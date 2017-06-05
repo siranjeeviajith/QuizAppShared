@@ -1,0 +1,40 @@
+
+apply from: 'gradle/dependencies.gradle'
+
+
+/** project configurations **/
+allprojects {
+    group 'com.fulllearn'
+    version '1.0'
+}
+
+subprojects {
+
+    apply plugin: "java"
+    apply plugin: 'idea'
+
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    repositories {
+        maven {
+            url 'https://maven-central.storage.googleapis.com' // Google's mirror of Maven Central
+//   url 'https://oss.sonatype.org/content/repositories/snapshots' // SNAPSHOT Repository (if needed)
+        }
+        jcenter()
+        mavenCentral()
+        mavenLocal()
+    }
+
+
+    dependencies {
+
+        compile libs.objectify
+        compile libs.jackson
+        compile libs.slf4jLog4j12
+
+       // compileOnly libs.lombok
+
+        testCompile libs.junit
+    }
+}

@@ -1,0 +1,44 @@
+apply from: '../gradle/dependencies.gradle'
+
+apply plugin: 'war'
+apply plugin: 'com.google.cloud.tools.appengine'
+
+group 'com.fulllearn.backend'
+version '1.0'
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'
+    }
+}
+
+dependencies {
+    providedCompile libs.servletApi
+    compile libs.gae
+}
+
+appengine {
+    run {
+        port = config.gae.port.backend
+        jvmFlags = config.gae.defaultJvmFlags
+    }
+
+    deploy {
+        stopPreviousVersion = false
+        promote = false
+    }
+}
+
+
+task reloadApp(type: Copy) {
+    dependsOn war
+
+    project.afterEvaluate {
+        into project.tasks.explodeWar.explodedAppDirectory
+        with war
+    }
+}
