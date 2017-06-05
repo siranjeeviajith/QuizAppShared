@@ -12,9 +12,7 @@ Full Learn is a Multi Module project, which monitors and generates Metrics for F
 
 The following are the list of modules available in this project.
 
-#### Backend
-
-The Backend module is reponsible for fetching the stats and generating appropriate metrics , generate reports etc
+- Backend Module - reponsible for fetching the stats and generating appropriate metrics , generate reports etc
 
 ### How to Setup
 
