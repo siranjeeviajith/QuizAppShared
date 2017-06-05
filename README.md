@@ -12,7 +12,7 @@ Full Learn is a Multi Module project, which monitors and generates Metrics for F
 
 The following are the list of modules available in this project.
 
-- Backend Module - reponsible for fetching the stats and generating appropriate metrics , generate reports etc
+- **Backend Module** - reponsible for fetching the stats and generating appropriate metrics , generate reports etc
 
 ### How to Setup
 
@@ -24,5 +24,4 @@ The following are the list of modules available in this project.
 By default run configurations are added for few of the common operations. 
 
 #### Run Backend Module 
-
-- To run the backend module in the local devserver, run the configuration `fl backend run` from Run Configuration Menu.
+To run the backend module in the local devserver, run the configuration `fl backend run` from Run Configuration Menu.
