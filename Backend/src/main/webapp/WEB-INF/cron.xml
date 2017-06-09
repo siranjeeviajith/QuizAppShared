@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/croncontact</url>
+    <target>beta</target>
+    <description>Daily Updates</description>
+    <schedule>every day 00:01</schedule>
+  </cron>
+</cronentries>
