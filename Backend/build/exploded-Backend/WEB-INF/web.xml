@@ -1,4 +1,4 @@
-
+<?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
     <!--<servlet>-->
     <!--<servlet-name>comingsoon</servlet-name>-->
@@ -53,5 +53,19 @@
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
+
+
+    <servlet>
+        <servlet-name>CreateUserDetails</servlet-name>
+        <servlet-class>Servlets.CreateUserDetails</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateUserDetails</servlet-name>
+        <url-pattern>/create</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>war/index.html</welcome-file>
+    </welcome-file-list>
+
 
 </web-app>
