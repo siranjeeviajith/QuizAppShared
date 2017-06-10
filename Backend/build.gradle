@@ -24,7 +24,7 @@ dependencies {
 appengine {
     run {
         port = config.gae.port.backend
-        jvmFlags = config.gae.defaultJvmFlags
+//        jvmFlags = config.gae.defaultJvmFlags
     }
 
     deploy {
