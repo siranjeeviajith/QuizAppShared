@@ -22,6 +22,7 @@ public class LearningStats {
 	private Map<String,Integer> challenges_details;
 	
 	private int minutes;
+	/// this property will directly map with json data so name would be same sir
 	private int challenges_completed;
 
 	public enum Frequency

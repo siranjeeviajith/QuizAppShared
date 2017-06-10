@@ -15,24 +15,37 @@ import com.fullLearn.service.FullLearnService;
 @SuppressWarnings("serial")
 public class FullLearnProjectServlet extends HttpServlet {
 	
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain");
 		PrintWriter out=resp.getWriter();
-		
-	
-		
+
+
+
+
+
+
+
+
 		///////    Get UserDetails by query
 		
 		
 		
 		
 		//////    NEED TO PASS EMAIL ,STARTIME AND ENDTIME To getUserActivities Method
-		
-		String userActivitiesDetail= HTTP.getUserActivities("amandeep.santokh@conversionsupport.com");
-	String status= FullLearnService.create(userActivitiesDetail,"userid -jdfhsjfahskdfd","amandeep.santokh@conversionsupport.com");
+
+		//FullLearnService.fetchUser();
+
+			/*boolean status=FullLearnService();
+			if(status)
+			{
+				out.println("all details saved successfully");
+			}*/
+
+		//String userActivitiesDetail= HTTP.getUserActivities("amandeep.santokh@conversionsupport.com",1493577000,1494009000);
+	//String status= FullLearnService.create(userActivitiesDetail,"userid -jdfhsjfahskdfd","amandeep.santokh@conversionsupport.com");
 	
-	out.println(status);
-	
+	/*out.println(status);
+	*/
 		
 	}
 }

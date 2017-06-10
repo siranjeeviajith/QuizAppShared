@@ -10,9 +10,9 @@ import java.net.URL;
 public class HTTP {
 
 	
-	public static String getUserActivities(String email) throws IOException
+	public static String getUserActivities(String email,long startTime,long endTime) throws IOException
 	{
-		URL url=new URL("https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=shaikanjavali.mastan@a-cti.com&startTime=1493577000000&endTime=1494009000000");
+		URL url=new URL("https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email="+email+"&startTime="+startTime+"&endTime="+endTime);
 		
 		HttpURLConnection con= (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("GET");
