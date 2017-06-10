@@ -33,6 +33,11 @@ public class LearningStats {
 		YEAR
 	}
 
+	//default constructor
+public LearningStats()
+{
+
+}
 	private Frequency frequency;
 
 	private long endTime;

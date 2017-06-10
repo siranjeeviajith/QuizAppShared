@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+    <cron>
+        <url>api/fetch/userdetails</url>
+        <target>beta</target>
+        <description>daily user data fetching job</description>
+        <schedule>every day 00:15</schedule>
+    </cron>
+</cronentries>
