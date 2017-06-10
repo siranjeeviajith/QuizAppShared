@@ -34,7 +34,7 @@ public class FullLearnService {
     long countYear;
 
     /**/;
-    public static boolean fetchUserDetails() throws JsonParseException, JsonMappingException, IOException {
+    public static boolean fetchUserDetails() throws  IOException {
         String cursorStr = null;
         do {
             ////// LearningStates is for Demo after getting all merged it would be Contacts.class
