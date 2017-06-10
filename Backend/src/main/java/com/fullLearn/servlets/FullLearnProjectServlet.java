@@ -26,20 +26,19 @@ public class FullLearnProjectServlet extends HttpServlet {
 
 
 
-		///////    Get UserDetails by query
-		
-		
-		
-		
-		//////    NEED TO PASS EMAIL ,STARTIME AND ENDTIME To getUserActivities Method
 
-		//FullLearnService.fetchUser();
+		
+		
+		
 
-			/*boolean status=FullLearnService();
+
+		boolean status=FullLearnService.fetchUserDetails();
+
+		//// this is just for displaying
 			if(status)
 			{
 				out.println("all details saved successfully");
-			}*/
+			}
 
 		//String userActivitiesDetail= HTTP.getUserActivities("amandeep.santokh@conversionsupport.com",1493577000,1494009000);
 	//String status= FullLearnService.create(userActivitiesDetail,"userid -jdfhsjfahskdfd","amandeep.santokh@conversionsupport.com");
