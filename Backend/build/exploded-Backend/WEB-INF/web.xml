@@ -8,11 +8,21 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
     <servlet>
         <servlet-name>ContactServlet</servlet-name>
-        <servlet-class>com.fullLearn.servlet.ContactServlet</servlet-class>
+        <servlet-class>com.fullLearn.servlets.ContactServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ContactServlet</servlet-name>
         <url-pattern>/contact/info</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
+        <servlet-class>com.fullLearn.servlets.FullLearnProjectWeeklyReportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
+        <url-pattern>api/report/weekly</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>
