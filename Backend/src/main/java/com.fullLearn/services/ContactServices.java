@@ -10,7 +10,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
-
+import com.fullLearn.helper.*;
 
 
 public class ContactServices {
@@ -20,6 +20,8 @@ public class ContactServices {
 		ObjectifyService.register(Contacts.class);
 	}
 
+
+	HTTPUrl listOfDatas = new HTTPUrl();
 	public String getAccessToken() throws IOException
 	{
 
@@ -62,53 +64,64 @@ public class ContactServices {
 		return accesstoken;
 	}
 
-	public String getLastModifiedContacts()
+	public Long getLastModifiedContacts()
 	{
-		// On process.....
 		Query<Contacts> all = ofy().load().type(Contacts.class).order("-modifiedAt").limit(1);
 		List<Contacts> list = all.list();
-		String lastModified = list.get(0).getModifiedAt();
-		return lastModified;
-
-		// Output for above code ....
-		// true 1496679658392
-
-	}
-
-
-
-
-	public ArrayList<Contacts> getURLContacts(String accesstoken) throws IOException
-	{
-
-		int limit = 30;
-		URL url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit="+limit);
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod("GET");
-		con.setRequestProperty("Content-Type", "application/json");
-		con.setRequestProperty("Authorization","Bearer " +accesstoken);
-		con.setDoOutput(true);
-
-		String line, contacts = "";
-		BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		if ((line = reader.readLine()) != null) {
-			contacts += line;
-			// Mapping JSON
-
-			ObjectMapper obj = new ObjectMapper();
-			Map<String,String> map = obj.readValue(contacts.toString(),new TypeReference<Map<String,Object>>(){});
-			Map<String,String> datas = obj.readValue(obj.writeValueAsString(map.get("data")), new TypeReference<Map<String,Object>>(){});
-			ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Object>>(){});
-
-			// Map<String,String> cursorData = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<Map<String,String>>(){});
-
-			return userData;
-
+		Long lastModified;
+		if(list != null)
+		{
+			lastModified = list.get(0).getModifiedAt();
+			return lastModified;
 		}
-		else{
+		else
+		{
 			return null;
 		}
+
 	}
+
+
+	public ArrayList<Contacts> syncContacts(Long lastModified, String accesstoken)throws IOException
+	{
+		ObjectMapper obj = new ObjectMapper();
+		URL url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?since="+lastModified);
+		String methodType = "GET";
+		String contentType = "application/json";
+
+		Map<String, String> datas = listOfDatas.request(accesstoken, url,methodType,contentType);
+
+		ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>(){});
+		return userData;
+
+
+	}
+
+
+
+	public ArrayList<Contacts> saveAllContacts(String accesstoken,int limit) throws IOException
+	{
+		String cursorStr = null;
+		do
+		{
+			ObjectMapper obj = new ObjectMapper();
+			URL url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit="+limit+"&cursor"+cursorStr);
+			String methodType = "GET";
+			String contentType = "application/json";
+
+			Map<String, String> datas = listOfDatas.request(accesstoken, url,methodType,contentType);
+
+			cursorStr = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<Map<String,String>>(){});
+			ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>(){});
+			if(userData.size() < limit)
+				cursorStr = null;
+			return userData;
+		}while(cursorStr != null);
+
+	}
+
+
+
 
 
 

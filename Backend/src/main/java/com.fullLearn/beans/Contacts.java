@@ -7,7 +7,7 @@ public class Contacts {
 	
 	@Id private String id;
 	@Ignore private String createdAt;
-	@Index private String modifiedAt;
+	@Index private Long modifiedAt;
 	private String accountId;
 	private String login;
 	private String firstName;
@@ -27,10 +27,10 @@ public class Contacts {
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
-	public String getModifiedAt() {
+	public Long getModifiedAt() {
 		return modifiedAt;
 	}
-	public void setModifiedAt(String modifiedAt) {
+	public void setModifiedAt(Long modifiedAt) {
 		this.modifiedAt = modifiedAt;
 	}
 	public String getAccountId() {

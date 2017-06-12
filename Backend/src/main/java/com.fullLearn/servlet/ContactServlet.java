@@ -18,15 +18,29 @@ public class ContactServlet extends HttpServlet {
 		// Access Token
 		String accessToken = fc.getAccessToken();
 
-		// List Of Contacts to save in DB
-		ArrayList<Contacts> contacts= fc.getURLContacts(accessToken);
+
+		// Getting LastMOdified
+		Long lastModified = fc.getLastModifiedContacts();
+		ArrayList<Contacts> contacts = null;
+		if(lastModified != null)
+		{
+			int limit = 30;
+			contacts = fc.syncContacts(lastModified,accessToken);
+
+			if(contacts == null)
+			{
+				contacts = fc.saveAllContacts(accessToken, limit);
+			}
+
+		}
+		else
+		{
+			out.println("null");
+		}
+
 
 		boolean status = fc.saveContacts(contacts);
 		out.println(status);
-
-		// LastMOdified check
-		String dbCont = fc.getLastModifiedContacts();
-		out.println(dbCont);
 
 
 
