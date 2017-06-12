@@ -3,17 +3,23 @@ package com.fullLearn.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import com.fullLearn.helpers.HTTP;
+import com.fullLearn.beans.LearningStats;
+
 import javax.servlet.http.*;
 
 
 
 import com.fullLearn.service.FullLearnService;
-
+import com.googlecode.objectify.ObjectifyService;
 
 
 @SuppressWarnings("serial")
 public class FullLearnProjectServlet extends HttpServlet {
+
+
+	static {
+		ObjectifyService.register(LearningStats.class);
+	}
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain");
