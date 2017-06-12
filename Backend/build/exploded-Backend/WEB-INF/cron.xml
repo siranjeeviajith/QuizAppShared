@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
+
+  <cron>
+    <url>/contact/info</url>
+    <target>beta</target>
+    <description>Daily Updates</description>
+    <schedule>every day 00:01</schedule>
+  </cron>
     <cron>
         <url>api/fetch/userdetails</url>
-        <target>beta</target>
+        <target>beckend</target>
         <description>daily user data fetching job</description>
         <schedule>every day 00:15</schedule>
     </cron>
+
+    <cron>
+        <url>api/report/weekly</url>
+        <target>beckend</target>
+        <description>Weekly Report job</description>
+        <schedule>every monday 00:00</schedule>
+    </cron>
+
 </cronentries>

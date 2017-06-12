@@ -1,6 +1,6 @@
 package com.fullLearn.servlets;
 
-import com.fullLearn.service.FullLearnService;
+import com.fullLearn.services.FullLearnService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
