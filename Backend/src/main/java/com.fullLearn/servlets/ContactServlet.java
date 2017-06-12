@@ -1,10 +1,13 @@
-package com.fullLearn.servlet;
+package com.fullLearn.servlets;
 
 import java.io.*;
 import java.util.*;
 import com.fullLearn.beans.*;
-import javax.servlet.http.*;
 import com.fullLearn.services.*;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class ContactServlet extends HttpServlet {
@@ -41,8 +44,6 @@ public class ContactServlet extends HttpServlet {
 
 		boolean status = fc.saveContacts(contacts);
 		out.println(status);
-
-
 
 	}
 }
