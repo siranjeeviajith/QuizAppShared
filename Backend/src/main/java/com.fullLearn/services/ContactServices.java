@@ -3,13 +3,10 @@ package com.fullLearn.services;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import com.fullLearn.beans.*;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
@@ -22,7 +19,6 @@ public class ContactServices {
 	{
 		ObjectifyService.register(Contacts.class);
 	}
-
 
 	public String getAccessToken() throws IOException
 	{
@@ -66,20 +62,23 @@ public class ContactServices {
 		return accesstoken;
 	}
 
-//	public Long getLastModifiedContacts()
-//	{
-//		Long st = null;
-//		Query<Contacts> all = ofy().load().type(Contacts.class).order("-modifiedAt");
-//		for(Contacts cc : all)
-//	    st = cc.getModifiedAt();
-//		return st;
-//
-//	}
+	public String getLastModifiedContacts()
+	{
+		// On process.....
+		Query<Contacts> all = ofy().load().type(Contacts.class).order("-modifiedAt").limit(1);
+		List<Contacts> list = all.list();
+		String lastModified = list.get(0).getModifiedAt();
+		return lastModified;
+
+		// Output for above code ....
+		// true 1496679658392
+
+	}
 
 
 
 
-	public ArrayList<String> getURLContacts(String accesstoken) throws IOException
+	public ArrayList<Contacts> getURLContacts(String accesstoken) throws IOException
 	{
 
 		int limit = 30;
@@ -99,7 +98,7 @@ public class ContactServices {
 			ObjectMapper obj = new ObjectMapper();
 			Map<String,String> map = obj.readValue(contacts.toString(),new TypeReference<Map<String,Object>>(){});
 			Map<String,String> datas = obj.readValue(obj.writeValueAsString(map.get("data")), new TypeReference<Map<String,Object>>(){});
-			ArrayList<String> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Object>>(){});
+			ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Object>>(){});
 
 			// Map<String,String> cursorData = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<Map<String,String>>(){});
 
@@ -113,18 +112,15 @@ public class ContactServices {
 
 
 
-	public String saveContacts(ArrayList<String> contacts) throws IOException
+	public boolean saveContacts(ArrayList<Contacts> contacts) throws IOException
 	{
-
-
 		ObjectMapper obj = new ObjectMapper();
+		boolean status = false;
 		for (int i=0;i<contacts.size();i++)
 		{
 			Contacts users = obj.readValue(obj.writeValueAsString(contacts.get(i)),new TypeReference<Contacts>(){});
-
-			ofy().save().entity(users).now();
+			status = ofy().save().entity(users).now() != null;
 		}
-		return "Saved successfully";
+		return status;
 	}
-
 }

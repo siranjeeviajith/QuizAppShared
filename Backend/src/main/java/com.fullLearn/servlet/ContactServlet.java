@@ -1,8 +1,8 @@
 package com.fullLearn.servlet;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
+import com.fullLearn.beans.*;
 import javax.servlet.http.*;
 import com.fullLearn.services.*;
 
@@ -18,16 +18,15 @@ public class ContactServlet extends HttpServlet {
 		// Access Token
 		String accessToken = fc.getAccessToken();
 
-		// LastMOdified check
-//			Long dbCont = fc.getLastModifiedContacts();
-//			out.println(dbCont);
 		// List Of Contacts to save in DB
-		ArrayList<String> contacts= fc.getURLContacts(accessToken);
+		ArrayList<Contacts> contacts= fc.getURLContacts(accessToken);
 
-		String status = fc.saveContacts(contacts);
+		boolean status = fc.saveContacts(contacts);
 		out.println(status);
 
-
+		// LastMOdified check
+		String dbCont = fc.getLastModifiedContacts();
+		out.println(dbCont);
 
 
 
