@@ -27,20 +27,22 @@ public class FullLearnService {
     public static boolean fetchUserDetails() throws  IOException {
 
         System.out.println("fetchUserDetails ");
+        List<LearningStats> contacts=ofy().load().type(LearningStats.class).list();
         String cursorStr = null;
-        QueryResultIterator<LearningStats> contacts;
+
         do {
             ////// LearningStates is for Demo after getting all merged it would be Contacts.class
             //////  this cursor is getting limit of 30 per batch
+
             Query<LearningStats> query = ofy().load().type(LearningStats.class).limit(30);
             if (cursorStr != null)
                 query = query.startAt(Cursor.fromWebSafeString(cursorStr));
 
-             contacts = query.iterator();
+            QueryResultIterator<LearningStats> contactsByBatch = query.iterator();
 
-            fetchDataByBatch(contacts);
-            cursorStr = contacts.getCursor().toWebSafeString();
-        } while (contacts.hasNext());//  in while(cursorStr != null) condition will go for infinite loop  cursorStr will never null in this case
+            fetchDataByBatch(contactsByBatch);
+            cursorStr = contactsByBatch.getCursor().toWebSafeString();
+        } while (cursorStr != null);
         return true;
     } // end of fetchUserDetails method
 
@@ -59,11 +61,11 @@ public class FullLearnService {
                 // email will be dynamic for contacts pojo
             ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-            String data=   HTTP.getUserActivities("shaikanjavali.mastan@a-cti.com",startDate,endDate);
+            Map<String,Object> dataMap=   HTTP.getUserActivities("shaikanjavali.mastan@a-cti.com",startDate,endDate);
             ObjectMapper objectmapper=new ObjectMapper();
-            Map<String,Object>dataMap=objectmapper.readValue(data,new TypeReference<Map<String,Object>>(){});
 
-         System.out.println("data is :"+data);
+
+
             MapUserDataAfterFetch(dataMap,contact,startDate,endDate);
 
 
@@ -134,7 +136,7 @@ System.out.println("mapuser dataafer fetch");
             storeUserActivityDetail(entry);
 
             ///  Current Month Max days
-
+/*
             Calendar c = Calendar.getInstance();
             int monthMaxDays = c.getActualMaximum(Calendar.DAY_OF_MONTH);
 
@@ -190,7 +192,7 @@ System.out.println("mapuser dataafer fetch");
 
                 ////  To do calculation for year will be done year .........................
 
-            }
+            }*/
         }// end of if
 
     } // end of MapUserDataAfterFetch
