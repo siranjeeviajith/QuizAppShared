@@ -4,40 +4,31 @@ package com.fullLearn.service;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
-import javax.servlet.http.HttpServletResponse;
 
 
-import com.fasterxml.jackson.core.JsonParseException;
+
+
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fullLearn.helpers.HTTP;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
-import com.google.appengine.repackaged.org.joda.time.DateTime;
-import com.googlecode.objectify.ObjectifyService;
+
 import com.fullLearn.beans.LearningStats;
 import com.googlecode.objectify.cmd.Query;
 
 
 public class FullLearnService {
 
-
-    long countDay;
-    long countWeek;
-    long countMonth;
-    long countYear;
-
-
     public static boolean fetchUserDetails() throws  IOException {
+
+        System.out.println("fetchUserDetails ");
         String cursorStr = null;
+        QueryResultIterator<LearningStats> contacts;
         do {
             ////// LearningStates is for Demo after getting all merged it would be Contacts.class
             //////  this cursor is getting limit of 30 per batch
@@ -45,17 +36,18 @@ public class FullLearnService {
             if (cursorStr != null)
                 query = query.startAt(Cursor.fromWebSafeString(cursorStr));
 
-            QueryResultIterator<LearningStats> contacts = query.iterator();
+             contacts = query.iterator();
+
             fetchDataByBatch(contacts);
             cursorStr = contacts.getCursor().toWebSafeString();
-        } while (cursorStr != null);
+        } while (contacts.hasNext());//  in while(cursorStr != null) condition will go for infinite loop  cursorStr will never null in this case
         return true;
-    }
+    } // end of fetchUserDetails method
 
 
 	public static void fetchDataByBatch(QueryResultIterator contacts) throws IOException {
 		//To do for iterating and getting data for each user by Calling HTTP class in helper package
-
+  System.out.println("fetchdataby bactch");
         Date d = new Date();// current date
         long endDate=d.getTime();// endDate for fetching user data
         Date dateBefore = new Date(d.getTime() - 1 * 24 * 3600 * 1000  );
@@ -69,38 +61,139 @@ public class FullLearnService {
 
             String data=   HTTP.getUserActivities("shaikanjavali.mastan@a-cti.com",startDate,endDate);
             ObjectMapper objectmapper=new ObjectMapper();
-            Map<String,Object> dataMap=new HashMap<String,Object>();
-            dataMap=objectmapper.readValue(data,new TypeReference<Map<String,Object>>(){});
+            Map<String,Object>dataMap=objectmapper.readValue(data,new TypeReference<Map<String,Object>>(){});
 
          System.out.println("data is :"+data);
-           LearningStats entry= MapUserDataAfterFetch(dataMap);
-
-            ///  To do for calling method to store data in datastore for each user
-        }
+            MapUserDataAfterFetch(dataMap,contact,startDate,endDate);
 
 
 
-	}
 
 
-	public static LearningStats MapUserDataAfterFetch(Map dataMap){
-        // properties of LearningStats pojo
-        //id
-        //userid
-        //minutes
-        //challenges completed
-        //frequency
-        //endTime
-        // startTime
+
+        } // end of while
+
+
+
+	} // end of fetchDataByBatch method
+
+
+	public static void storeUserActivityDetail(LearningStats entry)
+    {
+
+
+        System.out.println("store data");
+        ofy().save().entity(entry).now();
+    }// end of storeUserActivityDetail method
+
+
+	public static void MapUserDataAfterFetch(Map dataMap,LearningStats contact, long startDate,long endDate) throws IOException {
+
+        ObjectMapper objectmapper=new ObjectMapper();
+System.out.println("mapuser dataafer fetch");
+        // properties of LearningStats pojo to be map
+        // 1. id
+        // 2. userid
+        // 3. minutes
+        // 4. challenges completed
+        // 5 .frequency
+        // 6. endTime
+        // 7. startTime
+        // 8. challenges details
+
         LearningStats entry=new LearningStats();
         if((boolean)dataMap.get("response") && dataMap.get("status").equals("Success"))
         {
 
-            //// To do mapping is to be done here to Learning Stats
 
-        }
-return entry;
-    }
+
+            // 1. unique id
+            UUID uuid = UUID.randomUUID();
+            String id = uuid.toString();
+            entry.setId(id);
+
+            //  2. userid
+
+            entry.setUserId(contact.getUserId());
+
+
+            // 6 and 7 startTime and endTime
+
+            entry.setStartTime(startDate);
+            entry.setEndTime(endDate);
+
+            //  5. frequency for daily entry
+            entry.setFrequency(LearningStats.Frequency.DAY);
+
+
+            // 3,4,8 for minutes and challenges
+            Map<String,Object> mapToLearningStats= (Map<String, Object>) dataMap.get("data");
+            entry= objectmapper.readValue(objectmapper.writeValueAsString(mapToLearningStats),new TypeReference<LearningStats>(){});
+
+            //////  store entry object to datastore
+            storeUserActivityDetail(entry);
+
+            ///  Current Month Max days
+
+            Calendar c = Calendar.getInstance();
+            int monthMaxDays = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+            /// current day of month
+            int dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
+
+
+
+
+            ////  current day of year
+
+            int currentDayOfYear=c.get(Calendar.DAY_OF_YEAR);
+
+            /////  Max days in current year
+
+            int maxDaysCurrentYear=c.getActualMaximum(Calendar.DAY_OF_YEAR);
+
+
+
+            if (dayOfMonth % 7 == 0 && dayOfMonth != monthMaxDays && currentDayOfYear != maxDaysCurrentYear )
+            {
+                /// new Entity will be created
+                LearningStats weeklyCalculation = new LearningStats();
+
+                weeklyCalculation.setFrequency(LearningStats.Frequency.WEEK);
+
+
+
+                // 1. unique id
+                UUID uuidCalculation = UUID.randomUUID();
+                String idCalculation = uuidCalculation.toString();
+                weeklyCalculation.setId(idCalculation);
+
+                //// To do calculation for week will done here.............
+
+
+
+            }
+
+            else if(dayOfMonth == monthMaxDays && currentDayOfYear != maxDaysCurrentYear)
+            {
+                LearningStats monthlyCalculation = new LearningStats();
+
+                monthlyCalculation.setFrequency(LearningStats.Frequency.MONTH);
+
+                ///  To do calculation for month will done here ......................
+            }
+
+            else if(currentDayOfYear != maxDaysCurrentYear)
+            {
+                LearningStats yearlyCalculation = new LearningStats();
+                yearlyCalculation.setFrequency(LearningStats.Frequency.YEAR);
+
+                ////  To do calculation for year will be done year .........................
+
+            }
+        }// end of if
+
+    } // end of MapUserDataAfterFetch
 
 	/*
 9:41 PM	Error running fl backend run: No task to execute is specified
