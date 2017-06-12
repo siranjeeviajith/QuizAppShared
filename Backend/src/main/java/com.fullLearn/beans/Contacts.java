@@ -7,14 +7,14 @@ public class Contacts {
 	
 	@Id private String id;
 	@Ignore private String createdAt;
-	private String modifiedAt;
+	@Index private String modifiedAt;
 	private String accountId;
 	private String login;
 	private String firstName;
 	private String lastName;
 	private String photoId;
 	private String status;
-	
+
 	public String getId() {
 		return id;
 	}
