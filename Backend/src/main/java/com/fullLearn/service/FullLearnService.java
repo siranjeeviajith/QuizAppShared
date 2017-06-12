@@ -14,8 +14,10 @@ import java.util.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fullLearn.beans.Frequency;
 import com.fullLearn.helpers.HTTP;
 import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.Index;
 import com.google.appengine.api.datastore.QueryResultIterator;
 
 import com.fullLearn.beans.LearningStats;
@@ -30,18 +32,37 @@ public class FullLearnService {
         List<LearningStats> contacts=ofy().load().type(LearningStats.class).list();
         String cursorStr = null;
 
+        QueryResultIterator<LearningStats> contactsByBatch=null;
+        int limit=30;
         do {
             ////// LearningStates is for Demo after getting all merged it would be Contacts.class
             //////  this cursor is getting limit of 30 per batch
 
-            Query<LearningStats> query = ofy().load().type(LearningStats.class).limit(30);
-            if (cursorStr != null)
+            Query<LearningStats> query = ofy().load().type(LearningStats.class).limit(limit);
+            if (cursorStr != null) {
                 query = query.startAt(Cursor.fromWebSafeString(cursorStr));
+                contactsByBatch= query.iterator();
+                //cursorStr = contactsByBatch.getCursor().toWebSafeString();
+            }
 
-            QueryResultIterator<LearningStats> contactsByBatch = query.iterator();
+            else
+            {
+                contactsByBatch= query.iterator();
+            }
 
+            List<Index> index=contactsByBatch.getIndexList();
+            int size=index.size();
+            System.out.println("size = " +size);
+                    if(size<limit)
+                    {
+                            cursorStr =null;
+                    }
+                    else
+                    {
+                        cursorStr = contactsByBatch.getCursor().toWebSafeString();
+                    }
             fetchDataByBatch(contactsByBatch);
-            cursorStr = contactsByBatch.getCursor().toWebSafeString();
+
         } while (cursorStr != null);
         return true;
     } // end of fetchUserDetails method
@@ -61,10 +82,12 @@ public class FullLearnService {
                 // email will be dynamic for contacts pojo
             ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-            Map<String,Object> dataMap=   HTTP.getUserActivities("shaikanjavali.mastan@a-cti.com",startDate,endDate);
-            ObjectMapper objectmapper=new ObjectMapper();
+            String url="https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=shaikanjavali.mastan@a-cti.com"+"&startTime="+startDate+"&endTime="+endDate;
+            String methodType="POST";
+            String payLoad="";
+            String contentType="application/json";
 
-
+            Map<String,Object> dataMap= HTTP.request(url,methodType,payLoad,contentType);
 
             MapUserDataAfterFetch(dataMap,contact,startDate,endDate);
 
@@ -125,7 +148,7 @@ System.out.println("mapuser dataafer fetch");
             entry.setEndTime(endDate);
 
             //  5. frequency for daily entry
-            entry.setFrequency(LearningStats.Frequency.DAY);
+            entry.setFrequency(Frequency.DAY);
 
 
             // 3,4,8 for minutes and challenges
@@ -196,6 +219,19 @@ System.out.println("mapuser dataafer fetch");
         }// end of if
 
     } // end of MapUserDataAfterFetch
+
+
+
+    /////////////////////////     WEEKLY REPORTS
+
+
+
+    public static boolean generateWeeklyReport()
+    {
+
+
+        return true;
+    }
 
 	/*
 9:41 PM	Error running fl backend run: No task to execute is specified

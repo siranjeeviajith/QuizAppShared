@@ -25,13 +25,7 @@ public class LearningStats {
 	/// this property will directly map with json data so name would be same sir
 	private int challenges_completed;
 
-	public enum Frequency
-	{
-		DAY,
-		WEEK,
-		MONTH,
-		YEAR
-	}
+
 
 	//default constructor
 public LearningStats()
