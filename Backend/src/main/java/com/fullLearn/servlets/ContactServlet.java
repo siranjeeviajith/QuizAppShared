@@ -23,11 +23,13 @@ public class ContactServlet extends HttpServlet {
 
 
 		// Getting LastMOdified
+
 		Long lastModified = fc.getLastModifiedContacts();
 		ArrayList<Contacts> contacts = null;
+		int limit =0;
 		if(lastModified != null)
 		{
-			int limit = 30;
+			limit = 30;
 			contacts = fc.syncContacts(lastModified,accessToken);
 
 			if(contacts == null)
@@ -38,7 +40,7 @@ public class ContactServlet extends HttpServlet {
 		}
 		else
 		{
-			out.println("null");
+			contacts = fc.saveAllContacts(accessToken, limit);
 		}
 
 
