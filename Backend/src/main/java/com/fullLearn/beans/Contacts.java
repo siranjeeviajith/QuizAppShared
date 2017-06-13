@@ -6,7 +6,7 @@ import com.googlecode.objectify.annotation.*;
 public class Contacts {
 	
 	@Id private String id;
-	@Ignore private String createdAt;
+	private String createdAt;
 	@Index private Long modifiedAt;
 	private String accountId;
 	private String login;

@@ -2,8 +2,8 @@ package com.fullLearn.services;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.lang.reflect.InvocationTargetException;
+import java.net.*;
 import java.util.*;
 import com.fullLearn.beans.*;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,8 +12,7 @@ import com.fullLearn.helpers.HTTPUrl;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
 
-
-public class ContactServices {
+public class ContactServices{
 
 	static
 	{
@@ -64,7 +63,7 @@ public class ContactServices {
 		return accesstoken;
 	}
 
-	public Long getLastModifiedContacts()
+	public Long getLastModifiedContacts()throws IOException
 	{
 		Query<Contacts> all = ofy().load().type(Contacts.class).order("-modifiedAt").limit(1);
 		List<Contacts> list = all.list();
