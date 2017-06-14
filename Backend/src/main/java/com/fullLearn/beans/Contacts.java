@@ -6,7 +6,7 @@ import com.googlecode.objectify.annotation.*;
 public class Contacts {
 	
 	@Id private String id;
-	@Ignore private String createdAt;
+	private String createdAt;
 	@Index private Long modifiedAt;
 	private String accountId;
 	private String login;
@@ -14,6 +14,7 @@ public class Contacts {
 	private String lastName;
 	private String photoId;
 	private String status;
+	private String title;
 
 	public String getId() {
 		return id;
@@ -69,5 +70,10 @@ public class Contacts {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
 }
