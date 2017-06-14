@@ -28,8 +28,8 @@ appengine {
     }
 
     deploy {
-        stopPreviousVersion = false
-        promote = false
+        stopPreviousVersion = true
+        promote = true
     }
 }
 
