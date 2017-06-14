@@ -20,11 +20,20 @@ public class LearningStats {
 	
 	@Ignore 
 	private Map<String,Integer> challenges_details;
-	
+
 	private int minutes;
-	/// this property will directly map with json data so name would be same sir
+
 	private int challenges_completed;
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	private String email;
 
 
 	//default constructor

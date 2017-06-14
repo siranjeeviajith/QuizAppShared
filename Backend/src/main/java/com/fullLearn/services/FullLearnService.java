@@ -4,118 +4,137 @@ package com.fullLearn.services;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 
-
-
-
-
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.Frequency;
 import com.fullLearn.helpers.HTTP;
 import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.Index;
 import com.google.appengine.api.datastore.QueryResultIterator;
 
 import com.fullLearn.beans.LearningStats;
+import com.google.appengine.api.datastore.QueryResultList;
 import com.googlecode.objectify.cmd.Query;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 public class FullLearnService {
 
-    public static boolean fetchUserDetails() throws  IOException {
 
+
+
+    public static boolean fetchAllUserStats() throws IOException {
         System.out.println("fetchUserDetails ");
-        List<LearningStats> contacts=ofy().load().type(LearningStats.class).list();
-        String cursorStr = null;
-
-        QueryResultIterator<LearningStats> contactsByBatch=null;
-        int limit=30;
+String cursorStr=null;
         do {
-            ////// LearningStates is for Demo after getting all merged it would be Contacts.class
-            //////  this cursor is getting limit of 30 per batch
 
-            Query<LearningStats> query = ofy().load().type(LearningStats.class).limit(limit);
-            if (cursorStr != null) {
+            Query<Contacts> query = ofy().load().type(Contacts.class).limit(10);
+
+            // String cursorStr = request.getParameter("cursor");
+            if (cursorStr != null)
                 query = query.startAt(Cursor.fromWebSafeString(cursorStr));
-                contactsByBatch= query.iterator();
-                //cursorStr = contactsByBatch.getCursor().toWebSafeString();
+
+            QueryResultIterator<Contacts> iterator = query.iterator();
+
+            List<Contacts> contactList = query.list();
+
+            System.out.println("size :"+contactList.size());
+
+            if (contactList.size() < 1) {
+                return true;
             }
 
-            else
-            {
-                contactsByBatch= query.iterator();
-            }
-
-            List<Index> index=contactsByBatch.getIndexList();
-            int size=index.size();
-            System.out.println("size = " +size);
-                    if(size<limit)
-                    {
-                            cursorStr =null;
-                    }
-                    else
-                    {
-                        cursorStr = contactsByBatch.getCursor().toWebSafeString();
-                    }
-            fetchDataByBatch(contactsByBatch);
-
-        } while (cursorStr != null);
-        return true;
-    } // end of fetchUserDetails method
+            fetchDataByBatch(iterator);
+            cursorStr = iterator.getCursor().toWebSafeString();
 
 
-	public static void fetchDataByBatch(QueryResultIterator contacts) throws IOException {
-		//To do for iterating and getting data for each user by Calling HTTP class in helper package
-  System.out.println("fetchdataby bactch");
-        Date d = new Date();// current date
-        long endDate=d.getTime();// endDate for fetching user data
-        Date dateBefore = new Date(d.getTime() - 1 * 24 * 3600 * 1000  );
-        long startDate=dateBefore.getTime();// start date for fetching user data
+        }while(cursorStr!=null);
+        /*
+        while (iterator.hasNext()) {
+            Contacts contact = iterator.next();
+            fetchDataByBatch(contact);
+            continu = true;
+        }
 
-        while(contacts.hasNext())
+        if (continu) {
+            cursorStr = iterator.getCursor().toWebSafeString();
+            fetchAllUserStats(cursorStr);
+        }
+        else
         {
-            LearningStats contact= (LearningStats) contacts.next();
-                // email will be dynamic for contacts pojo
+            return true;
+        }
+*/
+        return true;
+    } // end of fetchUserDetails
+
+    public static void fetchDataByBatch(QueryResultIterator contactList) throws IOException {
+        //To do for iterating and getting data for each user by Calling HTTP class in helper package
+
+
+
+
+
+        while(contactList.hasNext()) {
+
+Contacts contact= (Contacts) contactList.next();
+
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+
+
+            Date start = cal.getTime();
+            long startDate = start.getTime();
+            Calendar cal1 = Calendar.getInstance();
+            cal1.add(Calendar.DATE, -1);
+
+            cal1.set(Calendar.HOUR_OF_DAY, 23);
+            cal1.set(Calendar.MINUTE, 59);
+            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.MILLISECOND, 0);
+
+
+            Date end = cal1.getTime();// current date
+            long endDate = end.getTime();// endDate for fetching user data
+
+            // email will be dynamic for contacts pojo
             ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-            String url="https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=shaikanjavali.mastan@a-cti.com"+"&startTime="+startDate+"&endTime="+endDate;
-            String methodType="POST";
-            String payLoad="";
-            String contentType="application/json";
+            String url = "https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
+            String methodType = "POST";
+            String payLoad = "";
+            String contentType = "application/json";
 
-            Map<String,Object> dataMap= HTTP.request(url,methodType,payLoad,contentType);
+            Map<String, Object> dataMap = HTTP.request(url, methodType, payLoad, contentType);
 
-            MapUserDataAfterFetch(dataMap,contact,startDate,endDate);
-
-
+            MapUserDataAfterFetch(dataMap, contact, startDate, endDate);
 
 
+        }
 
 
-        } // end of while
+    } // end of fetchDataByBatch method
 
 
-
-	} // end of fetchDataByBatch method
-
-
-	public static void storeUserActivityDetail(LearningStats entry)
-    {
+    public static void storeUserActivityDetail(LearningStats entry) {
 
 
-        System.out.println("store data");
-        ofy().save().entity(entry).now();
     }// end of storeUserActivityDetail method
 
 
-	public static void MapUserDataAfterFetch(Map dataMap,LearningStats contact, long startDate,long endDate) throws IOException {
+    public static void MapUserDataAfterFetch(Map dataMap, Contacts contact, long startDate, long endDate) throws IOException {
 
-        ObjectMapper objectmapper=new ObjectMapper();
-System.out.println("mapuser dataafer fetch");
+        ObjectMapper objectmapper = new ObjectMapper();
+        System.out.println("mapuser dataafer fetch");
         // properties of LearningStats pojo to be map
         // 1. id
         // 2. userid
@@ -126,111 +145,80 @@ System.out.println("mapuser dataafer fetch");
         // 7. startTime
         // 8. challenges details
 
-        LearningStats entry=new LearningStats();
-        if((boolean)dataMap.get("response") && dataMap.get("status").equals("Success"))
-        {
 
+        if ((boolean) dataMap.get("response") && dataMap.get("status").equals("Success")) {
 
+            LearningStats entry = new LearningStats();
 
             // 1. unique id
             UUID uuid = UUID.randomUUID();
             String id = uuid.toString();
+            System.out.println("id = " + id);
             entry.setId(id);
-
+            System.out.println("id :" + entry.getId());
             //  2. userid
 
-            entry.setUserId(contact.getUserId());
-
+            entry.setUserId(contact.getId());
+            System.out.println("userid :" + entry.getUserId());
+            System.out.println("contact id " + contact.getId());
 
             // 6 and 7 startTime and endTime
 
             entry.setStartTime(startDate);
+            System.out.println("start :" + entry.getStartTime());
             entry.setEndTime(endDate);
 
-            //  5. frequency for daily entry
+            //  5. frequency for daily entrys
             entry.setFrequency(Frequency.DAY);
-
-
+            System.out.println("freq :" + entry.getFrequency());
+            entry.setEmail(contact.getLogin());
             // 3,4,8 for minutes and challenges
-            Map<String,Object> mapToLearningStats= (Map<String, Object>) dataMap.get("data");
-            entry= objectmapper.readValue(objectmapper.writeValueAsString(mapToLearningStats),new TypeReference<LearningStats>(){});
+            Map<String, Object> mapToLearningStats = (Map<String, Object>) dataMap.get("data");
+            Map<String, Object> emailMap = (Map<String, Object>) mapToLearningStats.get(contact.getLogin());
 
-            //////  store entry object to datastore
-            storeUserActivityDetail(entry);
+            if (emailMap == null) {
+                entry.setMinutes(0);
+                entry.setChallenges_completed(0);
+            } else {
+                System.out.println("email " + contact.getLogin());
+                System.out.println("emailmap " + emailMap);
+                entry.setMinutes((int) emailMap.get("minutes"));
+                entry.setChallenges_completed((int) emailMap.get("challenges_completed"));
 
-            ///  Current Month Max days
-/*
-            Calendar c = Calendar.getInstance();
-            int monthMaxDays = c.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-            /// current day of month
-            int dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
-
-
+                System.out.println("minutes :" + entry.getMinutes());
 
 
-            ////  current day of year
-
-            int currentDayOfYear=c.get(Calendar.DAY_OF_YEAR);
-
-            /////  Max days in current year
-
-            int maxDaysCurrentYear=c.getActualMaximum(Calendar.DAY_OF_YEAR);
-
-
-
-            if (dayOfMonth % 7 == 0 && dayOfMonth != monthMaxDays && currentDayOfYear != maxDaysCurrentYear )
-            {
-                /// new Entity will be created
-                LearningStats weeklyCalculation = new LearningStats();
-
-                weeklyCalculation.setFrequency(LearningStats.Frequency.WEEK);
-
-
-
-                // 1. unique id
-                UUID uuidCalculation = UUID.randomUUID();
-                String idCalculation = uuidCalculation.toString();
-                weeklyCalculation.setId(idCalculation);
-
-                //// To do calculation for week will done here.............
-
-
-
+                //////  store entry object to datastore
+                System.out.println("email id " + contact.getLogin());
+                System.out.println("name " + contact.getFirstName());
+                System.out.println(entry.getId() + " " + entry.getFrequency() + "" + entry.getMinutes());
             }
+            ofy().save().entity(entry).now();
 
-            else if(dayOfMonth == monthMaxDays && currentDayOfYear != maxDaysCurrentYear)
-            {
-                LearningStats monthlyCalculation = new LearningStats();
 
-                monthlyCalculation.setFrequency(LearningStats.Frequency.MONTH);
-
-                ///  To do calculation for month will done here ......................
-            }
-
-            else if(currentDayOfYear != maxDaysCurrentYear)
-            {
-                LearningStats yearlyCalculation = new LearningStats();
-                yearlyCalculation.setFrequency(LearningStats.Frequency.YEAR);
-
-                ////  To do calculation for year will be done year .........................
-
-            }*/
         }// end of if
 
-    } // end of MapUserDataAfterFetch
 
+    } // end of MapUserDataAfterFetch
 
 
     /////////////////////////     WEEKLY REPORTS
 
 
+    public static boolean generateWeeklyReport() {
 
-    public static boolean generateWeeklyReport()
+            sendMailUser();
+        return true;
+    }
+
+
+    public static void  sendMailUser()
     {
 
+        String fromEmail="amandeep.pannu8233@gmail.com";
+        String userName="amandeep.pannu8233";
+        String password="Chandela8859@#";
 
-        return true;
     }
 
 	/*

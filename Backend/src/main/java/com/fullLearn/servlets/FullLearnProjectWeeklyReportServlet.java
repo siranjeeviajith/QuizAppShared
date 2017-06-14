@@ -1,6 +1,9 @@
 package com.fullLearn.servlets;
 
+import com.fullLearn.beans.Contacts;
+import com.fullLearn.beans.LearningStats;
 import com.fullLearn.services.FullLearnService;
+import com.googlecode.objectify.ObjectifyService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +14,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class FullLearnProjectWeeklyReportServlet extends HttpServlet {
 
-public void doGet(HttpServletRequest req, HttpServletResponse resp)
+
+    static {
+        ObjectifyService.register(Contacts.class);
+
+        ObjectifyService.register(LearningStats.class);
+    }
+
+
+
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
 {
 
 

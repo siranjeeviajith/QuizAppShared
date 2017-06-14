@@ -1,0 +1,8 @@
+<enterprise-beans>
+<session id="mailUser">
+    <session-type>Stateless</session-type>
+    <ejb-name>MailDispatcher</ejb-name>
+    <ejb-class>com.fullLearn.mail.MailDispatcher</ejb-class>
+</session>
+
+</enterprise-beans>
