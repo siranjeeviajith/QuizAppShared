@@ -1,57 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
 
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
-    <!--<servlet>-->
-    <!--<servlet-name>comingsoon</servlet-name>-->
-    <!--<servlet-class>mysite.server.ComingSoonServlet</servlet-class>-->
-    <!--</servlet>-->
-    <!--<servlet-mapping>-->
-    <!--<servlet-name>comingsoon</servlet-name>-->
-    <!--<url-pattern>/*</url-pattern>-->
-    <!--</servlet-mapping>-->
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
-    <!--AppStats Filter-->
+
+    <servlet>
+        <servlet-name>ContactServlet</servlet-name>
+        <servlet-class>com.fullLearn.servlets.ContactServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ContactServlet</servlet-name>
+        <url-pattern>/contact/info</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
+        <servlet-class>com.fullLearn.servlets.FullLearnProjectWeeklyReportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
+        <url-pattern>api/report/weekly</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
     <filter>
-        <filter-name>appstats</filter-name>
-        <filter-class>com.google.appengine.tools.appstats.AppstatsFilter</filter-class>
+        <filter-name>ObjectifyFilter</filter-name>
+        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
     </filter>
-
     <filter-mapping>
-        <filter-name>appstats</filter-name>
+        <filter-name>ObjectifyFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <!--AppStats Filter End-->
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>BackendOps</web-resource-name>
-            <url-pattern>/backend/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>AdminOps</web-resource-name>
-            <url-pattern>/admin/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-    <!-- all urls are secured with https -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Secure Access</web-resource-name>
-            <url-pattern>*.</url-pattern>
-            <url-pattern>/</url-pattern>
-            <url-pattern>/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
 
 </web-app>
