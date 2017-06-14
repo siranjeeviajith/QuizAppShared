@@ -23,29 +23,27 @@ public class ContactServlet extends HttpServlet {
 
 
 		// Getting LastMOdified
-
 		Long lastModified = fc.getLastModifiedContacts();
-		ArrayList<Contacts> contacts = null;
-		int limit =0;
+
+
+		boolean contacts;
+		String cursorStr=null;
+		int limit = 30;
 		if(lastModified != null)
 		{
-			limit = 30;
+
 			contacts = fc.syncContacts(lastModified,accessToken);
 
-			if(contacts == null)
+			if(contacts == true)
 			{
-				contacts = fc.saveAllContacts(accessToken, limit);
+				contacts = fc.saveAllContacts(accessToken, limit , cursorStr);
 			}
 
 		}
 		else
 		{
-			contacts = fc.saveAllContacts(accessToken, limit);
+			contacts = fc.saveAllContacts(accessToken, limit , cursorStr);
 		}
-
-
-		boolean status = fc.saveContacts(contacts);
-		out.println(status);
 
 	}
 }
