@@ -18,7 +18,7 @@
         <url>api/report/weekly</url>
         <target>backend</target>
         <description>Weekly Report job</description>
-        <schedule>every monday 00:00</schedule>
+        <schedule>every monday 00:30</schedule>
     </cron>
 
 </cronentries>

@@ -4,22 +4,21 @@ package com.fullLearn.services;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.Frequency;
 import com.fullLearn.helpers.HTTP;
+import com.fullLearn.mail.MailDispatcher;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 
 import com.fullLearn.beans.LearningStats;
-import com.google.appengine.api.datastore.QueryResultList;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.cmd.Query;
-
-import javax.servlet.http.HttpServletResponse;
 
 
 public class FullLearnService {
@@ -29,10 +28,11 @@ public class FullLearnService {
 
     public static boolean fetchAllUserStats() throws IOException {
         System.out.println("fetchUserDetails ");
+        int count=0;
 String cursorStr=null;
         do {
 
-            Query<Contacts> query = ofy().load().type(Contacts.class).limit(10);
+            Query<Contacts> query = ofy().load().type(Contacts.class).limit(30);
 
             // String cursorStr = request.getParameter("cursor");
             if (cursorStr != null)
@@ -41,7 +41,8 @@ String cursorStr=null;
             QueryResultIterator<Contacts> iterator = query.iterator();
 
             List<Contacts> contactList = query.list();
-
+                count=count+contactList.size();
+            System.out.println("usercount : "+count);
             System.out.println("size :"+contactList.size());
 
             if (contactList.size() < 1) {
@@ -53,22 +54,7 @@ String cursorStr=null;
 
 
         }while(cursorStr!=null);
-        /*
-        while (iterator.hasNext()) {
-            Contacts contact = iterator.next();
-            fetchDataByBatch(contact);
-            continu = true;
-        }
 
-        if (continu) {
-            cursorStr = iterator.getCursor().toWebSafeString();
-            fetchAllUserStats(cursorStr);
-        }
-        else
-        {
-            return true;
-        }
-*/
         return true;
     } // end of fetchUserDetails
 
@@ -99,7 +85,7 @@ Contacts contact= (Contacts) contactList.next();
 
             cal1.set(Calendar.HOUR_OF_DAY, 23);
             cal1.set(Calendar.MINUTE, 59);
-            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.SECOND, 59);
             cal1.set(Calendar.MILLISECOND, 0);
 
 
@@ -116,22 +102,23 @@ Contacts contact= (Contacts) contactList.next();
 
             Map<String, Object> dataMap = HTTP.request(url, methodType, payLoad, contentType);
 
-            MapUserDataAfterFetch(dataMap, contact, startDate, endDate);
 
-
+           LearningStats dailyEntity= MapUserDataAfterFetch(dataMap, contact, startDate, endDate);
+            // save daily entity to datastore
+                 saveUserStats(dailyEntity);
         }
 
 
     } // end of fetchDataByBatch method
 
 
-    public static void storeUserActivityDetail(LearningStats entry) {
+    public static void saveUserStats(LearningStats entry) {
 
-
+                ofy().save().entity(entry).now();
     }// end of storeUserActivityDetail method
 
 
-    public static void MapUserDataAfterFetch(Map dataMap, Contacts contact, long startDate, long endDate) throws IOException {
+    public static LearningStats MapUserDataAfterFetch(Map dataMap, Contacts contact, long startDate, long endDate) throws IOException {
 
         ObjectMapper objectmapper = new ObjectMapper();
         System.out.println("mapuser dataafer fetch");
@@ -144,82 +131,219 @@ Contacts contact= (Contacts) contactList.next();
         // 6. endTime
         // 7. startTime
         // 8. challenges details
+        // 9. email
 
 
+LearningStats dailyEntity = new LearningStats();
         if ((boolean) dataMap.get("response") && dataMap.get("status").equals("Success")) {
 
-            LearningStats entry = new LearningStats();
+
 
             // 1. unique id
             UUID uuid = UUID.randomUUID();
             String id = uuid.toString();
             System.out.println("id = " + id);
-            entry.setId(id);
-            System.out.println("id :" + entry.getId());
+            dailyEntity.setId(id);
+            System.out.println("id :" + dailyEntity.getId());
             //  2. userid
 
-            entry.setUserId(contact.getId());
-            System.out.println("userid :" + entry.getUserId());
+            dailyEntity.setUserId(contact.getId());
+            System.out.println("userid :" + dailyEntity.getUserId());
             System.out.println("contact id " + contact.getId());
 
             // 6 and 7 startTime and endTime
 
-            entry.setStartTime(startDate);
-            System.out.println("start :" + entry.getStartTime());
-            entry.setEndTime(endDate);
+            dailyEntity.setStartTime(startDate);
+            System.out.println("start :" + dailyEntity.getStartTime());
+            dailyEntity.setEndTime(endDate);
 
             //  5. frequency for daily entrys
-            entry.setFrequency(Frequency.DAY);
-            System.out.println("freq :" + entry.getFrequency());
-            entry.setEmail(contact.getLogin());
+            dailyEntity.setFrequency(Frequency.DAY);
+            System.out.println("freq :" + dailyEntity.getFrequency());
+
+            //9. email
+            dailyEntity.setEmail(contact.getLogin());
             // 3,4,8 for minutes and challenges
+
+
             Map<String, Object> mapToLearningStats = (Map<String, Object>) dataMap.get("data");
             Map<String, Object> emailMap = (Map<String, Object>) mapToLearningStats.get(contact.getLogin());
 
             if (emailMap == null) {
-                entry.setMinutes(0);
-                entry.setChallenges_completed(0);
+                dailyEntity.setMinutes(0);
+                dailyEntity.setChallenges_completed(0);
             } else {
                 System.out.println("email " + contact.getLogin());
                 System.out.println("emailmap " + emailMap);
-                entry.setMinutes((int) emailMap.get("minutes"));
-                entry.setChallenges_completed((int) emailMap.get("challenges_completed"));
+                dailyEntity.setMinutes((int) emailMap.get("minutes"));
+                dailyEntity.setChallenges_completed((int) emailMap.get("challenges_completed"));
 
-                System.out.println("minutes :" + entry.getMinutes());
+                System.out.println("minutes :" + dailyEntity.getMinutes());
 
 
                 //////  store entry object to datastore
                 System.out.println("email id " + contact.getLogin());
                 System.out.println("name " + contact.getFirstName());
-                System.out.println(entry.getId() + " " + entry.getFrequency() + "" + entry.getMinutes());
+                System.out.println(dailyEntity.getId() + " " + dailyEntity.getFrequency() + "" + dailyEntity.getMinutes());
             }
-            ofy().save().entity(entry).now();
+
 
 
         }// end of if
 
 
+        return dailyEntity;
     } // end of MapUserDataAfterFetch
 
 
     /////////////////////////     WEEKLY REPORTS
 
 
-    public static boolean generateWeeklyReport() {
+    public static boolean generateWeeklyReport() throws JsonProcessingException {
 
-            sendMailUser();
+
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -7);
+
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+
+        Date start = cal.getTime();
+        long startDate = start.getTime();
+        Calendar cal1 = Calendar.getInstance();
+        cal1.add(Calendar.DATE, -1);
+
+        cal1.set(Calendar.HOUR_OF_DAY, 23);
+        cal1.set(Calendar.MINUTE, 59);
+        cal1.set(Calendar.SECOND, 59);
+        cal1.set(Calendar.MILLISECOND, 0);
+
+
+        Date end = cal1.getTime();// current date
+        long endDate = end.getTime();// endDate for fetching user data
+
+
+
+        System.out.println("Weekly stats  ");
+        int usercount=0;
+        //MailDispatcher.sendEmail();
+        String cursorStr=null;
+        do {
+
+              Query<Contacts> contactQuery= ofy().load().type(Contacts.class).limit(30);
+
+           // Query query=  ofy().load().type(LearningStats.class).filter("userId", keys).filter("startTime >=", startDate).filter("startTime <=",endDate).limit(30);
+
+            // String cursorStr = request.getParameter("cursor");
+            if (cursorStr != null)
+                 contactQuery= contactQuery.startAt(Cursor.fromWebSafeString(cursorStr));
+
+            QueryResultIterator<Contacts> iterator = contactQuery.iterator();
+
+            List<Contacts> contactList=contactQuery.list();
+
+            usercount = usercount+contactList.size();
+
+            System.out.println("userscount: "+usercount);
+            System.out.println("size :"+contactList.size());
+
+            if (contactList.size() < 1) {
+                return true;
+            }
+
+                generateWeeklyReportAllUserByBatch(iterator,startDate,endDate);
+            cursorStr = iterator.getCursor().toWebSafeString();
+
+        }while(cursorStr!=null);
+
+
         return true;
     }
 
+    private static void generateWeeklyReportAllUserByBatch(QueryResultIterator<Contacts> iterator, long startDate, long endDate) throws JsonProcessingException {
 
-    public static void  sendMailUser()
-    {
 
-        String fromEmail="amandeep.pannu8233@gmail.com";
-        String userName="amandeep.pannu8233";
-        String password="Chandela8859@#";
+        while (iterator.hasNext()) {
 
+            Contacts contact = iterator.next();
+
+            List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).list();
+
+
+//Query<LearningStats> weeklyLearningStats = ofy().load().type(LearningStats.class);
+            Iterator weeklyStatsIterator = weeklyStateUser.iterator();
+            int minutesAggregation = 0;
+            int challengeCompletedAggregation = 0;
+            while (weeklyStatsIterator.hasNext()) {
+
+                    LearningStats userStats= (LearningStats) weeklyStatsIterator.next();
+                minutesAggregation = minutesAggregation + userStats.getMinutes();
+                challengeCompletedAggregation = challengeCompletedAggregation + userStats.getChallenges_completed();
+
+
+                LearningStats weeklyEntity = mapUserWeeklyStats(userStats, minutesAggregation, challengeCompletedAggregation, startDate, endDate);
+
+                System.out.println(new ObjectMapper().writeValueAsString(weeklyEntity));
+                //// storing weekly entity to datastore
+
+                saveUserStats(weeklyEntity);
+
+                /// send email
+                //MailDispatcher.sendEmail(contact,weeklyEntity);
+            }
+            System.out.println(new ObjectMapper().writeValueAsString(contact));
+
+        }
     }
+
+    private static LearningStats mapUserWeeklyStats(LearningStats userStats, int minutesAggregation, int challengeCompletedAggregation, long startDate, long endDate) {
+
+        LearningStats weeklyEntity = new LearningStats();
+
+
+        // unique id
+        UUID uuid = UUID.randomUUID();
+        String id = uuid.toString();
+        System.out.println("id = " + id);
+        weeklyEntity.setId(id);
+        System.out.println("id :" + weeklyEntity.getId());
+        //   userid
+
+        weeklyEntity.setUserId(userStats.getId());
+        System.out.println("userid :" + weeklyEntity.getUserId());
+        System.out.println("contact id " + userStats.getId());
+
+        // startTime and endTime
+
+        weeklyEntity.setStartTime(startDate);
+        System.out.println("start :" + weeklyEntity.getStartTime());
+        weeklyEntity.setEndTime(endDate);
+
+        //  frequency for daily entrys
+        weeklyEntity.setFrequency(Frequency.WEEK);
+        System.out.println("freq :" + weeklyEntity.getFrequency());
+
+       // email
+        weeklyEntity.setEmail(userStats.getEmail());
+
+
+        // minutes and challenges
+
+        weeklyEntity.setMinutes(minutesAggregation);
+
+        weeklyEntity.setChallenges_completed(challengeCompletedAggregation);
+
+
+
+        return weeklyEntity;
+    }
+
+
+}
 
 	/*
 9:41 PM	Error running fl backend run: No task to execute is specified
@@ -234,4 +358,4 @@ Contacts contact= (Contacts) contactList.next();
 
 
 	*/
-}
+

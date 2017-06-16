@@ -23,7 +23,7 @@ public class FullLearnProjectServlet extends HttpServlet {
     }
 
 
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/plain");
         PrintWriter out = resp.getWriter();
 
