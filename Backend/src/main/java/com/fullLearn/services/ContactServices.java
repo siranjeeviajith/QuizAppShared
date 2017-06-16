@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fullLearn.helpers.*;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
+import com.sun.security.auth.SolarisNumericUserPrincipal;
 
 public class ContactServices {
 
@@ -84,15 +85,15 @@ public class ContactServices {
 
 	public boolean syncContacts(Long lastModified, String accesstoken) throws IOException {
 		ObjectMapper obj = new ObjectMapper();
-		URL url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?since=" + lastModified);
+		URL url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?since="+lastModified);
 		String methodType = "GET";
 		String contentType = "application/json";
 
 		Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType);
 
-		ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {
-		});
+		ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
 
+		System.out.println(obj.writeValueAsString(userData));
 		saveContacts.saveContacts(userData);
 		if (userData.size() != 0) {
 			boolean status = saveContacts.saveContacts(userData);
