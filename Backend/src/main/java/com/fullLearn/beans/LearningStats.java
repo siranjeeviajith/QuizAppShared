@@ -5,8 +5,7 @@ import java.util.Map;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
-
-
+import com.googlecode.objectify.annotation.Index;
 
 
 @Entity
@@ -14,34 +13,48 @@ public class LearningStats {
 
 
 	@Id
+	@Index
 	private String id;
-	
+
+	@Index
 	private String userId;
 	
-	@Ignore 
+ 	@Ignore
 	private Map<String,Integer> challenges_details;
-	
+
+	@Index
 	private int minutes;
-	/// this property will directly map with json data so name would be same sir
+
+	@Index
 	private int challenges_completed;
 
+	public String getEmail() {
+		return email;
+	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+@Index
+	private String email;
+
+	public Frequency getFrequency() {
+		return frequency;
+	}
 
 	//default constructor
 public LearningStats()
 {
 
 }
+	@Index
 	private Frequency frequency;
 
-	private long endTime;
+	@Index
 	private long startTime;
-
-// getter setter for frequency
-	public Frequency getFrequency(){
-		return frequency;
-	}
-
+@Index
+	private  long endTime;
 	public void setFrequency(Frequency frequency){
 		this.frequency = frequency;
 	}

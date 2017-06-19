@@ -18,7 +18,15 @@
         <url>api/report/weekly</url>
         <target>backend</target>
         <description>Weekly Report job</description>
-        <schedule>every monday 00:00</schedule>
+        <schedule>every monday 00:30</schedule>
     </cron>
+
+    <cron>
+        <url>api/report/stats/average</url>
+        <target>backend</target>
+        <description>Weekly Average calculation job</description>
+        <schedule>every monday 00:45</schedule>
+    </cron>
+
 
 </cronentries>
