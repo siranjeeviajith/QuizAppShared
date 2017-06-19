@@ -1,13 +1,13 @@
 package com.fullLearn.beans;
 
 public class TokenAccess {
-	
+
     private String access_token;
     private String token_type;
     private int expires_in;
     private String user_id;
     private String refresh_token;
-    
+
 	public String getUser_id() {
 		return user_id;
 	}
@@ -38,15 +38,15 @@ public class TokenAccess {
 	public void setRefresh_token(String refresh_token) {
 		this.refresh_token = refresh_token;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "TokenAccess [access_token=" + access_token + ", token_type=" + token_type + ", expires_in=" + expires_in
 				+ ", user_id=" + user_id + ", refresh_token=" + refresh_token + "]";
 	}
-	
-	
-	
-	  
-    
+
+
+
+
+
 }

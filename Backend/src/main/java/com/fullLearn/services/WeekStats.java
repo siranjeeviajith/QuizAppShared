@@ -10,11 +10,11 @@ import java.util.*;
 
 public class WeekStats {
 
-    static {
+   /* static {
         ObjectifyService.register(WeeksStats.class);
-    }
+    }*/
 
-    WeeksStats ws = new WeeksStats();
+    LearningStatsAverage ws = new LearningStatsAverage();
     UserStats us = new UserStats();
 
     public Map<String, Object> getWeekStats(String userId)
@@ -22,11 +22,11 @@ public class WeekStats {
         ObjectMapper obj = new ObjectMapper();
         try
         {
-           List<WeeksStats> userDatas = ofy().load().type(WeeksStats.class).filter("userId ==", userId).list();
-            System.out.println(userDatas);
-           if(userDatas.size() != 0)
+           LearningStatsAverage userDatas =  ofy().load().type(LearningStatsAverage.class).id(userId).now();
+           System.out.println(userDatas);
+           if(userDatas != null)
            {
-               Map<String,Object> userData = obj.readValue(obj.writeValueAsString(userDatas.get(0)), new TypeReference<Map<String,Object>>(){});
+               Map<String,Object> userData = obj.readValue(obj.writeValueAsString(userDatas), new TypeReference<Map<String,Object>>(){});
                String status = "success";
                String response = "true";
                String error = null;

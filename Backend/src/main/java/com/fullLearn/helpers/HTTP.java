@@ -15,7 +15,7 @@ public class HTTP {
 	
 	public static Map<String,Object> request(String url, String methodType,String payLoad,String contentType) throws IOException
 	{
-		URL _url=new URL("url");
+		URL _url=new URL(url);
 
 		ObjectMapper objectmapper =new ObjectMapper();
 		HttpURLConnection con= (HttpURLConnection) _url.openConnection();

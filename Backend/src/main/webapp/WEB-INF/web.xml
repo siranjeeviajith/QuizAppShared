@@ -21,7 +21,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet>
     <servlet-mapping>
         <servlet-name>UserWeekStats</servlet-name>
-        <url-pattern>api/learn/weekstats/userId/*</url-pattern>
+        <url-pattern>api/learn/stats</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -43,6 +43,24 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>api/report/weekly</url-pattern>
     </servlet-mapping>
 
+
+    <servlet>
+        <servlet-name>FullLearnProjectLearningStatsAverage</servlet-name>
+        <servlet-class>com.fullLearn.servlets.FullLearnProjectLearningStatsAverage</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FullLearnProjectLearningStatsAverage</servlet-name>
+        <url-pattern>api/report/stats/average</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FullLearnProject</servlet-name>
+        <servlet-class>com.fullLearn.servlets.FullLearnProjectServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FullLearnProject</servlet-name>
+        <url-pattern>api/fetch/userstats</url-pattern>
+    </servlet-mapping>
 
 
     <welcome-file-list>

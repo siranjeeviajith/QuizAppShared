@@ -6,6 +6,7 @@ import com.fullLearn.beans.*;
 import com.fullLearn.helpers.UserStats;
 import com.googlecode.objectify.ObjectifyService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,16 +14,16 @@ import java.util.Map;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class LearningAvgStats {
-    static {
+    /*static {
         ObjectifyService.register(WeeksStats.class);
-    }
+    }*/
 
-    WeeksStats ws = new WeeksStats();
+    LearningStatsAverage ws = new LearningStatsAverage();
     UserStats us = new UserStats();
 
     public Map<String, Object> getLearningStats(String type,String order)
     {
-        List<WeeksStats> userDatas = null;
+        List<LearningStatsAverage> userDatas = null;
         ObjectMapper obj = new ObjectMapper();
         try
         {
@@ -30,12 +31,12 @@ public class LearningAvgStats {
             {
                 if(order.equals("asc"))
                 {
-                    userDatas = ofy().load().type(WeeksStats.class).order("fourthWeek").list();
+                    userDatas = ofy().load().type(LearningStatsAverage.class).order("fourthWeek").list();
                     System.out.println(userDatas);
                 }
                 else
                 {
-                    userDatas = ofy().load().type(WeeksStats.class).order("-fourthWeek").list();
+                    userDatas = ofy().load().type(LearningStatsAverage.class).order("-fourthWeek").list();
                     System.out.println(userDatas);
                 }
             }
@@ -43,12 +44,12 @@ public class LearningAvgStats {
             {
                 if(order.equals("asc"))
                 {
-                    userDatas = ofy().load().type(WeeksStats.class).order("twelfthWeek").list();
+                    userDatas = ofy().load().type(LearningStatsAverage.class).order("twelfthWeek").list();
                     System.out.println(userDatas);
                 }
                 else
                 {
-                    userDatas = ofy().load().type(WeeksStats.class).order("-twelfthWeek").list();
+                    userDatas = ofy().load().type(LearningStatsAverage.class).order("-twelfthWeek").list();
                     System.out.println(userDatas);
                 }
             }
@@ -59,14 +60,20 @@ public class LearningAvgStats {
 
             if(userDatas.size() != 0)
             {
-                Map<String,Object> userData = obj.readValue(obj.writeValueAsString(userDatas.get(0)), new TypeReference<Map<String,Object>>(){});
-                String status = "success";
-                String response = "true";
-                String error = null;
-                String code =  "200";
-                Map<String,Object> userStats = us.getResponse(status,response,error,code,userData);
-                return userStats;
+                    Map<String,Object> userDetails = new HashMap<String,Object>();
+                    userDetails.put("status","Succes");
 
+                    userDetails.put("error",null);
+                    userDetails.put("code","200");
+                    userDetails.put("response","true");
+                    String datas = obj.writeValueAsString(userDatas);
+                    userDetails.put("datas",datas);
+                    /*for(int i=0;i<userDatas.size();i++) {
+                      //  userData = obj.readValue(obj.writeValueAsString(userDatas.get(i)), new TypeReference<Map<String, Object>>() {});
+                        //String number = "No"+i;
+                      //  userDetails.put("datas",userData);
+                    }*/
+                return userDetails;
             }
 
             else

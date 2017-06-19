@@ -10,7 +10,7 @@ public class UserStats {
     {
         Map<String,Object> userDatas = new HashMap<String,Object>();
         userDatas.put("status",status);
-        userDatas.put("datas",datas.toString());
+        userDatas.put("datas",datas);
         userDatas.put("error",error);
         userDatas.put("code",code);
         userDatas.put("response",response);

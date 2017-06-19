@@ -7,7 +7,8 @@ public class Contacts {
 	
 	@Id private String id;
 	private String createdAt;
-	@Index private Long modifiedAt;
+	@Index
+	private Long modifiedAt;
 	private String accountId;
 	private String login;
 	private String firstName;
