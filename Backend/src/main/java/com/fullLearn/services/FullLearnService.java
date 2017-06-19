@@ -416,7 +416,7 @@ int day=7*12;
             List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).filter("frequency ==",Frequency.WEEK).list();
 
             Iterator WeekAverageIterator =StateUser.iterator();
-            int weekCount=1;
+            int weekCount=12;
             int fourWeekAverage=0;
             int twelfthWeekAverage=0;
             while(WeekAverageIterator.hasNext()) {
@@ -429,7 +429,7 @@ int day=7*12;
                     twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
                     fourWeekAverage = fourWeekAverage + userStats.getMinutes();
                     }
-                    weekCount++;
+                    weekCount--;
             }
             fourWeekAverage=fourWeekAverage/4;
             twelfthWeekAverage=twelfthWeekAverage/12;
