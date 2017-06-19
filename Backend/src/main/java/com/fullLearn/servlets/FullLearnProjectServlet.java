@@ -9,6 +9,7 @@ import com.fullLearn.beans.LearningStats;
 import javax.servlet.http.*;
 
 
+import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.services.FullLearnService;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -16,11 +17,14 @@ import com.googlecode.objectify.ObjectifyService;
 @SuppressWarnings("serial")
 public class FullLearnProjectServlet extends HttpServlet {
 
-
     static {
         ObjectifyService.register(Contacts.class);
+
         ObjectifyService.register(LearningStats.class);
+        ObjectifyService.register(LearningStatsAverage.class);
     }
+
+
 
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

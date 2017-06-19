@@ -3,6 +3,7 @@ package com.fullLearn.servlets;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.LearningStats;
+import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.services.FullLearnService;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -22,6 +23,7 @@ public class FullLearnProjectWeeklyReportServlet extends HttpServlet {
         ObjectifyService.register(Contacts.class);
 
         ObjectifyService.register(LearningStats.class);
+        ObjectifyService.register(LearningStatsAverage.class);
     }
 
 

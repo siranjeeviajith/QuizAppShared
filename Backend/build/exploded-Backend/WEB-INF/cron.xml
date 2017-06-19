@@ -21,4 +21,12 @@
         <schedule>every monday 00:30</schedule>
     </cron>
 
+    <cron>
+        <url>api/report/stats/average</url>
+        <target>backend</target>
+        <description>Weekly Average calculation job</description>
+        <schedule>every monday 00:45</schedule>
+    </cron>
+
+
 </cronentries>

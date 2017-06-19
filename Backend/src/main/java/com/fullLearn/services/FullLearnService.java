@@ -342,7 +342,7 @@ LearningStats dailyEntity = new LearningStats();
     }
 
 
-    public static boolean calculateAllUserFourthWeeklyStatsAverage() {
+    public static boolean calculateAllUserStatsAverage() {
 
         int usercount=0;
         //MailDispatcher.sendEmail();
@@ -351,9 +351,7 @@ LearningStats dailyEntity = new LearningStats();
 
             Query<Contacts> contactQuery= ofy().load().type(Contacts.class).limit(30);
 
-            // Query query=  ofy().load().type(LearningStats.class).filter("userId", keys).filter("startTime >=", startDate).filter("startTime <=",endDate).limit(30);
 
-            // String cursorStr = request.getParameter("cursor");
             if (cursorStr != null)
                 contactQuery= contactQuery.startAt(Cursor.fromWebSafeString(cursorStr));
 
@@ -370,7 +368,7 @@ LearningStats dailyEntity = new LearningStats();
                 return true;
             }
 
-            generateFourthWeeklyReportAllUserByBatch(iterator);
+            calculateAverage(iterator);
             cursorStr = iterator.getCursor().toWebSafeString();
 
         }while(cursorStr!=null);
@@ -381,10 +379,10 @@ LearningStats dailyEntity = new LearningStats();
 
     }
 
-    private static void generateFourthWeeklyReportAllUserByBatch(QueryResultIterator<Contacts> iterator) {
+    private static void calculateAverage(QueryResultIterator<Contacts> iterator) {
 
 
-int day=7*4;
+int day=7*12;
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -day);
 
@@ -415,206 +413,51 @@ int day=7*4;
 
             Contacts contact = iterator.next();
 
-            List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).filter("frequency ==",Frequency.WEEK).list();
+            List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).filter("frequency ==",Frequency.WEEK).list();
 
-            Iterator fourthWeekAverageIterator =weeklyStateUser.iterator();
-            int averageStatsMinutes=0;
-            int averageStatsChallenges=0;
+            Iterator WeekAverageIterator =StateUser.iterator();
+            int weekCount=1;
+            int fourWeekAverage=0;
+            int twelfthWeekAverage=0;
+            while(WeekAverageIterator.hasNext()) {
+                LearningStats userStats = (LearningStats) WeekAverageIterator.next();
 
+                    if(weekCount<=8)
+                    twelfthWeekAverage =  twelfthWeekAverage + userStats.getMinutes();
 
-            while(fourthWeekAverageIterator.hasNext()) {
-
-                LearningStats userStats = (LearningStats) fourthWeekAverageIterator.next();
-
-            averageStatsMinutes = averageStatsMinutes + userStats.getMinutes();
-            averageStatsChallenges =averageStatsChallenges+userStats.getChallenges_completed();
-
-
+                    else{
+                    twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
+                    fourWeekAverage = fourWeekAverage + userStats.getMinutes();
+                    }
+                    weekCount++;
             }
-            averageStatsMinutes=averageStatsMinutes/4;
-            averageStatsChallenges=averageStatsChallenges/4;
+            fourWeekAverage=fourWeekAverage/4;
+            twelfthWeekAverage=twelfthWeekAverage/12;
 
-            LearningStatsAverage averageFourthWeekEntity=mapUserDataFourthWeekAverage(contact,averageStatsMinutes, averageStatsChallenges,startDate,endDate);
+
+            LearningStatsAverage averageEntity=mapUserDataAverage(fourWeekAverage,twelfthWeekAverage,contact);
 
 
             /////   save entity to datastore
-                saveUserStats(averageFourthWeekEntity);
+                saveUserStats(averageEntity);
         }
 
 
 
     }
 
-    private static LearningStatsAverage mapUserDataFourthWeekAverage(Contacts contact, int averageStatsMinutes, int averageStatsChallenges, long startDate, long endDate) {
+    private static LearningStatsAverage mapUserDataAverage(int fourWeekAverage, int twelfthWeekAverage, Contacts contact) {
 
 
-        LearningStatsAverage fourthWeekEntity=new LearningStatsAverage();
+        LearningStatsAverage averageEntity=new LearningStatsAverage();
 
-
-        UUID uuid = UUID.randomUUID();
-        String id = uuid.toString();
-        System.out.println("id = " + id);
-
-        fourthWeekEntity.setId(id);
-
-
-        fourthWeekEntity.setEmail(contact.getLogin());
-
-        fourthWeekEntity.setStartTime(startDate);
-
-        fourthWeekEntity.setEndTime(endDate);
-
-        fourthWeekEntity.setChallenges_completed(averageStatsChallenges);
-
-        fourthWeekEntity.setMinutes(averageStatsMinutes);
-
-        fourthWeekEntity.setFrequencyWeek(Frequency.Week.FOURTH);
-
-        fourthWeekEntity.setUserId(contact.getId());
-
-
-
-
-        return fourthWeekEntity;
+        averageEntity.setUserid(contact.getId());
+        averageEntity.setFourthWeek(fourWeekAverage);
+        averageEntity.setTwelfthWeek(twelfthWeekAverage);
+        return averageEntity;
     }
 
-    public static boolean calculateAllUserTwelfthWeeklyStatsAverage() {
 
-
-
-        int usercount=0;
-        //MailDispatcher.sendEmail();
-        String cursorStr=null;
-        do {
-
-            Query<Contacts> contactQuery= ofy().load().type(Contacts.class).limit(30);
-
-            // Query query=  ofy().load().type(LearningStats.class).filter("userId", keys).filter("startTime >=", startDate).filter("startTime <=",endDate).limit(30);
-
-            // String cursorStr = request.getParameter("cursor");
-            if (cursorStr != null)
-                contactQuery= contactQuery.startAt(Cursor.fromWebSafeString(cursorStr));
-
-            QueryResultIterator<Contacts> iterator = contactQuery.iterator();
-
-            List<Contacts> contactList=contactQuery.list();
-
-            usercount = usercount+contactList.size();
-
-            System.out.println("userscount: "+usercount);
-            System.out.println("size :"+contactList.size());
-
-            if (contactList.size() < 1) {
-                return true;
-            }
-
-            generateTwelfthWeeklyReportAllUserByBatch(iterator);
-            cursorStr = iterator.getCursor().toWebSafeString();
-
-        }while(cursorStr!=null);
-
-
-        return true;
-    }
-
-    private static void generateTwelfthWeeklyReportAllUserByBatch(QueryResultIterator<Contacts> iterator) {
-
-
-
-        int day=7*12;
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -day);
-
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-
-        Date start = cal.getTime();
-        long startDate = start.getTime();
-        Calendar cal1 = Calendar.getInstance();
-        cal1.add(Calendar.DATE, -1);
-
-        cal1.set(Calendar.HOUR_OF_DAY, 23);
-        cal1.set(Calendar.MINUTE, 59);
-        cal1.set(Calendar.SECOND, 59);
-        cal1.set(Calendar.MILLISECOND, 0);
-
-
-        Date end = cal1.getTime();// current date
-        long endDate = end.getTime();// endDate for fetching user data
-
-
-
-        while(iterator.hasNext())
-        {
-
-            Contacts contact = iterator.next();
-
-            List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).filter("frequency ==",Frequency.WEEK).list();
-
-            Iterator TwelfthWeekAverageIterator =weeklyStateUser.iterator();
-            int averageStatsMinutes=0;
-            int averageStatsChallenges=0;
-
-
-            while(TwelfthWeekAverageIterator.hasNext()) {
-
-                LearningStats userStats = (LearningStats) TwelfthWeekAverageIterator.next();
-
-                averageStatsMinutes = averageStatsMinutes + userStats.getMinutes();
-                averageStatsChallenges =averageStatsChallenges+userStats.getChallenges_completed();
-
-
-            }
-            averageStatsMinutes=averageStatsMinutes/12;
-            averageStatsChallenges=averageStatsChallenges/12;
-
-            LearningStatsAverage averageTwelfthWeekEntity=mapUserDataTwelfthWeekAverage(contact,averageStatsMinutes, averageStatsChallenges,startDate,endDate);
-
-            /////   save entity to datastore
-            saveUserStats(averageTwelfthWeekEntity);
-        }
-
-
-
-
-    }
-
-    private static LearningStatsAverage mapUserDataTwelfthWeekAverage(Contacts contact, int averageStatsMinutes, int averageStatsChallenges, long startDate, long endDate) {
-
-        LearningStatsAverage twelfthWeekEntity=new LearningStatsAverage();
-
-
-        UUID uuid = UUID.randomUUID();
-        String id = uuid.toString();
-        System.out.println("id = " + id);
-
-        twelfthWeekEntity.setId(id);
-
-
-        twelfthWeekEntity.setEmail(contact.getLogin());
-
-        twelfthWeekEntity.setStartTime(startDate);
-
-        twelfthWeekEntity.setEndTime(endDate);
-
-        twelfthWeekEntity.setChallenges_completed(averageStatsChallenges);
-
-        twelfthWeekEntity.setMinutes(averageStatsMinutes);
-
-        twelfthWeekEntity.setFrequencyWeek(Frequency.Week.TWELFTH);
-
-        twelfthWeekEntity.setUserId(contact.getId());
-
-
-
-
-        return twelfthWeekEntity;
-
-
-    }
 }
 
 	/*
