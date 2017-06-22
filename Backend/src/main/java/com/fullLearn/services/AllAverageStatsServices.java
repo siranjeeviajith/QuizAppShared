@@ -25,12 +25,10 @@ public class AllAverageStatsServices {
                 if(order.equals("aesc"))
                 {
                     userDatas = ofy().load().type(LearningStatsAverage.class).order("fourthWeek").limit(limit).list();
-                    System.out.println(userDatas);
                 }
                 else
                 {
                     userDatas = ofy().load().type(LearningStatsAverage.class).order("-fourthWeek").limit(limit).list();
-                    System.out.println(userDatas);
                 }
             }
             else if(type.equals("12"))
@@ -38,17 +36,11 @@ public class AllAverageStatsServices {
                 if(order.equals("aesc"))
                 {
                     userDatas = ofy().load().type(LearningStatsAverage.class).order("twelfthWeek").limit(limit).list();
-                    System.out.println(userDatas);
                 }
                 else
                 {
                     userDatas = ofy().load().type(LearningStatsAverage.class).order("-twelfthWeek").limit(limit).list();
-                    System.out.println(userDatas);
                 }
-            }
-            else
-            {
-                userDatas.add(null);
             }
 
             if(userDatas.size() != 0)

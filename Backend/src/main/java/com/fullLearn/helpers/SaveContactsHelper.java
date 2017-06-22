@@ -18,19 +18,16 @@ public boolean saveContacts(ArrayList<Contacts> contacts) throws IOException
 	boolean status = false;
 	Contacts cc = new Contacts();
 
+	// To check the existing DB for status
 	List<Contacts> list = ofy().load().type(Contacts.class).filter("status !=","ACTIVE").list();
     if(!list.isEmpty()) {
-		System.out.println("Checking");
 		for (int j = 0; j < list.size(); j++) {
 			String userId = list.get(j).getId();
 			ofy().delete().type(Contacts.class).id(userId);
 		}
 	}
-	else
-	{
-		System.out.println("Success");
-	}
 
+	// To save the data
 	for (int i=0;i<contacts.size();i++)
 	{
 	Contacts users = obj.readValue(obj.writeValueAsString(contacts.get(i)),new TypeReference<Contacts>(){});

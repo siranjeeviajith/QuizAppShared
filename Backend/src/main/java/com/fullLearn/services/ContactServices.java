@@ -131,9 +131,6 @@ public class ContactServices {
 
 			boolean status = saveContactsHelper.saveContacts(userData);
 
-		/*System.out.println("Cursor: "+cursor);
-		System.out.println("size: "+userData.size());*/
-
 			if (userData.size() < limit) {
 				return true;
 			}

@@ -24,6 +24,7 @@ public class FullLearnProjectLearningStatsAverage extends HttpServlet {
     }
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter out = resp.getWriter();
+
         boolean statusForAverage = FullLearnService.calculateAllUserStatsAverage();
         if (statusForAverage) {
             out.println("Average calculation weeklycompleted");
