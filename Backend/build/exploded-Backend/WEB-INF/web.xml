@@ -27,13 +27,17 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
 
 
+
+
+
+
     <servlet>
-        <servlet-name>FullLearnProjectLearningStatsAverage</servlet-name>
-        <servlet-class>com.fullLearn.servlets.FullLearnProjectLearningStatsAverage</servlet-class>
+        <servlet-name>FullLearnProjectTwelveWeeksStatsServlet</servlet-name>
+        <servlet-class>com.fullLearn.servlets.FullLearnProjectTwelveWeeksStatsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>FullLearnProjectLearningStatsAverage</servlet-name>
-        <url-pattern>api/report/stats/average</url-pattern>
+        <servlet-name>FullLearnProjectTwelveWeeksStatsServlet</servlet-name>
+        <url-pattern>api/report/fetch/stats/twelveweeks</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -44,6 +48,17 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>FullLearnProject</servlet-name>
         <url-pattern>api/fetch/userstats</url-pattern>
     </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>FullLearnProjectTaskQuequeServlet</servlet-name>
+        <servlet-class>com.fullLearn.servlets.FullLearnProjectTaskQuequeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FullLearnProjectTaskQuequeServlet</servlet-name>
+        <url-pattern>api/fetch/user/stats</url-pattern>
+    </servlet-mapping>
+
 
 
     <welcome-file-list>
