@@ -17,16 +17,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
     <servlet>
         <servlet-name>UserWeekStats</servlet-name>
-        <servlet-class>com.fullLearn.servlets.UserWeekStats</servlet-class>
+        <servlet-class>com.fullLearn.servlets.WeekStatsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserWeekStats</servlet-name>
-        <url-pattern>api/learn/stats</url-pattern>
+        <url-pattern>api/learn/stats/userId/*</url-pattern>
     </servlet-mapping>
 
     <servlet>
         <servlet-name>LearningStatsAvg</servlet-name>
-        <servlet-class>com.fullLearn.servlets.LearningStatsAvg</servlet-class>
+        <servlet-class>com.fullLearn.servlets.AllAverageStatsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LearningStatsAvg</servlet-name>

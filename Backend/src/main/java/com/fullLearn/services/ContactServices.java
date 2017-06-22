@@ -20,7 +20,7 @@ public class ContactServices {
 
 	// helpers
 	HTTPUrl listOfDatas = new HTTPUrl();
-	SaveContacts saveContacts = new SaveContacts();
+	SaveContactsHelper saveContactsHelper = new SaveContactsHelper();
 
 	public String getAccessToken() throws IOException {
 
@@ -93,9 +93,9 @@ public class ContactServices {
 		ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
 
 		System.out.println(obj.writeValueAsString(userData));
-		saveContacts.saveContacts(userData);
+		saveContactsHelper.saveContacts(userData);
 		if (userData.size() != 0) {
-			boolean status = saveContacts.saveContacts(userData);
+			boolean status = saveContactsHelper.saveContacts(userData);
 			return status;
 		} else {
 			return false;
@@ -109,36 +109,55 @@ public class ContactServices {
 		ObjectMapper obj = new ObjectMapper();
 		URL url = null;
 		ArrayList<Contacts> userData;
-		if (cursorStr == null || cursorStr.equals("")) {
+		String cursor = null;
+		try {
+			if (cursorStr == null || cursorStr.equals("")) {
 
-			url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit="+limit);
+				url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit=" + limit);
 
-		} else {
-			url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit="+limit+"&cursor="+cursorStr);
-		}
-
-
-		String methodType = "GET";
-		String contentType = "application/json";
-
-		Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType);
-
-		String cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {});
-		userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
+			} else {
+				url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit=" + limit + "&cursor=" + cursorStr);
+			}
 
 
-		boolean status = saveContacts.saveContacts(userData);
+			String methodType = "GET";
+			String contentType = "application/json";
+
+			Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType);
+
+			cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {});
+			userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
+
+
+			boolean status = saveContactsHelper.saveContacts(userData);
 
 		/*System.out.println("Cursor: "+cursor);
 		System.out.println("size: "+userData.size());*/
 
-		if (userData.size() < limit)
-		{
+			if (userData.size() < limit) {
+				return true;
+			}
+
+			saveAllContacts(accesstoken, limit, cursor);
 			return true;
 		}
+		catch(Throwable timeOut)
+		{
+			if(timeOut instanceof InterruptedException){
 
-		saveAllContacts(accesstoken, limit, cursor);
-		return true;
+				String cursorValue = cursor;
+				System.out.println(cursorValue);
+				saveAllContacts(accesstoken, limit, cursorValue);
+				return true;
+			}
+			else
+			{
+				HttpURLConnection con = (HttpURLConnection) new URL("contact/info").openConnection();
+				con.setConnectTimeout(30000);
+				timeOut.printStackTrace();
+				return false;
+			}
+		}
 	}
 
 
