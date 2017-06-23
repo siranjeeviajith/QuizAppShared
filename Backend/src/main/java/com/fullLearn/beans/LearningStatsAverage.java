@@ -2,17 +2,16 @@ package com.fullLearn.beans;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Ignore;
 import com.googlecode.objectify.annotation.Index;
 
-import java.util.Map;
-
-/**
- * Created by user on 6/16/2017.
- */
 @Entity
 public class LearningStatsAverage {
 
+    @Id
+    @Index
+    private String userId;
+    @Index private int fourthWeek;
+    @Index private int twelfthWeek;
 
     public String getUserid() {
         return userId;
@@ -38,14 +37,7 @@ public class LearningStatsAverage {
         this.twelfthWeek = twelfthWeek;
     }
 
-    @Id
 
-    @Index
-    private String userId;
-
-    @Index private int fourthWeek;
-
-    @Index private int twelfthWeek;
 
     public String getEmail() {
         return email;
