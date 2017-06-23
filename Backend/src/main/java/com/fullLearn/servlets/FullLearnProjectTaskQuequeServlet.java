@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import static com.fullLearn.services.FullLearnService.MapUserDataAfterFetchTwelveWeeks;
+import static com.fullLearn.services.FullLearnService.MapUserDataAfterFetch;
 import static com.fullLearn.services.FullLearnService.calculateAverage;
 import static com.fullLearn.services.FullLearnService.saveUserStats;
 
@@ -102,12 +102,12 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
             url = "https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + strt + "&endTime=" + en;
             methodType = "POST";
-            payLoad = "";
+
             contentType = "application/json";
 
-            Map<String, Object> dataMap = HTTP.request(url, methodType, payLoad, contentType);
+            Map<String, Object> dataMap = HTTP.request(url, methodType,  contentType);
 
-            LearningStats TwelveWeekEntity = MapUserDataAfterFetchTwelveWeeks(dataMap,email,userId ,startDate, endDate);
+            LearningStats TwelveWeekEntity = MapUserDataAfterFetch(dataMap,email,userId ,startDate, endDate);
 
 
             // save daily entity to datastore
