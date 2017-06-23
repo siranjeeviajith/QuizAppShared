@@ -14,7 +14,7 @@ public class ContactServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 		resp.setContentType("application/json");
-		PrintWriter out = resp.getWriter();
+		/*PrintWriter out = resp.getWriter();*/
 
 		ContactServices fc = new ContactServices();
 

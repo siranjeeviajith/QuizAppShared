@@ -24,21 +24,29 @@ public class AllAverageStatsServlet extends HttpServlet {
             String type = null;
             String order = null;
             int limit = 0;
-            if (query.contains("limit")) {
-                limit = Integer.valueOf(req.getParameter("limit"));
-            } else {
+            if(query != null) {
+                if (query.contains("limit")) {
+                    limit = Integer.valueOf(req.getParameter("limit"));
+                } else {
+                    limit = 20;
+                }
+
+                if (query.contains("type")) {
+                    type = req.getParameter("type");
+                } else {
+                    type = "4";
+                }
+
+                if (query.contains("order")) {
+                    order = req.getParameter("order");
+                } else {
+                    order = "desc";
+                }
+            }
+            else
+            {
                 limit = 20;
-            }
-
-            if (query.contains("type")) {
-                type = req.getParameter("type");
-            } else {
-                type= "4";
-            }
-
-            if (query.contains("order")) {
-                order = req.getParameter("order");
-            } else {
+                type = "4";
                 order = "desc";
             }
 

@@ -372,8 +372,8 @@ public class FullLearnService {
     public static void calculateAverage(String userId,String email) {
 
 
-        System.out.println("email "+email);
-int day=7*12;
+        System.out.println("email " + email);
+        int day = 7 * 12;
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -day);
 
@@ -398,57 +398,55 @@ int day=7*12;
         long endDate = end.getTime();// endDate for fetching user data
 
 
+        List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", userId).filter("startTime >=", startDate).filter("startTime <=", endDate).filter("frequency ==", Frequency.WEEK).order("startTime").list();
 
+        System.out.println("size of no of weeks " + StateUser.size());
 
-
-            List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", userId).filter("startTime >=", startDate).filter("startTime <=", endDate).filter("frequency ==",Frequency.WEEK).order("startTime").list();
-
-            System.out.println("size of no of weeks "+StateUser.size() );
-
-
-            Iterator WeekAverageIterator =StateUser.iterator();
-            int weekCount=1;
-            int fourWeekAverage=0;
-            int twelfthWeekAverage=0;
-            while(WeekAverageIterator.hasNext()) {
+        if (StateUser.size() < 12)
+            calculateAverage(userId, email);
+        else {
+            Iterator WeekAverageIterator = StateUser.iterator();
+            int weekCount = 1;
+            int fourWeekAverage = 0;
+            int twelfthWeekAverage = 0;
+            while (WeekAverageIterator.hasNext()) {
                 LearningStats userStats = (LearningStats) WeekAverageIterator.next();
 
-                    if(weekCount<=8)
-                    twelfthWeekAverage =  twelfthWeekAverage + userStats.getMinutes();
+                if (weekCount <= 8)
+                    twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
 
-                    else{
+                else {
                     twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
                     fourWeekAverage = fourWeekAverage + userStats.getMinutes();
 
-                    }
-                System.out.println("minutes for week "+weekCount+" is "+userStats.getMinutes()+" email "+email+"in Time is "+userStats.getStartTime()+" - "+userStats.getEndTime());
-                    weekCount++;
+                }
+                System.out.println("minutes for week " + weekCount + " is " + userStats.getMinutes() + " email " + email + "in Time is " + userStats.getStartTime() + " - " + userStats.getEndTime());
+                weekCount++;
 
 
             }
-            float fourWeekFloat= (float)fourWeekAverage/4;
-            float twelfthWeekFloat= (float)twelfthWeekAverage/12;
+            float fourWeekFloat = (float) fourWeekAverage / 4;
+            float twelfthWeekFloat = (float) twelfthWeekAverage / 12;
 
 
-            System.out.println("float values "+fourWeekFloat+" email "+email+"in Time is "+startDate+" - "+endDate);
-            System.out.println("float values "+twelfthWeekFloat+" email "+email+"in Time is "+startDate+" - "+endDate);
+            System.out.println("float values " + fourWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
+            System.out.println("float values " + twelfthWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
 
 
+            fourWeekAverage = (int) Math.round(fourWeekFloat);
+            twelfthWeekAverage = (int) Math.round(twelfthWeekFloat);
 
-            fourWeekAverage=(int)Math.round(fourWeekFloat);
-            twelfthWeekAverage=(int)Math.round(twelfthWeekFloat);
+            System.out.println("total for 4 weeks " + fourWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
+            System.out.println("total for 12 weeks " + twelfthWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
 
-        System.out.println("total for 4 weeks "+fourWeekAverage+" email "+email+"in Time is "+startDate+" - "+endDate);
-        System.out.println("total for 12 weeks "+twelfthWeekAverage+" email "+email+"in Time is "+startDate+" - "+endDate);
-
-            LearningStatsAverage averageEntity=mapUserDataAverage(fourWeekAverage,twelfthWeekAverage,userId,email);
+            LearningStatsAverage averageEntity = mapUserDataAverage(fourWeekAverage, twelfthWeekAverage, userId, email);
 
 
             /////   save entity to datastore
-                saveUserStats(averageEntity);
+            saveUserStats(averageEntity);
         }
 
-
+    }
 
 
 
