@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ContactServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-		resp.setContentType("text/HTML");
+		resp.setContentType("application/json");
 		PrintWriter out = resp.getWriter();
 
 		ContactServices fc = new ContactServices();
@@ -36,13 +36,13 @@ public class ContactServlet extends HttpServlet {
 
 			if(contacts == true)
 			{
-				contacts = fc.saveAllContacts(accessToken, limit , cursorStr);
+				fc.saveAllContacts(accessToken, limit , cursorStr);
 			}
 
 		}
 		else
 		{
-			contacts = fc.saveAllContacts(accessToken, limit , cursorStr);
+			fc.saveAllContacts(accessToken, limit , cursorStr);
 		}
 
 	}

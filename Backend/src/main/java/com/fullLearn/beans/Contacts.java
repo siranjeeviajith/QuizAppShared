@@ -14,7 +14,7 @@ public class Contacts {
 	private String firstName;
 	private String lastName;
 	private String photoId;
-	private String status;
+	@Index private String status;
 	private String title;
 
 	public String getId() {
