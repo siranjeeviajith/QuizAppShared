@@ -15,9 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import static com.fullLearn.services.FullLearnService.MapUserDataAfterFetchTwelveWeeks;
-import static com.fullLearn.services.FullLearnService.calculateAverage;
-import static com.fullLearn.services.FullLearnService.saveUserStats;
+import static com.fullLearn.services.FullLearnService.*;
 
 /**
  * Created by user on 6/21/2017.
@@ -52,9 +50,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
           int startDay = 7;
             int endDay = 1;
 
-            for (int i = 0; i < 12; i++) {
-
-
+            for (int i = 1; i <=12; i++) {
 
 
                 Calendar cal = Calendar.getInstance();
@@ -81,26 +77,22 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
                 long endDate = end.getTime();// endDate for fetching user data
                 String url = "";
                 String methodType = "";
-                String payLoad = "";
                 String contentType = "";
 
                 // email will be dynamic for contacts pojo
                 ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-                    url = "https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + startDate + "&endTime=" + endDate;
-                    methodType = "POST";
-                    payLoad = "";
-                    contentType = "application/json";
+                url = " https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + startDate + "&endTime=" + endDate;
+                methodType = "POST";
+                contentType = "application/json";
 
-                Map<String, Object> dataMap = HTTP.request(url, methodType, payLoad, contentType);
+                Map<String, Object> dataMap = HTTP.request(url, methodType, contentType);
 
-                LearningStats TwelveWeekEntity = MapUserDataAfterFetchTwelveWeeks(dataMap,email,userId ,startDate, endDate);
+                LearningStats TwelveWeekEntity = MapUserDataAfterFetch(dataMap, email, userId, startDate, endDate);
 
 
                 // save daily entity to datastore
                 saveUserStats(TwelveWeekEntity);
-
-
 
 
 
@@ -111,7 +103,11 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             }
 
         ///  calculating four and 12 weeks average
-                        calculateAverage(userId,email);
+
+
+               // System.out.println("count of calculation is "+j);
+                calculateAverage(userId, email);
+
 
 
 

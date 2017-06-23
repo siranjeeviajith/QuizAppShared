@@ -14,7 +14,7 @@ import java.util.Map;
 public class HTTP {
 
 	
-	public static Map<String,Object> request(String url, String methodType,String payLoad,String contentType) throws IOException
+	public static Map<String,Object> request(String url, String methodType,String contentType) throws IOException
 	{
 int tryCount=1;
 	Map<String, Object> dataMap = new HashMap<String, Object>();
