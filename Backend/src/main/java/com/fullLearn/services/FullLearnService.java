@@ -366,30 +366,58 @@ public class FullLearnService {
     public static void calculateAverage(String userId, String email) {
 
 
-        System.out.println("email " + email);
-        int day = 7 * 12;
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -day);
 
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
+
+
+
+
+
+
+        System.out.println("email " + email);
+        int day = 7 * 11;
+
+
+
+
+
+////    Fixing two dates
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
         cal.set(Calendar.MILLISECOND, 0);
 
+        Date enddate = cal.getTime();
 
-        Date start = cal.getTime();
-        long startDate = start.getTime();
+
+
         Calendar cal1 = Calendar.getInstance();
-        cal1.add(Calendar.DATE, -1);
+        cal1.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+        cal1.add(Calendar.DATE, -6);
 
-        cal1.set(Calendar.HOUR_OF_DAY, 23);
-        cal1.set(Calendar.MINUTE, 59);
-        cal1.set(Calendar.SECOND, 59);
+        cal1.set(Calendar.HOUR_OF_DAY, 0);
+        cal1.set(Calendar.MINUTE, 0);
+        cal1.set(Calendar.SECOND, 0);
         cal1.set(Calendar.MILLISECOND, 0);
+        Date startdate=cal1.getTime();
 
 
-        Date end = cal1.getTime();// current date
-        long endDate = end.getTime();// endDate for fetching user data
+
+
+        Calendar cal3=Calendar.getInstance();
+        cal3.setTime(startdate);
+        cal3.add(Calendar.DATE,-day);
+        Date startTime=cal3.getTime();
+
+        long startDate=startTime.getTime();
+
+        Calendar cal4=Calendar.getInstance();
+        cal4.setTime(enddate);
+        cal4.add(Calendar.DATE,-0);
+        Date endTime=cal4.getTime();
+
+        long endDate=endTime.getTime();
 
 
         List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", userId).filter("startTime >=", startDate).filter("startTime <", endDate).filter("frequency ==", Frequency.WEEK).order("startTime").list();
