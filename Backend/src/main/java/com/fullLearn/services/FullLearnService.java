@@ -415,25 +415,27 @@ public class FullLearnService {
                     fourWeekAverage = fourWeekAverage + userStats.getMinutes();
 
                 }
+                if(email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com")|| email.equals("naresh.talluri@a-cti.com"))
                 System.out.println("minutes for week " + weekCount + " is " + userStats.getMinutes() + " email " + email + "in Time is " + userStats.getStartTime() + " - " + userStats.getEndTime());
                 weekCount++;
 
 
             }
+
             float fourWeekFloat = (float) fourWeekAverage / 4;
             float twelfthWeekFloat = (float) twelfthWeekAverage / 12;
 
-
-            System.out.println("float values " + fourWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
-            System.out.println("float values " + twelfthWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
-
+            if(email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com")|| email.equals("naresh.talluri@a-cti.com")) {
+                System.out.println("float values " + fourWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
+                System.out.println("float values " + twelfthWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
+            }
 
             fourWeekAverage = (int) Math.round(fourWeekFloat);
             twelfthWeekAverage = (int) Math.round(twelfthWeekFloat);
-
-            System.out.println("total for 4 weeks " + fourWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
-            System.out.println("total for 12 weeks " + twelfthWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
-
+            if(email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com")|| email.equals("naresh.talluri@a-cti.com")) {
+                System.out.println("total for 4 weeks " + fourWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
+                System.out.println("total for 12 weeks " + twelfthWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
+            }
             LearningStatsAverage averageEntity = mapUserDataAverage(fourWeekAverage, twelfthWeekAverage, userId, email);
 
 
@@ -510,7 +512,7 @@ public class FullLearnService {
 
 
         ObjectMapper objectmapper = new ObjectMapper();
-        System.out.println("mapuser dataafer fetch");
+        //System.out.println("mapuser dataafer fetch");
         // properties of LearningStats pojo to be map
         // 1. id
         // 2. userid
@@ -530,24 +532,24 @@ public class FullLearnService {
             // 1. unique id
             UUID uuid = UUID.randomUUID();
             String id = uuid.toString();
-            System.out.println("id = " + id);
+            //System.out.println("id = " + id);
             twelveWeeksEntity.setId(id);
-            System.out.println("id :" + twelveWeeksEntity.getId());
+            //System.out.println("id :" + twelveWeeksEntity.getId());
             //  2. userid
 
             twelveWeeksEntity.setUserId(userId);
-            System.out.println("userid :" + twelveWeeksEntity.getUserId());
-            System.out.println("contact id " + userId);
+            //System.out.println("userid :" + twelveWeeksEntity.getUserId());
+            //System.out.println("contact id " + userId);
 
             // 6 and 7 startTime and endTime
 
             twelveWeeksEntity.setStartTime(startDate);
-            System.out.println("start :" + twelveWeeksEntity.getStartTime());
+            //System.out.println("start :" + twelveWeeksEntity.getStartTime());
             twelveWeeksEntity.setEndTime(endDate);
 
             //  5. frequency for daily entrys
             twelveWeeksEntity.setFrequency(Frequency.WEEK);
-            System.out.println("freq :" + twelveWeeksEntity.getFrequency());
+           // System.out.println("freq :" + twelveWeeksEntity.getFrequency());
 
             //9. email
             twelveWeeksEntity.setEmail(email);
@@ -561,17 +563,17 @@ public class FullLearnService {
                 twelveWeeksEntity.setMinutes(0);
                 twelveWeeksEntity.setChallenges_completed(0);
             } else {
-                System.out.println("email " + email);
-                System.out.println("emailmap " + emailMap);
+                //System.out.println("email " + email);
+                //System.out.println("emailmap " + emailMap);
                 twelveWeeksEntity.setMinutes((int) emailMap.get("minutes"));
                 twelveWeeksEntity.setChallenges_completed((int) emailMap.get("challenges_completed"));
 
-                System.out.println("minutes :" + twelveWeeksEntity.getMinutes());
+                //System.out.println("minutes :" + twelveWeeksEntity.getMinutes());
 
 
                 //////  store entry object to datastore
-                System.out.println("email id " + email);
-                System.out.println(twelveWeeksEntity.getId() + " " + twelveWeeksEntity.getFrequency() + "" + twelveWeeksEntity.getMinutes());
+             //   System.out.println("email id " + email);
+               // System.out.println(twelveWeeksEntity.getId() + " " + twelveWeeksEntity.getFrequency() + "" + twelveWeeksEntity.getMinutes());
             }
 
 

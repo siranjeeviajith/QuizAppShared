@@ -39,12 +39,12 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
 
 
-        String email=req.getParameter("email");
+  String email=req.getParameter("email");
        String userId=req.getParameter("userId");
 
         PrintWriter out=resp.getWriter();
-        System.out.println("email "+email);
-        System.out.println("userId "+userId);
+//        System.out.println("email "+email);
+//        System.out.println("userId "+userId);
 
 
           int startDay = 7;
@@ -99,7 +99,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
                 startDay=startDay+7;
                 endDay=endDay+7;
 
-                System.out.println("week no "+i);
+               // System.out.println("week no "+i);
             }
 
         ///  calculating four and 12 weeks average

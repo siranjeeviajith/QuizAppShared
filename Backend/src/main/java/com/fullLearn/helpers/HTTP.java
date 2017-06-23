@@ -26,7 +26,7 @@ int tryCount=1;
 	con.setRequestMethod(methodType);
 	con.setRequestProperty("content-type", contentType);
 	con.setConnectTimeout(30000);
-	System.out.println("timeout time in " + 3 + " sec");
+//	System.out.println("timeout time in " + 3 + " sec");
 	BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
 	StringBuffer sb = new StringBuffer();
@@ -43,7 +43,7 @@ int tryCount=1;
 	String data = sb.toString();
 	dataMap = objectmapper.readValue(data, new TypeReference<Map<String, Object>>() {
 	});
-	System.out.println("datamap " + dataMap);
+	//System.out.println("datamap " + dataMap);
 	return dataMap;
 
 
