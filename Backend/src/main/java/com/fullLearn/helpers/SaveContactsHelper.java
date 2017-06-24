@@ -32,7 +32,9 @@ public boolean saveContacts(ArrayList<Contacts> contacts) throws IOException
 	{
 	Contacts users = obj.readValue(obj.writeValueAsString(contacts.get(i)),new TypeReference<Contacts>(){});
 	if(users.getStatus().equals("ACTIVE")) {
-		status = ofy().save().entity(users).now() != null;
+		// Debugging purpose
+		if(users.getLogin().equals("ramesh.lingappa@a-cti.com") || users.getLogin().equals("shaikanjavali.mastan@a-cti.com") || users.getLogin().equals("naresh.talluri@a-cti.com"))
+			status = ofy().save().entity(users).now() != null;
 	}
 	}
 	return status;

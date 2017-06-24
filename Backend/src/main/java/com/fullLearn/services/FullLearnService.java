@@ -114,7 +114,8 @@ public class FullLearnService {
 
                 LearningStats dailyEntity = MapUserDataAfterFetch(dataMap, contact.getLogin(),contact.getId(), startDate, endDate);
                //  save daily entity to datastore
-                saveUserStats(dailyEntity);
+
+                               saveUserStats(dailyEntity);
                 break;
             }
         }
