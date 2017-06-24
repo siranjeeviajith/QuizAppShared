@@ -88,7 +88,8 @@ public class ContactServices {
 		String methodType = "GET";
 		String contentType = "application/json";
 
-		Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType);
+		String cursorStr = null;
+		Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType, cursorStr);
 
 		ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
 
@@ -123,7 +124,7 @@ public class ContactServices {
 			String methodType = "GET";
 			String contentType = "application/json";
 
-			Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType);
+			Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType, cursorStr);
 
 			cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {});
 			userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
@@ -140,9 +141,9 @@ public class ContactServices {
 		}
 		catch(Exception ex)
 		{
-
-			HttpURLConnection con = (HttpURLConnection) new URL("contact/info").openConnection();
-			con.setConnectTimeout(30000);
+			/*HttpURLConnection con = (HttpURLConnection) new URL("contact/info").openConnection();
+			con.setConnectTimeout(30000);*/
+			System.out.println("Exception");
 				String cursorValue = cursor;
 				System.out.println(cursorValue);
 				saveAllContacts(accesstoken, limit, cursorValue);

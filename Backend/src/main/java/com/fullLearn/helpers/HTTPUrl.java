@@ -11,11 +11,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HTTPUrl {
 
-	public Map<String, String> request(String accesstoken, String urlString,String methodType,String contentType) throws IOException
+	public Map<String, String> request(String accesstoken, String urlString,String methodType,String contentType,String cursor) throws IOException
 	{
+		String cursorStr = cursor;
 		try {
 			URL url = new URL(urlString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setConnectTimeout(30000);
 			con.setRequestMethod(methodType);
 			con.setRequestProperty("Content-Type", contentType);
 			con.setRequestProperty("Authorization", "Bearer " + accesstoken);
@@ -39,9 +41,10 @@ public class HTTPUrl {
 		}
 		catch(Exception ex)
 		{
+			System.out.println(cursorStr);
 			HttpURLConnection con = (HttpURLConnection) new URL(urlString).openConnection();
 			con.setConnectTimeout(30000);
-			request(accesstoken,urlString,methodType,contentType);
+			request(accesstoken,urlString,methodType,contentType,cursorStr);
 			return null;
 		}
 	}	
