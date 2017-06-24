@@ -84,7 +84,7 @@ public class ContactServices {
 
 	public boolean syncContacts(Long lastModified, String accesstoken) throws IOException {
 		ObjectMapper obj = new ObjectMapper();
-		URL url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?since="+lastModified);
+		String url = "https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?since="+lastModified;
 		String methodType = "GET";
 		String contentType = "application/json";
 
@@ -92,7 +92,7 @@ public class ContactServices {
 
 		ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
 
-		System.out.println(obj.writeValueAsString(userData));
+		System.out.println("Last Modified : "+obj.writeValueAsString(userData));
 		saveContactsHelper.saveContacts(userData);
 		if (userData.size() != 0) {
 			boolean status = saveContactsHelper.saveContacts(userData);
@@ -107,16 +107,16 @@ public class ContactServices {
 
 	public boolean saveAllContacts(String accesstoken, int limit, String cursorStr) throws IOException {
 		ObjectMapper obj = new ObjectMapper();
-		URL url = null;
+		String url = null;
 		ArrayList<Contacts> userData;
 		String cursor = null;
 		try {
 			if (cursorStr == null || cursorStr.equals("")) {
 
-				url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit=" + limit);
+				url = "https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit=" + limit;
 
 			} else {
-				url = new URL("https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit=" + limit + "&cursor=" + cursorStr);
+				url = "https://api-dot-staging-fullspectrum.appspot.com/api/v1/account/SEN42/user?limit=" + limit + "&cursor=" + cursorStr;
 			}
 
 

@@ -11,26 +11,37 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HTTPUrl {
 
-	public Map<String, String> request(String accesstoken, URL url,String methodType,String contentType) throws IOException
+	public Map<String, String> request(String accesstoken, String urlString,String methodType,String contentType) throws IOException
 	{
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod(methodType);
-		con.setRequestProperty("Content-Type", contentType);
-		con.setRequestProperty("Authorization","Bearer " +accesstoken);
-		con.setDoOutput(true);
-		
-		String line, contacts = "";
-		BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		if ((line = reader.readLine()) != null) {
-		    contacts += line;
-		    // Mapping JSON
-		    
-			ObjectMapper obj = new ObjectMapper();
-			Map<String,String> map = obj.readValue(contacts.toString(),new TypeReference<Map<String,Object>>(){});
-			Map<String,String> datas = obj.readValue(obj.writeValueAsString(map.get("data")), new TypeReference<Map<String,Object>>(){});
-			return datas;
-	    }
-		else{	
+		try {
+			URL url = new URL(urlString);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod(methodType);
+			con.setRequestProperty("Content-Type", contentType);
+			con.setRequestProperty("Authorization", "Bearer " + accesstoken);
+			con.setDoOutput(true);
+
+			String line, contacts = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			if ((line = reader.readLine()) != null) {
+				contacts += line;
+				// Mapping JSON
+
+				ObjectMapper obj = new ObjectMapper();
+				Map<String, String> map = obj.readValue(contacts.toString(), new TypeReference<Map<String, Object>>() {
+				});
+				Map<String, String> datas = obj.readValue(obj.writeValueAsString(map.get("data")), new TypeReference<Map<String, Object>>() {
+				});
+				return datas;
+			} else {
+				return null;
+			}
+		}
+		catch(Exception ex)
+		{
+			HttpURLConnection con = (HttpURLConnection) new URL(urlString).openConnection();
+			con.setConnectTimeout(30000);
+			request(accesstoken,urlString,methodType,contentType);
 			return null;
 		}
 	}	

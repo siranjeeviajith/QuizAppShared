@@ -91,7 +91,6 @@ public class FullLearnService {
                 long endDate = end.getTime();// endDate for fetching user data
                 String url = "";
                 String methodType = "";
-                String payLoad = "";
                 String contentType = "";
 
                 // email will be dynamic for contacts pojo
