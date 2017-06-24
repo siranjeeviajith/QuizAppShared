@@ -39,40 +39,74 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
 
 
-  String email=req.getParameter("email");
-       String userId=req.getParameter("userId");
+        String email=req.getParameter("email");
+        String userId=req.getParameter("userId");
 
         PrintWriter out=resp.getWriter();
 //        System.out.println("email "+email);
 //        System.out.println("userId "+userId);
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 0);
 
-        Date enddate = cal.getTime();
-        long endDate = enddate.getTime();
+        Calendar today = Calendar.getInstance();
+       Date startdate = null;
+       Date enddate = null;
+        if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
 
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE,-7);
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            cal.set(Calendar.MILLISECOND, 0);
 
-
-        Calendar cal1 = Calendar.getInstance();
-        cal1.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-        cal1.add(Calendar.DATE, -6);
-
-        cal1.set(Calendar.HOUR_OF_DAY, 0);
-        cal1.set(Calendar.MINUTE, 0);
-        cal1.set(Calendar.SECOND, 0);
-        cal1.set(Calendar.MILLISECOND, 0);
+            enddate = cal.getTime();
+            long endDate = enddate.getTime();
 
 
-        Date startdate=cal1.getTime();
-        long startDate=startdate.getTime();
-          int startDay = 0;
-            int endDay = 0;
 
-            for (int i = 1; i <=12; i++) {
+            Calendar cal1 = Calendar.getInstance();
+            cal1.add(Calendar.DATE,-13);
+            cal1.set(Calendar.HOUR_OF_DAY, 0);
+            cal1.set(Calendar.MINUTE, 0);
+            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.MILLISECOND, 0);
+
+
+            startdate=cal1.getTime();
+            long startDate=startdate.getTime();
+        }else{
+
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            cal.set(Calendar.MILLISECOND, 0);
+
+             enddate = cal.getTime();
+            long endDate = enddate.getTime();
+
+
+
+            Calendar cal1 = Calendar.getInstance();
+            cal1.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+            cal1.add(Calendar.DATE, -6);
+
+            cal1.set(Calendar.HOUR_OF_DAY, 0);
+            cal1.set(Calendar.MINUTE, 0);
+            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.MILLISECOND, 0);
+
+
+             startdate=cal1.getTime();
+            long startDate=startdate.getTime();
+
+        }
+
+         int startDay = 0;
+        int endDay = 0;
+
+        for (int i = 1; i <=12; i++) {
 
             Calendar cal3=Calendar.getInstance();
             cal3.setTime(startdate);
@@ -88,38 +122,38 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
 
 
-               String url = "";
-                String methodType = "";
-                String contentType = "";
+            String url = "";
+            String methodType = "";
+            String contentType = "";
 
-                // email will be dynamic for contacts pojo
-                ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
+            // email will be dynamic for contacts pojo
+            ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-                url = " https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + startTim + "&endTime=" + endTim;
-                methodType = "POST";
-                contentType = "application/json";
+            url = " https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + startTim + "&endTime=" + endTim;
+            methodType = "POST";
+            contentType = "application/json";
 
-                Map<String, Object> dataMap = HTTP.request(url, methodType, contentType);
+            Map<String, Object> dataMap = HTTP.request(url, methodType, contentType);
 
-                LearningStats TwelveWeekEntity = MapUserDataAfterFetch(dataMap, email, userId, startTim, endTim);
-
-
-                // save daily entity to datastore
-                saveUserStats(TwelveWeekEntity);
+            LearningStats TwelveWeekEntity = MapUserDataAfterFetch(dataMap, email, userId, startTim, endTim);
 
 
+            // save daily entity to datastore
+            saveUserStats(TwelveWeekEntity);
 
-                startDay=startDay+7;
-                endDay=endDay+7;
 
-               // System.out.println("week no "+i);
-            }
+
+            startDay=startDay+7;
+            endDay=endDay+7;
+
+            // System.out.println("week no "+i);
+        }
 
         ///  calculating four and 12 weeks average
 
 
-               // System.out.println("count of calculation is "+j);
-                calculateAverage(userId, email);
+        // System.out.println("count of calculation is "+j);
+        calculateAverage(userId, email);
 
 
 

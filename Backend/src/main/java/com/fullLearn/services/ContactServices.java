@@ -140,12 +140,20 @@ public class ContactServices {
 		}
 		catch(Throwable timeOut)
 		{
-			HttpURLConnection con = (HttpURLConnection) new URL("contact/info").openConnection();
-			con.setConnectTimeout(30000);
-			String cursorValue = cursor;
-			System.out.println(cursorValue);
-			saveAllContacts(accesstoken, limit, cursorValue);
-			return true;
+			if(timeOut instanceof InterruptedException){
+
+				String cursorValue = cursor;
+				System.out.println(cursorValue);
+				saveAllContacts(accesstoken, limit, cursorValue);
+				return true;
+			}
+			else
+			{
+				HttpURLConnection con = (HttpURLConnection) new URL("contact/info").openConnection();
+				con.setConnectTimeout(30000);
+				timeOut.printStackTrace();
+				return false;
+			}
 		}
 	}
 
