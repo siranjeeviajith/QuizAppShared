@@ -1,4 +1,4 @@
-apply from: '../gradle/dependencies.gradle'
+//apply from: '../gradle/dependencies.gradle'
 
 apply plugin: 'war'
 apply plugin: 'com.google.cloud.tools.appengine'
@@ -24,7 +24,10 @@ dependencies {
 appengine {
     run {
         port = config.gae.port.backend
-//        jvmFlags = config.gae.defaultJvmFlags
+        storagePath = file("$projectDir/appengine-generated/")
+       // datastorePath = file("$projectDir/appengine-generated/")
+        jvmFlags = config.gae.defaultJvmFlags
+      //  serverVersion = '2-alpha'
     }
 
     deploy {

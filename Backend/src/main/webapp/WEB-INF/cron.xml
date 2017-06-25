@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
 
-  <cron>
-    <url>/contact/info</url>
-      <target>backend</target>
-    <description>Daily Updates</description>
-    <schedule>every day 00:01</schedule>
-  </cron>
     <cron>
-        <url>api/fetch/userdetails</url>
+        <url>/contact/info</url>
+        <target>backend</target>
+        <description>Daily Updates</description>
+        <schedule>every day 00:01</schedule>
+    </cron>
+    <cron>
+        <url>/sync/stats/daily</url>
         <target>backend</target>
         <description>daily user data fetching job</description>
         <schedule>every day 00:15</schedule>
