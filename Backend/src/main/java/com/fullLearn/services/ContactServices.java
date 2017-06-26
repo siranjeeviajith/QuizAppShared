@@ -27,7 +27,7 @@ public class ContactServices {
 
 			URL url = new URL(Constants.FULL_AUTH_URL+"/o/oauth2/v1/token");
 			String params = "refresh_token="+Constants.REFRESH_TOKEN+"&client_id="+Constants.CLIENT_ID+"&client_secret="+Constants.CLIENT_SECRET+"&grant_type=refresh_token";
-
+		
 
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
