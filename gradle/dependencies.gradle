@@ -32,7 +32,7 @@ ext {
             gae: [
                     port: [
                             default: 8880,
-                            backend: 8881
+                            backend: 8888
                     ],
                     defaultJvmFlags: [
                             '-Dappengine.fullscan.seconds=3',
