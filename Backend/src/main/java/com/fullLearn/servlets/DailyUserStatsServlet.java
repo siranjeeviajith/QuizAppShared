@@ -35,17 +35,12 @@ public class DailyUserStatsServlet extends HttpServlet {
 
         boolean status = FullLearnService.fetchAllUserStats();
 
-        //// this is just for displaying
+
 
         if (status) {
             out.println("all users daily stats saved successfully");
         }
 
-        //String userActivitiesDetail= HTTP.getUserActivities("amandeep.santokh@conversionsupport.com",1493577000,1494009000);
-        //String status= FullLearnService.create(userActivitiesDetail,"userid -jdfhsjfahskdfd","amandeep.santokh@conversionsupport.com");
-
-	/*out.println(status);
-	*/
 
     }
 }

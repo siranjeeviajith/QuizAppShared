@@ -1,6 +1,7 @@
 package com.fullLearn.services;
 
 
+import com.fullLearn.helpers.Constants;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.taskqueue.Queue;
@@ -100,7 +101,7 @@ public class FullLearnService {
                 // email will be dynamic for contacts pojo
                 ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-                url = "https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
+                url = Constants.AU_API_URL+"/v1/completedMinutes?apiKey="+Constants.AU_APIKEY+"&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
 
                 methodType = "POST";
                 contentType = "application/json";
@@ -130,63 +131,6 @@ public class FullLearnService {
         ofy().save().entity(entry).now();
         // end of storeUserActivityDetail method
     }
-
-   /* public static LearningStats MapUserDataAfterFetch(Map dataMap, Contacts contact, long startDate, long endDate) throws IOException {
-        ObjectMapper objectmapper = new ObjectMapper();
-        System.out.println("mapuser dataafer fetch");
-        // properties of LearningStats pojo to be map
-        // 1. id
-        // 2. userid
-        // 3. minutes
-        // 4. challenges completed
-        // 5 .frequency
-        // 6. endTime
-        // 7. startTime
-        // 8. challenges details
-        // 9. email
-        System.out.println(dataMap);
-        LearningStats dailyEntity = new LearningStats();
-        if ((boolean) dataMap.get("response")) {
-            // 1. unique id
-            UUID uuid = UUID.randomUUID();
-            String id = uuid.toString();
-            System.out.println("id = " + id);
-            dailyEntity.setId(id);
-            System.out.println("id :" + dailyEntity.getId());
-            //  2. userid
-            dailyEntity.setUserId(contact.getId());
-            System.out.println("userid :" + dailyEntity.getUserId());
-            System.out.println("contact id " + contact.getId());
-            // 6 and 7 startTime and endTime
-            dailyEntity.setStartTime(startDate);
-            System.out.println("start :" + dailyEntity.getStartTime());
-            dailyEntity.setEndTime(endDate);
-            //  5. frequency for daily entrys
-            dailyEntity.setFrequency(Frequency.DAY);
-            System.out.println("freq :" + dailyEntity.getFrequency());
-            //9. email
-            dailyEntity.setEmail(contact.getLogin());
-            // 3,4,8 for minutes and challenges
-            Map<String, Object> mapToLearningStats = (Map<String, Object>) dataMap.get("data");
-            Map<String, Object> emailMap = (Map<String, Object>) mapToLearningStats.get(contact.getLogin());
-            if (emailMap == null) {
-                dailyEntity.setMinutes(0);
-                dailyEntity.setChallenges_completed(0);
-            } else {
-                System.out.println("email " + contact.getLogin());
-                System.out.println("emailmap " + emailMap);
-                dailyEntity.setMinutes((int) emailMap.get("minutes"));
-                dailyEntity.setChallenges_completed((int) emailMap.get("challenges_completed"));
-                System.out.println("minutes :" + dailyEntity.getMinutes());
-                //////  store entry object to datastore
-                System.out.println("email id " + contact.getLogin());
-                System.out.println("name " + contact.getFirstName());
-                System.out.println(dailyEntity.getId() + " " + dailyEntity.getFrequency() + "" + dailyEntity.getMinutes());
-            }
-        }// end of if
-        return dailyEntity;
-    } // end of MapUserDataAfterFetch
-*/
 
     /////////////////////////     WEEKLY REPORTS
 
@@ -228,9 +172,6 @@ public class FullLearnService {
             System.out.println("size of learning stats is " + lea.size());
             Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(30);
 
-            // Query query=  ofy().load().type(LearningStats.class).filter("userId", keys).filter("startTime >=", startDate).filter("startTime <=",endDate).limit(30);
-
-            // String cursorStr = request.getParameter("cursor");
             if (cursorStr != null)
                 contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursorStr));
 
@@ -266,8 +207,7 @@ public class FullLearnService {
             List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).list();
 
 
-//Query<LearningStats> weeklyLearningStats = ofy().load().type(LearningStats.class);
-            Iterator weeklyStatsIterator = weeklyStateUser.iterator();
+          Iterator weeklyStatsIterator = weeklyStateUser.iterator();
             int minutesAggregation = 0;
             int challengeCompletedAggregation = 0;
             int day = 1;
@@ -294,8 +234,6 @@ public class FullLearnService {
 
             saveUserStats(weeklyEntity);
 
-            /// send email
-            //MailDispatcher.sendEmail(contact,weeklyEntity);
 
             System.out.println(new ObjectMapper().writeValueAsString(contact));
         }
@@ -348,32 +286,20 @@ public class FullLearnService {
 
     public static void calculateAverage(String userId, String email) {
 
-
-
-
-
-
-
-
-
         System.out.println("email " + email);
         int day = 7 * 11;
-
-
-
-
 
 ////    Fixing two dates
 
         Date startdate = null;
-        Date enddate=null;
-Calendar today=Calendar.getInstance();
+        Date enddate = null;
+        Calendar today = Calendar.getInstance();
 
         if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
 
-System.out.println("saturday");
+            System.out.println("saturday");
             Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE,-7);
+            cal.add(Calendar.DATE, -7);
             cal.set(Calendar.HOUR_OF_DAY, 23);
             cal.set(Calendar.MINUTE, 59);
             cal.set(Calendar.SECOND, 59);
@@ -383,19 +309,17 @@ System.out.println("saturday");
             long endDate = enddate.getTime();
 
 
-
             Calendar cal1 = Calendar.getInstance();
-            cal1.add(Calendar.DATE,-13);
+            cal1.add(Calendar.DATE, -13);
             cal1.set(Calendar.HOUR_OF_DAY, 0);
             cal1.set(Calendar.MINUTE, 0);
             cal1.set(Calendar.SECOND, 0);
             cal1.set(Calendar.MILLISECOND, 0);
 
 
-            startdate=cal1.getTime();
+            startdate = cal1.getTime();
 
-        }
-        else {
+        } else {
 
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
@@ -404,40 +328,36 @@ System.out.println("saturday");
             cal.set(Calendar.SECOND, 59);
             cal.set(Calendar.MILLISECOND, 0);
 
-             enddate = cal.getTime();
-
+            enddate = cal.getTime();
 
 
             Calendar cal1 = Calendar.getInstance();
-            cal1.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+            cal1.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             cal1.add(Calendar.DATE, -6);
 
             cal1.set(Calendar.HOUR_OF_DAY, 0);
             cal1.set(Calendar.MINUTE, 0);
             cal1.set(Calendar.SECOND, 0);
             cal1.set(Calendar.MILLISECOND, 0);
-             startdate=cal1.getTime();
-
+            startdate = cal1.getTime();
 
 
         }
 
 
-
-
-        Calendar cal3=Calendar.getInstance();
+        Calendar cal3 = Calendar.getInstance();
         cal3.setTime(startdate);
-        cal3.add(Calendar.DATE,-day);
-        Date startTime=cal3.getTime();
+        cal3.add(Calendar.DATE, -day);
+        Date startTime = cal3.getTime();
 
-        long startDate=startTime.getTime();
+        long startDate = startTime.getTime();
 
-        Calendar cal4=Calendar.getInstance();
+        Calendar cal4 = Calendar.getInstance();
         cal4.setTime(enddate);
-        cal4.add(Calendar.DATE,-0);
-        Date endTime=cal4.getTime();
+        cal4.add(Calendar.DATE, -0);
+        Date endTime = cal4.getTime();
 
-        long endDate=endTime.getTime();
+        long endDate = endTime.getTime();
 
 
         List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", userId).filter("startTime >=", startDate).filter("startTime <", endDate).filter("frequency ==", Frequency.WEEK).order("startTime").list();
@@ -463,7 +383,7 @@ System.out.println("saturday");
                     fourWeekAverage = fourWeekAverage + userStats.getMinutes();
 
                 }
-                if(email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com")|| email.equals("naresh.talluri@a-cti.com"))
+                if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com"))
                     System.out.println("minutes for week " + weekCount + " is " + userStats.getMinutes() + " email " + email + "in Time is " + userStats.getStartTime() + " - " + userStats.getEndTime());
                 weekCount++;
 
@@ -473,14 +393,14 @@ System.out.println("saturday");
             float fourWeekFloat = (float) fourWeekAverage / 4;
             float twelfthWeekFloat = (float) twelfthWeekAverage / 12;
 
-            if(email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com")|| email.equals("naresh.talluri@a-cti.com")) {
+            if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com")) {
                 System.out.println("float values " + fourWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
                 System.out.println("float values " + twelfthWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
             }
 
             fourWeekAverage = (int) Math.round(fourWeekFloat);
             twelfthWeekAverage = (int) Math.round(twelfthWeekFloat);
-            if(email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com")|| email.equals("naresh.talluri@a-cti.com")) {
+            if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com")) {
                 System.out.println("total for 4 weeks " + fourWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
                 System.out.println("total for 12 weeks " + twelfthWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
             }
@@ -515,7 +435,6 @@ System.out.println("saturday");
 
             Query<Contacts> query = ofy().load().type(Contacts.class).limit(30);
 
-            // String cursorStr = request.getParameter("cursor");
             if (cursorStr != null)
                 query = query.startAt(Cursor.fromWebSafeString(cursorStr));
 
@@ -560,17 +479,7 @@ System.out.println("saturday");
 
 
         ObjectMapper objectmapper = new ObjectMapper();
-        //System.out.println("mapuser dataafer fetch");
-        // properties of LearningStats pojo to be map
-        // 1. id
-        // 2. userid
-        // 3. minutes
-        // 4. challenges completed
-        // 5 .frequency
-        // 6. endTime
-        // 7. startTime
-        // 8. challenges details
-        // 9. email
+
 
 
         LearningStats twelveWeeksEntity = new LearningStats();
@@ -611,17 +520,10 @@ System.out.println("saturday");
                 twelveWeeksEntity.setMinutes(0);
                 twelveWeeksEntity.setChallenges_completed(0);
             } else {
-                //System.out.println("email " + email);
-                //System.out.println("emailmap " + emailMap);
                 twelveWeeksEntity.setMinutes((int) emailMap.get("minutes"));
                 twelveWeeksEntity.setChallenges_completed((int) emailMap.get("challenges_completed"));
 
-                //System.out.println("minutes :" + twelveWeeksEntity.getMinutes());
 
-
-                //////  store entry object to datastore
-                //   System.out.println("email id " + email);
-                // System.out.println(twelveWeeksEntity.getId() + " " + twelveWeeksEntity.getFrequency() + "" + twelveWeeksEntity.getMinutes());
             }
 
 
@@ -636,7 +538,7 @@ System.out.println("saturday");
 
 
         int usercount = 0;
-        //MailDispatcher.sendEmail();
+
         String cursorStr = null;
         do {
 

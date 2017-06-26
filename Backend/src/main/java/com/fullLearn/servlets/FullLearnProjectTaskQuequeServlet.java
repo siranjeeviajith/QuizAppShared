@@ -3,6 +3,7 @@ package com.fullLearn.servlets;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.LearningStats;
 import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -45,8 +46,8 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 //        System.out.println("userId "+userId);
 
         Calendar today = Calendar.getInstance();
-       Date startdate = null;
-       Date enddate = null;
+        Date startdate = null;
+        Date enddate = null;
         if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
 
             Calendar cal = Calendar.getInstance();
@@ -81,7 +82,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             cal.set(Calendar.SECOND, 59);
             cal.set(Calendar.MILLISECOND, 0);
 
-             enddate = cal.getTime();
+            enddate = cal.getTime();
             long endDate = enddate.getTime();
 
 
@@ -96,12 +97,12 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             cal1.set(Calendar.MILLISECOND, 0);
 
 
-             startdate=cal1.getTime();
+            startdate=cal1.getTime();
             long startDate=startdate.getTime();
 
         }
 
-         int startDay = 0;
+        int startDay = 0;
         int endDay = 0;
 
         for (int i = 1; i <=12; i++) {
@@ -127,7 +128,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             // email will be dynamic for contacts pojo
             ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-            url = " https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + startTim + "&endTime=" + endTim;
+            url = Constants.AU_API_URL+"/v1/completedMinutes?apiKey="+Constants.AU_APIKEY+"&email=" + email + "&startTime=" + startTim + "&endTime=" + endTim;
             methodType = "POST";
             contentType = "application/json";
 
