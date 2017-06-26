@@ -101,7 +101,7 @@ public class FullLearnService {
                 // email will be dynamic for contacts pojo
                 ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-                url = Constants.AU_API_URL+"/v1/completedMinutes?"+"apiKey="+Constants.AU_APIKEY+"&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
+                url = Constants.AU_API_URL+"/v1/completedMinutes?apiKey="+Constants.AU_APIKEY+"&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
 
                 methodType = "POST";
                 contentType = "application/json";
