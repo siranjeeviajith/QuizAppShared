@@ -37,8 +37,6 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
 
 
-
-
         String email=req.getParameter("email");
         String userId=req.getParameter("userId");
 
