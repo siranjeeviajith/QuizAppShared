@@ -22,7 +22,7 @@ public class AllAverageStatsServices {
         {
             if(type.equals("4"))
             {
-                if(order.equals("aesc"))
+                if(order.equals("asce"))
                 {
                     userDatas = ofy().load().type(LearningStatsAverage.class).order("fourthWeek").limit(limit).list();
                 }
@@ -33,7 +33,7 @@ public class AllAverageStatsServices {
             }
             else if(type.equals("12"))
             {
-                if(order.equals("aesc"))
+                if(order.equals("asce"))
                 {
                     userDatas = ofy().load().type(LearningStatsAverage.class).order("twelfthWeek").limit(limit).list();
                 }
