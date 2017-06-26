@@ -15,9 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import static com.fullLearn.services.FullLearnService.MapUserDataAfterFetch;
-import static com.fullLearn.services.FullLearnService.calculateAverage;
-import static com.fullLearn.services.FullLearnService.saveUserStats;
+import static com.fullLearn.services.FullLearnService.*;
 
 /**
  * Created by user on 6/21/2017.
@@ -43,81 +41,118 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
         String userId=req.getParameter("userId");
 
         PrintWriter out=resp.getWriter();
-        System.out.println("email "+email);
-        System.out.println("userId "+userId);
+//        System.out.println("email "+email);
+//        System.out.println("userId "+userId);
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 0);
+        Calendar today = Calendar.getInstance();
+       Date startdate = null;
+       Date enddate = null;
+        if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
 
-        Date enddate = cal.getTime();
-        long endDate = enddate.getTime();
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE,-7);
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            cal.set(Calendar.MILLISECOND, 0);
 
-
-
-        Calendar cal1 = Calendar.getInstance();
-        cal1.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-        cal1.add(Calendar.DATE, -6);
-
-        cal1.set(Calendar.HOUR_OF_DAY, 0);
-        cal1.set(Calendar.MINUTE, 0);
-        cal1.set(Calendar.SECOND, 0);
-        cal1.set(Calendar.MILLISECOND, 0);
+            enddate = cal.getTime();
+            long endDate = enddate.getTime();
 
 
-        Date startdate=cal1.getTime();
-        long startDate=startdate.getTime();
 
-        int start=0;
-        int end=0;
-        int weekCount=1;
+            Calendar cal1 = Calendar.getInstance();
+            cal1.add(Calendar.DATE,-13);
+            cal1.set(Calendar.HOUR_OF_DAY, 0);
+            cal1.set(Calendar.MINUTE, 0);
+            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.MILLISECOND, 0);
 
-        for (int i = 0; i < 12; i++) {
+
+            startdate=cal1.getTime();
+            long startDate=startdate.getTime();
+        }else{
+
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            cal.set(Calendar.MILLISECOND, 0);
+
+             enddate = cal.getTime();
+            long endDate = enddate.getTime();
+
+
+
+            Calendar cal1 = Calendar.getInstance();
+            cal1.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+            cal1.add(Calendar.DATE, -6);
+
+            cal1.set(Calendar.HOUR_OF_DAY, 0);
+            cal1.set(Calendar.MINUTE, 0);
+            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.MILLISECOND, 0);
+
+
+             startdate=cal1.getTime();
+            long startDate=startdate.getTime();
+
+        }
+
+         int startDay = 0;
+        int endDay = 0;
+
+        for (int i = 1; i <=12; i++) {
 
             Calendar cal3=Calendar.getInstance();
             cal3.setTime(startdate);
-            cal3.add(Calendar.DATE,-start);
-
+            cal3.add(Calendar.DATE,-startDay);
+            Date startTime=cal3.getTime();
+            long startTim=startTime.getTime();
 
             Calendar cal4=Calendar.getInstance();
             cal4.setTime(enddate);
-            cal4.add(Calendar.DATE,-end);
+            cal4.add(Calendar.DATE,-endDay);
+            Date endTime=cal4.getTime();
+            long endTim=endTime.getTime();
 
-            Date calstar=cal3.getTime();
-            long strt=calstar.getTime();
-
-            Date calend=cal4.getTime();
-            long en=calend.getTime();
 
 
             String url = "";
             String methodType = "";
-            String payLoad = "";
             String contentType = "";
 
-            url = "https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + strt + "&endTime=" + en;
-            methodType = "POST";
+            // email will be dynamic for contacts pojo
+            ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
+            url = " https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + startTim + "&endTime=" + endTim;
+            methodType = "POST";
             contentType = "application/json";
 
-            Map<String, Object> dataMap = HTTP.request(url, methodType,  contentType);
+            Map<String, Object> dataMap = HTTP.request(url, methodType, contentType);
 
-            LearningStats TwelveWeekEntity = MapUserDataAfterFetch(dataMap,email,userId ,startDate, endDate);
+            LearningStats TwelveWeekEntity = MapUserDataAfterFetch(dataMap, email, userId, startTim, endTim);
 
 
             // save daily entity to datastore
             saveUserStats(TwelveWeekEntity);
 
-            start=start+7;
-            end=end+7;
-            System.out.println("week is "+weekCount+"and startDate is "+strt);
-            System.out.println("week is "+weekCount+"and endDate is "+en);
-            weekCount++;
+
+
+            startDay=startDay+7;
+            endDay=endDay+7;
+
+            // System.out.println("week no "+i);
         }
-                calculateAverage(userId, email);
+
+        ///  calculating four and 12 weeks average
+
+
+        // System.out.println("count of calculation is "+j);
+        calculateAverage(userId, email);
+
 
 
 

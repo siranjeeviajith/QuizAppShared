@@ -68,11 +68,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
     <servlet>
         <servlet-name>FullLearnProject</servlet-name>
-        <servlet-class>com.fullLearn.servlets.FullLearnProjectServlet</servlet-class>
+        <servlet-class>com.fullLearn.servlets.DailyUserStatsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FullLearnProject</servlet-name>
-        <url-pattern>api/fetch/userstats</url-pattern>
+        <url-pattern>/sync/stats/daily</url-pattern>
     </servlet-mapping>
 
 

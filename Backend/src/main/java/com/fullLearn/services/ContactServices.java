@@ -148,9 +148,10 @@ public class ContactServices {
 				System.out.println(cursorValue);
 				saveAllContacts(accesstoken, limit, cursorValue);
 				return true;
-		}
 
+		}
 	}
+
 
 
 }
