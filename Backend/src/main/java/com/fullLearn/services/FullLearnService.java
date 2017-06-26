@@ -1,6 +1,7 @@
 package com.fullLearn.services;
 
 
+import com.fullLearn.helpers.Constants;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.taskqueue.Queue;
@@ -95,13 +96,12 @@ public class FullLearnService {
                 long endDate = end.getTime();// endDate for fetching user data
                 String url = "";
                 String methodType = "";
-                String payLoad = "";
                 String contentType = "";
 
                 // email will be dynamic for contacts pojo
                 ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-                url = "https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
+                url = Constants.AU_API_URL+"/v1/completedMinutes?"+"apiKey="+Constants.AU_APIKEY+"&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
 
                 methodType = "POST";
                 contentType = "application/json";

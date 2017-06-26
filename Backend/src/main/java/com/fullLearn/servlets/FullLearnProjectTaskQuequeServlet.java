@@ -3,6 +3,7 @@ package com.fullLearn.servlets;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.LearningStats;
 import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -127,7 +128,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             // email will be dynamic for contacts pojo
             ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-            url = " https://mint4-dot-live-adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=" + email + "&startTime=" + startTim + "&endTime=" + endTim;
+            url = Constants.AU_API_URL+"/v1/completedMinutes?"+"apiKey="+Constants.AU_APIKEY+"&email=" + email + "&startTime=" + startTim + "&endTime=" + endTim;
             methodType = "POST";
             contentType = "application/json";
 
