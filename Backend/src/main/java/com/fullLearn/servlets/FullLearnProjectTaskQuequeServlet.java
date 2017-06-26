@@ -37,8 +37,6 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
 
 
-
-
         String email=req.getParameter("email");
         String userId=req.getParameter("userId");
 
@@ -47,8 +45,8 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 //        System.out.println("userId "+userId);
 
         Calendar today = Calendar.getInstance();
-       Date startdate = null;
-       Date enddate = null;
+        Date startdate = null;
+        Date enddate = null;
         if (today.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
 
             Calendar cal = Calendar.getInstance();
@@ -83,7 +81,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             cal.set(Calendar.SECOND, 59);
             cal.set(Calendar.MILLISECOND, 0);
 
-             enddate = cal.getTime();
+            enddate = cal.getTime();
             long endDate = enddate.getTime();
 
 
@@ -98,12 +96,12 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             cal1.set(Calendar.MILLISECOND, 0);
 
 
-             startdate=cal1.getTime();
+            startdate=cal1.getTime();
             long startDate=startdate.getTime();
 
         }
 
-         int startDay = 0;
+        int startDay = 0;
         int endDay = 0;
 
         for (int i = 1; i <=12; i++) {

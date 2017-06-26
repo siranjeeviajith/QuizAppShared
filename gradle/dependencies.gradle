@@ -32,14 +32,12 @@ ext {
             gae: [
                     port: [
                             default: 8880,
-                            backend: 8848
+                            backend: 8888
                     ],
-                    defaultJvmFlags: ['-Xdebug',
-                                      '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005',
-                                      '-Dappengine.fullscan.seconds=3',
-                                      "-Ddatastore.backing_store=$projectDir/appengine-generated/local_db.bin",
-                                      "-Ddatastore.generated_dir=$projectDir/appengine-generated",
-                                      "-Dblobstore.backing_store=$projectDir/appengine-generated/blob"
+                    defaultJvmFlags: [
+                            '-Dappengine.fullscan.seconds=3',
+                            "-Ddatastore.backing_store=$projectDir/appengine-generated/local_db.bin".toString(),
+                            "-Ddatastore.generated_dir=$projectDir/appengine-generated/".toString()
                     ]
             ]
     ]

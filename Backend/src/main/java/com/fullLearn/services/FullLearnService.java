@@ -1,25 +1,30 @@
 package com.fullLearn.services;
 
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
-
-import java.io.IOException;
-import java.util.*;
-
+import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.QueryResultIterator;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.Frequency;
+import com.fullLearn.beans.LearningStats;
 import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.helpers.HTTP;
-import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.QueryResultIterator;
-
-import com.fullLearn.beans.LearningStats;
-import com.google.appengine.api.taskqueue.*;
-import com.google.appengine.api.taskqueue.Queue;
 import com.googlecode.objectify.cmd.Query;
+
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 
 public class FullLearnService {
@@ -49,7 +54,7 @@ public class FullLearnService {
                 return true;
             }
 
-            fetchDataByBatch(iterator);
+            fetchUserDailyStats(iterator);
             cursorStr = iterator.getCursor().toWebSafeString();
 
 
@@ -58,9 +63,8 @@ public class FullLearnService {
         return true;
     } // end of fetchUserDetails
 
-    public static void fetchDataByBatch(QueryResultIterator contactList) throws IOException {
+    public static void fetchUserDailyStats(QueryResultIterator contactList) throws IOException {
         //To do for iterating and getting data for each user by Calling HTTP class in helper package
-
 
         while (contactList.hasNext()) {
             int i = 1;
@@ -110,7 +114,7 @@ public class FullLearnService {
                     continue;
                 }
 
-                System.out.println("my data is " + dataMap);
+                System.out.println("user : "+contact.getLogin()+" => "+ dataMap);
 
                 LearningStats dailyEntity = MapUserDataAfterFetch(dataMap, contact.getLogin(),contact.getId(), startDate, endDate);
                 //  save daily entity to datastore
@@ -119,7 +123,7 @@ public class FullLearnService {
             }
         }
 
-    } // end of fetchDataByBatch method
+    } // end of fetchUserDailyStats method
 
 
     public static void saveUserStats(Object entry) {
@@ -168,9 +172,6 @@ public class FullLearnService {
             System.out.println("size of learning stats is " + lea.size());
             Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(30);
 
-            // Query query=  ofy().load().type(LearningStats.class).filter("userId", keys).filter("startTime >=", startDate).filter("startTime <=",endDate).limit(30);
-
-            // String cursorStr = request.getParameter("cursor");
             if (cursorStr != null)
                 contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursorStr));
 
@@ -206,8 +207,7 @@ public class FullLearnService {
             List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).list();
 
 
-//Query<LearningStats> weeklyLearningStats = ofy().load().type(LearningStats.class);
-            Iterator weeklyStatsIterator = weeklyStateUser.iterator();
+          Iterator weeklyStatsIterator = weeklyStateUser.iterator();
             int minutesAggregation = 0;
             int challengeCompletedAggregation = 0;
             int day = 1;
@@ -234,8 +234,6 @@ public class FullLearnService {
 
             saveUserStats(weeklyEntity);
 
-            /// send email
-            //MailDispatcher.sendEmail(contact,weeklyEntity);
 
             System.out.println(new ObjectMapper().writeValueAsString(contact));
         }
@@ -437,7 +435,6 @@ public class FullLearnService {
 
             Query<Contacts> query = ofy().load().type(Contacts.class).limit(30);
 
-            // String cursorStr = request.getParameter("cursor");
             if (cursorStr != null)
                 query = query.startAt(Cursor.fromWebSafeString(cursorStr));
 
@@ -482,17 +479,7 @@ public class FullLearnService {
 
 
         ObjectMapper objectmapper = new ObjectMapper();
-        //System.out.println("mapuser dataafer fetch");
-        // properties of LearningStats pojo to be map
-        // 1. id
-        // 2. userid
-        // 3. minutes
-        // 4. challenges completed
-        // 5 .frequency
-        // 6. endTime
-        // 7. startTime
-        // 8. challenges details
-        // 9. email
+
 
 
         LearningStats twelveWeeksEntity = new LearningStats();
@@ -533,17 +520,10 @@ public class FullLearnService {
                 twelveWeeksEntity.setMinutes(0);
                 twelveWeeksEntity.setChallenges_completed(0);
             } else {
-                //System.out.println("email " + email);
-                //System.out.println("emailmap " + emailMap);
                 twelveWeeksEntity.setMinutes((int) emailMap.get("minutes"));
                 twelveWeeksEntity.setChallenges_completed((int) emailMap.get("challenges_completed"));
 
-                //System.out.println("minutes :" + twelveWeeksEntity.getMinutes());
 
-
-                //////  store entry object to datastore
-                //   System.out.println("email id " + email);
-                // System.out.println(twelveWeeksEntity.getId() + " " + twelveWeeksEntity.getFrequency() + "" + twelveWeeksEntity.getMinutes());
             }
 
 
@@ -558,7 +538,7 @@ public class FullLearnService {
 
 
         int usercount = 0;
-        //MailDispatcher.sendEmail();
+
         String cursorStr = null;
         do {
 
