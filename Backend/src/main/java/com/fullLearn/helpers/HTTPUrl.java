@@ -17,7 +17,7 @@ public class HTTPUrl {
 		try {
 			URL url = new URL(urlString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setConnectTimeout(30000);
+			con.setConnectTimeout(60000);
 			con.setRequestMethod(methodType);
 			con.setRequestProperty("Content-Type", contentType);
 			con.setRequestProperty("Authorization", "Bearer " + accesstoken);
@@ -30,10 +30,8 @@ public class HTTPUrl {
 				// Mapping JSON
 
 				ObjectMapper obj = new ObjectMapper();
-				Map<String, String> map = obj.readValue(contacts.toString(), new TypeReference<Map<String, Object>>() {
-				});
-				Map<String, String> datas = obj.readValue(obj.writeValueAsString(map.get("data")), new TypeReference<Map<String, Object>>() {
-				});
+				Map<String, String> map = obj.readValue(contacts.toString(), new TypeReference<Map<String, Object>>() {});
+				Map<String, String> datas = obj.readValue(obj.writeValueAsString(map.get("data")), new TypeReference<Map<String, Object>>() {});
 				return datas;
 			} else {
 				return null;
@@ -43,7 +41,7 @@ public class HTTPUrl {
 		{
 			System.out.println(cursorStr);
 			HttpURLConnection con = (HttpURLConnection) new URL(urlString).openConnection();
-			con.setConnectTimeout(30000);
+			con.setConnectTimeout(60000);
 			request(accesstoken,urlString,methodType,contentType,cursorStr);
 			return null;
 		}
