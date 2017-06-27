@@ -145,9 +145,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
             startDay=startDay+7;
             endDay=endDay+7;
-
-            // System.out.println("week no "+i);
-        }
+ }
 
         ///  calculating four and 12 weeks average
 
