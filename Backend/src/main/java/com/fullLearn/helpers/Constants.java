@@ -20,6 +20,7 @@ public class Constants {
 
     static {
         if(isLive()){
+            System.out.println("Live");
             FULL_AUTH_URL   = "https://fullcreative-dot-full-auth.appspot.com";
             CLIENT_ID       = "29354-aead045bc9f496b075afdbb144bcc0d0";
             CLIENT_SECRET   = "wiPmUft4CLZCNwme4UjscMBh8p-y3UmUTUWdRPms";
@@ -29,6 +30,7 @@ public class Constants {
             AU_APIKEY       = "b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d";
 
         }else{
+            System.out.println("Stagging");
             FULL_AUTH_URL   = "https://staging-fullcreative-dot-full-auth.appspot.com";
             CLIENT_ID       = "2a9ac-5ea21026a3973e4c3a56a294f2e47d88";
             CLIENT_SECRET   = "e7m9Gb9nUzLoaCWXy8OdBI6zlh7cx8OmUXMeXRMh";

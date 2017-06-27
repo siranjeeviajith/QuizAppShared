@@ -81,47 +81,29 @@ public class ContactServices {
 	}
 
 
-	public boolean syncContacts(Long lastModified, String accesstoken) throws IOException {
+	public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
 		ObjectMapper obj = new ObjectMapper();
-
-
-		String url = Constants.AW_API_URL+"/api/v1/account/SEN42/user?since="+lastModified;
-		String methodType = "GET";
-		String contentType = "application/json";
-
-		String cursorStr = null;
-		Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType, cursorStr);
-
-		ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
-
-		System.out.println("Last Modified : "+obj.writeValueAsString(userData));
-		saveContactsHelper.saveContacts(userData);
-		if (userData.size() != 0) {
-			boolean status = saveContactsHelper.saveContacts(userData);
-			return status;
-		} else {
-			return false;
-		}
-
-
-	}
-
-
-	public boolean saveAllContacts(String accesstoken, int limit, String cursorStr) throws IOException {
-		ObjectMapper obj = new ObjectMapper();
-		String url = null;
+		String baseUrl = Constants.AW_API_URL+"/api/v1/account/SEN42/user?";
 		ArrayList<Contacts> userData;
 		String cursor = null;
-		try {
-			if (cursorStr == null || cursorStr.equals("")) {
+		String url = null;
 
-				url = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit=" + limit;
+		try {
+			if(lastModified != null)
+			{
+				System.out.println("Last Modified : "+lastModified);
+				url = baseUrl+"since="+lastModified+"&limit="+limit;
+			}
+			else if (cursorStr == null || cursorStr.equals("")) {
+
+				url = baseUrl+"limit="+limit;
 
 			} else {
-				url = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit=" + limit + "&cursor=" + cursorStr;
+				url = baseUrl+"limit="+limit+"&cursor="+cursorStr;
 			}
 
 
+			System.out.println("url : "+url);
 			String methodType = "GET";
 			String contentType = "application/json";
 
@@ -130,24 +112,22 @@ public class ContactServices {
 			cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {});
 			userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
 
-
 			boolean status = saveContactsHelper.saveContacts(userData);
 
-			if (userData.size() < limit) {
+			System.out.println("fetched users : "+userData.size());
+			if (userData.size() < limit || userData == null) {
 				return true;
 			}
 
-			saveAllContacts(accesstoken, limit, cursor);
+			saveAllContacts(lastModified, accesstoken, limit, cursor);
 			return true;
 		}
 		catch(Exception ex)
 		{
-			/*HttpURLConnection con = (HttpURLConnection) new URL("contact/info").openConnection();
-			con.setConnectTimeout(30000);*/
-			System.out.println("Exception");
+			    System.out.println(ex.getMessage());
 				String cursorValue = cursor;
 				System.out.println(cursorValue);
-				saveAllContacts(accesstoken, limit, cursorValue);
+				saveAllContacts(lastModified, accesstoken, limit, cursorValue);
 				return true;
 
 		}

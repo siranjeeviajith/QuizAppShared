@@ -12,12 +12,12 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet>
     <servlet-mapping>
         <servlet-name>ContactServlet</servlet-name>
-        <url-pattern>/contact/info</url-pattern>
+        <url-pattern>/fetch/contacts</url-pattern>
     </servlet-mapping>
 
     <servlet>
         <servlet-name>UserWeekStats</servlet-name>
-        <servlet-class>com.fullLearn.servlets.WeekStatsServlet</servlet-class>
+        <servlet-class>com.fullLearn.servlets.UserStatsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserWeekStats</servlet-name>
@@ -54,6 +54,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 
 
+
+    <servlet>
+        <servlet-name>ContactSyncTaskQueue</servlet-name>
+        <servlet-class>com.fullLearn.servlets.ContactSyncTaskQueue</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ContactSyncTaskQueue</servlet-name>
+        <url-pattern>/contact/sync/task/queue</url-pattern>
+    </servlet-mapping>
 
 
 
