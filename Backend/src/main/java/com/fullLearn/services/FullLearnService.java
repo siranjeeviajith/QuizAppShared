@@ -404,6 +404,8 @@ public class FullLearnService {
                 System.out.println("total for 4 weeks " + fourWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
                 System.out.println("total for 12 weeks " + twelfthWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
             }
+
+            System.out.println("Twelve weeks timestamps is startime : "+startDate+" and endTime is : "+endDate);
             LearningStatsAverage averageEntity = mapUserDataAverage(fourWeekAverage, twelfthWeekAverage, userId, email);
 
 
