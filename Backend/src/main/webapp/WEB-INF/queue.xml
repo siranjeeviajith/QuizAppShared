@@ -7,7 +7,5 @@
             <task-age-limit>2d</task-age-limit>
         </retry-parameters>
 
-
     </queue>
 </queue-entries>
-
