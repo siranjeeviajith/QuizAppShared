@@ -37,8 +37,7 @@ appengine {
         promote = false
 //        stopPreviousVersion = true
 //        promote = true
-        version = 2
-        project = "online-directory-168507"
+
     }
 }
 
