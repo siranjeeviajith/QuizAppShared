@@ -39,9 +39,6 @@ public class ContactServices {
 		wr.write(params);
 		wr.flush();
 
-		System.out.println(con.getResponseCode());
-		System.out.println(con.getResponseMessage());
-
 		// Get the response
 		String tokens = new String();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -83,7 +80,7 @@ public class ContactServices {
 
 	public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
 		ObjectMapper obj = new ObjectMapper();
-		String baseUrl = Constants.AW_API_URL+"/api/v1/account/SEN42/user?";
+		String baseUrl = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit="+limit;
 		ArrayList<Contacts> userData;
 		String cursor = null;
 		String url = null;
@@ -92,14 +89,14 @@ public class ContactServices {
 			if(lastModified != null)
 			{
 				System.out.println("Last Modified : "+lastModified);
-				url = baseUrl+"since="+lastModified+"&limit="+limit;
+				url = baseUrl+"&since="+lastModified;
 			}
 			else if (cursorStr == null || cursorStr.equals("")) {
 
-				url = baseUrl+"limit="+limit;
+				url = baseUrl;
 
 			} else {
-				url = baseUrl+"limit="+limit+"&cursor="+cursorStr;
+				url = baseUrl+"&cursor="+cursorStr;
 			}
 
 
