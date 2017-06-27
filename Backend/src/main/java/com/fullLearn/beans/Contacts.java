@@ -10,7 +10,7 @@ public class Contacts {
 	@Index
 	private Long modifiedAt;
 	private String accountId;
-	private String login;
+	@Index private String login;
 	private String firstName;
 	private String lastName;
 	private String photoId;

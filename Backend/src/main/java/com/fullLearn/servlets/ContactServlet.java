@@ -1,11 +1,9 @@
 package com.fullLearn.servlets;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.*;
-import com.fullLearn.beans.*;
+
 import com.fullLearn.services.*;
+import com.google.appengine.api.taskqueue.*;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,24 +22,20 @@ public class ContactServlet extends HttpServlet {
 			String accessToken = fc.getAccessToken();
 
 
-			// Getting LastMOdified
-			Long lastModified = fc.getLastModifiedContacts();
+
 
 
 			boolean contacts;
-			String cursorStr = null;
+
 			int limit = 30;
-			if (lastModified != null) {
 
-				contacts = fc.syncContacts(lastModified, accessToken);
+				System.out.println("fetching all users");
+				String limitStr=new Integer(limit).toString();
 
-				if (contacts == true) {
-					fc.saveAllContacts(accessToken, limit, cursorStr);
-				}
+				Queue queue =  QueueFactory.getDefaultQueue();
+				queue.add(TaskOptions.Builder.withUrl("/contact/sync/task/queue").param("accesstoken",accessToken).param("limit",limitStr));
 
-			} else {
-				fc.saveAllContacts(accessToken, limit, cursorStr);
-			}
+
 
 	}
 }

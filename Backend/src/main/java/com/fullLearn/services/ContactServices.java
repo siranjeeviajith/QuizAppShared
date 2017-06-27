@@ -27,7 +27,7 @@ public class ContactServices {
 
 			URL url = new URL(Constants.FULL_AUTH_URL+"/o/oauth2/v1/token");
 			String params = "refresh_token="+Constants.REFRESH_TOKEN+"&client_id="+Constants.CLIENT_ID+"&client_secret="+Constants.CLIENT_SECRET+"&grant_type=refresh_token";
-
+		
 
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -38,9 +38,6 @@ public class ContactServices {
 		OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
 		wr.write(params);
 		wr.flush();
-
-		System.out.println(con.getResponseCode());
-		System.out.println(con.getResponseMessage());
 
 		// Get the response
 		String tokens = new String();
@@ -81,73 +78,50 @@ public class ContactServices {
 	}
 
 
-	public boolean syncContacts(Long lastModified, String accesstoken) throws IOException {
+	public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
 		ObjectMapper obj = new ObjectMapper();
-
-
-		String url = Constants.AW_API_URL+"/api/v1/account/SEN42/user?since="+lastModified;
-		String methodType = "GET";
-		String contentType = "application/json";
-
-		String cursorStr = null;
-		Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType, cursorStr);
-
-		ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
-
-		System.out.println("Last Modified : "+obj.writeValueAsString(userData));
-		saveContactsHelper.saveContacts(userData);
-		if (userData.size() != 0) {
-			boolean status = saveContactsHelper.saveContacts(userData);
-			return status;
-		} else {
-			return false;
-		}
-
-
-	}
-
-
-	public boolean saveAllContacts(String accesstoken, int limit, String cursorStr) throws IOException {
-		ObjectMapper obj = new ObjectMapper();
-		String url = null;
+		String baseUrl = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit="+limit;
 		ArrayList<Contacts> userData;
 		String cursor = null;
+
 		try {
-			if (cursorStr == null || cursorStr.equals("")) {
+			if(lastModified != null)
+			{
+				System.out.println("Last Modified : "+lastModified);
+				baseUrl = baseUrl+"&since="+lastModified;
+			}
+			if (cursorStr != null) {
 
-				url = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit=" + limit;
+				baseUrl = baseUrl+"&cursor="+cursorStr;
 
-			} else {
-				url = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit=" + limit + "&cursor=" + cursorStr;
 			}
 
 
+			System.out.println("url : "+baseUrl);
 			String methodType = "GET";
 			String contentType = "application/json";
 
-			Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType, cursorStr);
+			Map<String, String> datas = listOfDatas.request(accesstoken, baseUrl, methodType, contentType, cursorStr);
 
 			cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {});
 			userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
 
-
 			boolean status = saveContactsHelper.saveContacts(userData);
 
-			if (userData.size() < limit) {
+			System.out.println("fetched users : "+userData.size());
+			if (userData.size() < limit || userData == null) {
 				return true;
 			}
 
-			saveAllContacts(accesstoken, limit, cursor);
+			saveAllContacts(lastModified, accesstoken, limit, cursor);
 			return true;
 		}
 		catch(Exception ex)
 		{
-			/*HttpURLConnection con = (HttpURLConnection) new URL("contact/info").openConnection();
-			con.setConnectTimeout(30000);*/
-			System.out.println("Exception");
+			    System.out.println(ex.getMessage());
 				String cursorValue = cursor;
 				System.out.println(cursorValue);
-				saveAllContacts(accesstoken, limit, cursorValue);
+				saveAllContacts(lastModified, accesstoken, limit, cursorValue);
 				return true;
 
 		}

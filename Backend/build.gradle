@@ -31,6 +31,10 @@ appengine {
     }
 
     deploy {
+        version = 1
+        project = "full-learn"
+        stopPreviousVersion = false
+        promote = false
 //        stopPreviousVersion = true
 //        promote = true
         version = 2
@@ -38,6 +42,9 @@ appengine {
     }
 }
 
+appengineDeploy.dependsOn appengineDeployQueue
+appengineDeploy.dependsOn appengineDeployCron
+appengineDeploy.dependsOn appengineDeployIndex
 
 task reloadApp(type: Copy) {
     dependsOn war
