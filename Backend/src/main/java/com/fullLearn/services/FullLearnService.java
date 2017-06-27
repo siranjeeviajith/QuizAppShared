@@ -116,7 +116,7 @@ public class FullLearnService {
 
                 System.out.println("user : "+contact.getLogin()+" => "+ dataMap);
 
-                LearningStats dailyEntity = MapUserDataAfterFetch(dataMap, contact.getLogin(),contact.getId(), startDate, endDate);
+                LearningStats dailyEntity = MapUserDataAfterFetch(dataMap, contact.getLogin(),contact.getId(), startDate, endDate, Frequency.DAY);
                 //  save daily entity to datastore
                 saveUserStats(dailyEntity);
                 break;
@@ -468,14 +468,14 @@ public class FullLearnService {
 
 
             // Add the task to the default queue.
-            Queue queue = QueueFactory.getDefaultQueue();
+            Queue queue = QueueFactory.getQueue("StatsFetchingQueue");
             queue.add(TaskOptions.Builder.withUrl("/api/fetch/user/stats").param("email", contact.getLogin()).param("userId", contact.getId()));
 
 
         }
     }
 
-    public static LearningStats MapUserDataAfterFetch(Map<String, Object> dataMap, String email, String userId, long startDate, long endDate) {
+    public static LearningStats MapUserDataAfterFetch(Map<String, Object> dataMap, String email, String userId, long startDate, long endDate, Frequency frequency) {
 
 
         ObjectMapper objectmapper = new ObjectMapper();
@@ -486,11 +486,9 @@ public class FullLearnService {
         if ((boolean) dataMap.get("response") && dataMap.get("status").equals("Success")) {
 
 
-            // 1. unique id
-            UUID uuid = UUID.randomUUID();
-            String id = uuid.toString();
-            //System.out.println("id = " + id);
-            twelveWeeksEntity.setId(id);
+          // set id
+
+            twelveWeeksEntity.setId(userId+":"+startDate+":"+endDate);
             //System.out.println("id :" + twelveWeeksEntity.getId());
             //  2. userid
 
@@ -505,7 +503,7 @@ public class FullLearnService {
             twelveWeeksEntity.setEndTime(endDate);
 
             //  5. frequency for daily entrys
-            twelveWeeksEntity.setFrequency(Frequency.WEEK);
+            twelveWeeksEntity.setFrequency(frequency);
             // System.out.println("freq :" + twelveWeeksEntity.getFrequency());
 
             //9. email
