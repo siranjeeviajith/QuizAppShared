@@ -83,28 +83,25 @@ public class ContactServices {
 		String baseUrl = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit="+limit;
 		ArrayList<Contacts> userData;
 		String cursor = null;
-		String url = null;
 
 		try {
 			if(lastModified != null)
 			{
 				System.out.println("Last Modified : "+lastModified);
-				url = baseUrl+"&since="+lastModified;
+				baseUrl = baseUrl+"&since="+lastModified;
 			}
-			else if (cursorStr == null || cursorStr.equals("")) {
+			if (cursorStr != null) {
 
-				url = baseUrl;
+				baseUrl = baseUrl+"&cursor="+cursorStr;
 
-			} else {
-				url = baseUrl+"&cursor="+cursorStr;
 			}
 
 
-			System.out.println("url : "+url);
+			System.out.println("url : "+baseUrl);
 			String methodType = "GET";
 			String contentType = "application/json";
 
-			Map<String, String> datas = listOfDatas.request(accesstoken, url, methodType, contentType, cursorStr);
+			Map<String, String> datas = listOfDatas.request(accesstoken, baseUrl, methodType, contentType, cursorStr);
 
 			cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {});
 			userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
