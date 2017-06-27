@@ -1,6 +1,7 @@
 package com.fullLearn.servlets;
 
 import com.fullLearn.beans.Contacts;
+import com.fullLearn.beans.Frequency;
 import com.fullLearn.beans.LearningStats;
 import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.helpers.Constants;
@@ -134,7 +135,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
             Map<String, Object> dataMap = HTTP.request(url, methodType, contentType);
 
-            LearningStats TwelveWeekEntity = MapUserDataAfterFetch(dataMap, email, userId, startTim, endTim);
+            LearningStats TwelveWeekEntity = MapUserDataAfterFetch(dataMap, email, userId, startTim, endTim, Frequency.WEEK);
 
 
             // save daily entity to datastore
