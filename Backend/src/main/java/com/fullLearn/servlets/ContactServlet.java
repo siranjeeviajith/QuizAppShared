@@ -14,18 +14,12 @@ public class ContactServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 			resp.setContentType("application/json");
-		/*PrintWriter out = resp.getWriter();*/
 
 			ContactServices fc = new ContactServices();
 
 			// Access Token
 			String accessToken = fc.getAccessToken();
 
-
-
-
-
-			boolean contacts;
 
 			int limit = 30;
 

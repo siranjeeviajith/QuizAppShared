@@ -13,9 +13,9 @@ import com.googlecode.objectify.cmd.Query;
 
 public class ContactServices {
 
-	static {
+	/*static {
 		ObjectifyService.register(Contacts.class);
-	}
+	}*/
 
 
 	// helpers

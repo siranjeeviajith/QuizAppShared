@@ -42,6 +42,8 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
         String email=req.getParameter("email");
         String userId=req.getParameter("userId");
 
+        System.out.println("Fetching for user : "+email+" => "+userId);
+
         PrintWriter out=resp.getWriter();
 //        System.out.println("email "+email);
 //        System.out.println("userId "+userId);
@@ -120,7 +122,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             Date endTime=cal4.getTime();
             long endTim=endTime.getTime();
 
-
+            System.out.println("st : "+startTim+", ed: "+endTim);
 
             String url = "";
             String methodType = "";
