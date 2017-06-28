@@ -6,6 +6,7 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
 
+
     <servlet>
         <servlet-name>ContactServlet</servlet-name>
         <servlet-class>com.fullLearn.servlets.ContactServlet</servlet-class>
@@ -95,10 +96,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 
 
-
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
+    <listener>
+        <listener-class>
+            com.fullLearn.helpers.ObjectifyRegistrationListener
+        </listener-class>
+    </listener>
 
     <filter>
         <filter-name>ObjectifyFilter</filter-name>
