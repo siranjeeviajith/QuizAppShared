@@ -25,15 +25,6 @@ import static com.fullLearn.services.FullLearnService.*;
 public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
 
-    static {
-        ObjectifyService.register(Contacts.class);
-
-        ObjectifyService.register(LearningStats.class);
-        ObjectifyService.register(LearningStatsAverage.class);
-    }
-
-
-
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
