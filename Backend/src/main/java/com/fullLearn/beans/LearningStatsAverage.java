@@ -1,16 +1,15 @@
 package com.fullLearn.beans;
 
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Index;
+import com.googlecode.objectify.annotation.*;
 
 @Entity
 public class LearningStatsAverage {
 
     @Id
     @Index private String userId;
-    @Index private int fourWeekAvg;
-    @Index private int twelveWeekAvg;
+    @Index
+    @AlsoLoad("fourthWeek")private int fourWeekAvg;
+    @Index @AlsoLoad("twelfthWeek") private int twelveWeekAvg;
     @Index private String email;
 
     public String getUserId() {
