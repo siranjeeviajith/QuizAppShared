@@ -6,7 +6,7 @@ import com.googlecode.objectify.annotation.*;
 
 
 @Entity
-@Cache
+@Cache(expirationSeconds=86400)
 public class LearningStats {
 
 

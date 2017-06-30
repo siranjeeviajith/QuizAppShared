@@ -6,7 +6,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 @Entity
-@Cache
+@Cache(expirationSeconds=86400)
 public class LearningStatsAverage {
 
     @Id
