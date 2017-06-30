@@ -3,6 +3,7 @@ package com.fullLearn.beans;
 import com.googlecode.objectify.annotation.*;
 
 @Entity
+@Cache(expirationSeconds=86400)
 public class Contacts {
 	
 	@Id private String id;

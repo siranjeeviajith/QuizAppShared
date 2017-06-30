@@ -2,19 +2,17 @@ package com.fullLearn.beans;
 
 import java.util.Map;
 
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Ignore;
-import com.googlecode.objectify.annotation.Index;
+import com.googlecode.objectify.annotation.*;
 
 
 @Entity
+@Cache(expirationSeconds=86400)
 public class LearningStats {
 
 
 	@Id
 	@Index
-	private String id;
+	 private String id;
 
 	@Index
 	private String userId;
@@ -35,7 +33,6 @@ public class LearningStats {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
 @Index
 	private String email;
 
