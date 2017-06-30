@@ -361,12 +361,8 @@ public class FullLearnService {
 
 
         List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", userId).filter("startTime >=", startDate).filter("startTime <", endDate).filter("frequency ==", Frequency.WEEK).order("startTime").list();
-
         System.out.println("size of no of weeks " + StateUser.size());
 
-        if (StateUser.size() < 12)
-            calculateAverage(userId, email);
-        else {
             Iterator WeekAverageIterator = StateUser.iterator();
             int weekCount = 1;
 
@@ -411,7 +407,6 @@ public class FullLearnService {
 
             /////   save entity to datastore
             saveUserStats(averageEntity);
-        }
 
     }
     private static LearningStatsAverage mapUserDataAverage(int fourWeekAverage, int twelfthWeekAverage, String userId, String email) {
@@ -419,9 +414,9 @@ public class FullLearnService {
 
         LearningStatsAverage averageEntity = new LearningStatsAverage();
 
-        averageEntity.setUserid(userId);
-        averageEntity.setFourthWeek(fourWeekAverage);
-        averageEntity.setTwelfthWeek(twelfthWeekAverage);
+        averageEntity.setUserId(userId);
+        averageEntity.setFourWeekAvg(fourWeekAverage);
+        averageEntity.setTwelveWeekAvg(twelfthWeekAverage);
         averageEntity.setEmail(email);
         return averageEntity;
     }
@@ -652,9 +647,9 @@ public class FullLearnService {
 
         LearningStatsAverage averageEntity = new LearningStatsAverage();
 
-        averageEntity.setUserid(contact.getId());
-        averageEntity.setFourthWeek(fourWeekAverage);
-        averageEntity.setTwelfthWeek(twelfthWeekAverage);
+        averageEntity.setUserId(contact.getId());
+        averageEntity.setFourWeekAvg(fourWeekAverage);
+        averageEntity.setTwelveWeekAvg(twelfthWeekAverage);
         averageEntity.setEmail(contact.getLogin());
         return averageEntity;
     }

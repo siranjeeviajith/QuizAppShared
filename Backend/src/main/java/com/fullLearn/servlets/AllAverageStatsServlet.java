@@ -1,6 +1,7 @@
 package com.fullLearn.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.helpers.UserStatsHelper;
 import com.fullLearn.services.*;
 
@@ -9,8 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class AllAverageStatsServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -19,6 +19,7 @@ public class AllAverageStatsServlet extends HttpServlet {
         //helpers
         UserStatsHelper us = new UserStatsHelper();
         ObjectMapper obj = new ObjectMapper();
+        Map<String,Object> userDatas = null;
         try {
             String query = req.getQueryString();
             String type = null;
@@ -31,8 +32,8 @@ public class AllAverageStatsServlet extends HttpServlet {
                     limit = 20;
                 }
 
-                if (query.contains("type")) {
-                    type = req.getParameter("type");
+                if (query.contains("sortType")) {
+                    type = req.getParameter("sortType");
                 } else {
                     type = "4";
                 }
@@ -52,15 +53,29 @@ public class AllAverageStatsServlet extends HttpServlet {
 
 
             AllAverageStatsServices las = new AllAverageStatsServices();
-            Map<String, Object> userStats = las.getLearningStats(type, order, limit);
-            out.println(obj.writeValueAsString(userStats));
+            List<LearningStatsAverage> userStats = las.getLearningStats(type, order, limit);
+
+            if(userStats.size() != 0  && userStats != null)
+            {
+                Map<String,Object> userDetails = new HashMap<String,Object>();
+                userDetails.put("datas",userStats);
+                userDatas = us.getResponse(userDetails);
+                out.println(obj.writeValueAsString(userDatas));
+            }
+
+            else
+            {
+                Map<String,Object> userData = new HashMap<>();
+                userDatas = us.getResponse(userData);
+                out.println(obj.writeValueAsString(userDatas));
+
+            }
         }
         catch(Exception ex)
         {
             Map<String,Object> msg  = new HashMap<>();
-
-            Map<String,Object> userStats = us.getResponse(msg);
-            out.println(obj.writeValueAsString(userStats));
+            userDatas = us.getResponse(msg);
+            out.println(obj.writeValueAsString(userDatas));
         }
 
     }

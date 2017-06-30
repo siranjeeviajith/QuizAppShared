@@ -1,5 +1,6 @@
 package com.fullLearn.beans;
 
+import com.googlecode.objectify.annotation.*;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -10,36 +11,35 @@ import com.googlecode.objectify.annotation.Index;
 public class LearningStatsAverage {
 
     @Id
+    @Index private String userId;
     @Index
-    private String userId;
-    @Index private int fourthWeek;
-    @Index private int twelfthWeek;
+    @AlsoLoad("fourthWeek")private int fourWeekAvg;
+    @Index @AlsoLoad("twelfthWeek") private int twelveWeekAvg;
+    @Index private String email;
 
-    public String getUserid() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserid(String userid) {
-        this.userId = userid;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getFourthWeek() {
-        return fourthWeek;
+    public int getFourWeekAvg() {
+        return fourWeekAvg;
     }
 
-    public void setFourthWeek(int fourthWeek) {
-        this.fourthWeek = fourthWeek;
+    public void setFourWeekAvg(int fourWeekAvg) {
+        this.fourWeekAvg = fourWeekAvg;
     }
 
-    public int getTwelfthWeek() {
-        return twelfthWeek;
+    public int getTwelveWeekAvg() {
+        return twelveWeekAvg;
     }
 
-    public void setTwelfthWeek(int twelfthWeek) {
-        this.twelfthWeek = twelfthWeek;
+    public void setTwelveWeekAvg(int twelveWeekAvg) {
+        this.twelveWeekAvg = twelveWeekAvg;
     }
-
-
 
     public String getEmail() {
         return email;
@@ -49,7 +49,7 @@ public class LearningStatsAverage {
         this.email = email;
     }
 
-    @Index private String email;
+
 
 
 

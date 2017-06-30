@@ -17,15 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class DailyUserStatsServlet extends HttpServlet {
 
-    static {
-        ObjectifyService.register(Contacts.class);
-
-        ObjectifyService.register(LearningStats.class);
-        ObjectifyService.register(LearningStatsAverage.class);
-    }
-
-
-
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/plain");
