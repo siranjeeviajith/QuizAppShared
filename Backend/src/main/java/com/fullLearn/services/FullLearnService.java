@@ -485,6 +485,7 @@ public class FullLearnService {
 
 
         LearningStats twelveWeeksEntity = new LearningStats();
+
         if ((boolean) dataMap.get("response") && dataMap.get("status").equals("Success")) {
 
 
@@ -574,7 +575,7 @@ public class FullLearnService {
     private static void calculateAverageWeek(QueryResultIterator<Contacts> iterator) {
 
 
-        int day = 7 * 12;
+        int day = (7 * 12);
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -day);
 
