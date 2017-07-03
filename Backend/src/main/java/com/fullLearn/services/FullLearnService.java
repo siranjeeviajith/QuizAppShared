@@ -1,7 +1,6 @@
 package com.fullLearn.services;
 
 
-import com.fullLearn.helpers.Constants;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.taskqueue.Queue;
@@ -14,6 +13,7 @@ import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.Frequency;
 import com.fullLearn.beans.LearningStats;
 import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
 import com.googlecode.objectify.cmd.Query;
 
@@ -101,7 +101,7 @@ public class FullLearnService {
                 // email will be dynamic for contacts pojo
                 ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
-                url = Constants.AU_API_URL+"/v1/completedMinutes?apiKey="+Constants.AU_APIKEY+"&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
+                url = Constants.AU_API_URL + "/v1/completedMinutes?apiKey=" + Constants.AU_APIKEY + "&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
 
                 methodType = "POST";
                 contentType = "application/json";
@@ -114,9 +114,9 @@ public class FullLearnService {
                     continue;
                 }
 
-                System.out.println("user : "+contact.getLogin()+" => "+ dataMap);
+                System.out.println("user : " + contact.getLogin() + " => " + dataMap);
 
-                LearningStats dailyEntity = MapUserDataAfterFetch(dataMap, contact.getLogin(),contact.getId(), startDate, endDate, Frequency.DAY);
+                LearningStats dailyEntity = MapUserDataAfterFetch(dataMap, contact.getLogin(), contact.getId(), startDate, endDate, Frequency.DAY);
                 //  save daily entity to datastore
                 saveUserStats(dailyEntity);
                 break;
@@ -180,9 +180,6 @@ public class FullLearnService {
 
             usercount = usercount + contactList.size();
 
-            System.out.println("userscount: " + usercount);
-            System.out.println("size :" + contactList.size());
-
             if (contactList.size() < 1) {
                 return true;
             }
@@ -206,7 +203,7 @@ public class FullLearnService {
             List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <", endDate).list();
 
 
-          Iterator weeklyStatsIterator = weeklyStateUser.iterator();
+            Iterator weeklyStatsIterator = weeklyStateUser.iterator();
             int minutesAggregation = 0;
             int challengeCompletedAggregation = 0;
             int day = 1;
@@ -362,52 +359,53 @@ public class FullLearnService {
         List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", userId).filter("startTime >=", startDate).filter("startTime <", endDate).filter("frequency ==", Frequency.WEEK).order("startTime").list();
         System.out.println("size of no of weeks " + StateUser.size());
 
-            Iterator WeekAverageIterator = StateUser.iterator();
-            int weekCount = 1;
+        Iterator WeekAverageIterator = StateUser.iterator();
+        int weekCount = 1;
 
-            int fourWeekAverage = 0;
-            int twelfthWeekAverage = 0;
-            while (WeekAverageIterator.hasNext()) {
-                LearningStats userStats = (LearningStats) WeekAverageIterator.next();
+        int fourWeekAverage = 0;
+        int twelfthWeekAverage = 0;
+        while (WeekAverageIterator.hasNext()) {
+            LearningStats userStats = (LearningStats) WeekAverageIterator.next();
 
-                if (weekCount <= 8)
-                    twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
+            if (weekCount <= 8)
+                twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
 
-                else {
-                    twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
-                    fourWeekAverage = fourWeekAverage + userStats.getMinutes();
-
-                }
-                if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com"))
-                    System.out.println("minutes for week " + weekCount + " is " + userStats.getMinutes() + " email " + email + "in Time is " + userStats.getStartTime() + " - " + userStats.getEndTime());
-                weekCount++;
-
+            else {
+                twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
+                fourWeekAverage = fourWeekAverage + userStats.getMinutes();
 
             }
-
-            float fourWeekFloat = (float) fourWeekAverage / 4;
-            float twelfthWeekFloat = (float) twelfthWeekAverage / 12;
-
-            if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com")) {
-                System.out.println("float values " + fourWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
-                System.out.println("float values " + twelfthWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
-            }
-
-            fourWeekAverage = (int) Math.round(fourWeekFloat);
-            twelfthWeekAverage = (int) Math.round(twelfthWeekFloat);
-            if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com")) {
-                System.out.println("total for 4 weeks " + fourWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
-                System.out.println("total for 12 weeks " + twelfthWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
-            }
-
-            System.out.println("Twelve weeks timestamps is startime : "+startDate+" and endTime is : "+endDate);
-            LearningStatsAverage averageEntity = mapUserDataAverage(fourWeekAverage, twelfthWeekAverage, userId, email);
+            if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com"))
+                System.out.println("minutes for week " + weekCount + " is " + userStats.getMinutes() + " email " + email + "in Time is " + userStats.getStartTime() + " - " + userStats.getEndTime());
+            weekCount++;
 
 
-            /////   save entity to datastore
-            saveUserStats(averageEntity);
+        }
+
+        float fourWeekFloat = (float) fourWeekAverage / 4;
+        float twelfthWeekFloat = (float) twelfthWeekAverage / 12;
+
+        if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com")) {
+            System.out.println("float values " + fourWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
+            System.out.println("float values " + twelfthWeekFloat + " email " + email + "in Time is " + startDate + " - " + endDate);
+        }
+
+        fourWeekAverage = (int) Math.round(fourWeekFloat);
+        twelfthWeekAverage = (int) Math.round(twelfthWeekFloat);
+        if (email.equals("ramesh.lingappa@a-cti.com") || email.equals("shaikanjavali.mastan@a-cti.com") || email.equals("naresh.talluri@a-cti.com")) {
+            System.out.println("total for 4 weeks " + fourWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
+            System.out.println("total for 12 weeks " + twelfthWeekAverage + " email " + email + "in Time is " + startDate + " - " + endDate);
+        }
+
+        System.out.println("Twelve weeks timestamps is startime : " + startDate + " and endTime is : " + endDate);
+        LearningStatsAverage averageEntity = mapUserDataAverage(fourWeekAverage, twelfthWeekAverage, userId, email);
+
+
+        /////   save entity to datastore
+        saveUserStats(averageEntity);
 
     }
+
     private static LearningStatsAverage mapUserDataAverage(int fourWeekAverage, int twelfthWeekAverage, String userId, String email) {
 
 
@@ -477,15 +475,14 @@ public class FullLearnService {
         ObjectMapper objectmapper = new ObjectMapper();
 
 
-
         LearningStats twelveWeeksEntity = new LearningStats();
 
         if ((boolean) dataMap.get("response") && dataMap.get("status").equals("Success")) {
 
 
-          // set id
+            // set id
 
-            twelveWeeksEntity.setId(userId+":"+startDate+":"+endDate);
+            twelveWeeksEntity.setId(userId + ":" + startDate + ":" + endDate);
             //System.out.println("id :" + twelveWeeksEntity.getId());
             //  2. userid
 
@@ -538,7 +535,6 @@ public class FullLearnService {
         do {
 
             Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(30);
-
 
             if (cursorStr != null)
                 contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursorStr));
@@ -615,7 +611,7 @@ public class FullLearnService {
                     twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
                     fourWeekAverage = fourWeekAverage + userStats.getMinutes();
                 }
-                    System.out.println("minutes for week " + weekCount + " is " + userStats.getMinutes() + " email " + contact.getLogin() + "in Time is " + userStats.getStartTime() + " - " + userStats.getEndTime());
+                System.out.println("minutes for week " + weekCount + " is " + userStats.getMinutes() + " email " + contact.getLogin() + "in Time is " + userStats.getStartTime() + " - " + userStats.getEndTime());
                 weekCount++;
 
 

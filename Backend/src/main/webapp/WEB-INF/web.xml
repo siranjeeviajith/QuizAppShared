@@ -6,6 +6,28 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
 
+    <!-- Objectify Filter -->
+    <filter>
+        <filter-name>ObjectifyFilter</filter-name>
+        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ObjectifyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Cron Services -->
+    <servlet>
+        <servlet-name>FullLearnProject</servlet-name>
+        <servlet-class>com.fullLearn.servlets.DailyUserStatsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FullLearnProject</servlet-name>
+        <url-pattern>/sync/stats/daily</url-pattern>
+    </servlet-mapping>
+
+    <!-- Cron services end -->
+
 
     <servlet>
         <servlet-name>ContactServlet</servlet-name>
@@ -76,15 +98,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>api/report/fetch/stats/twelveweeks</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>FullLearnProject</servlet-name>
-        <servlet-class>com.fullLearn.servlets.DailyUserStatsServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FullLearnProject</servlet-name>
-        <url-pattern>/sync/stats/daily</url-pattern>
-    </servlet-mapping>
-
 
     <servlet>
         <servlet-name>FullLearnProjectTaskQuequeServlet</servlet-name>
@@ -105,14 +118,5 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
             com.fullLearn.helpers.ObjectifyRegistrationListener
         </listener-class>
     </listener>
-
-    <filter>
-        <filter-name>ObjectifyFilter</filter-name>
-        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>ObjectifyFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 
 </web-app>
