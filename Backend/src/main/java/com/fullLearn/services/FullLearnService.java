@@ -622,24 +622,6 @@ public class FullLearnService {
             }
 
 
-            /*Iterator WeekAverageIterator = StateUser.iterator();
-            int weekCount = StateUser.size();
-            int fourWeekAverage = 0;
-            int twelfthWeekAverage = 0;
-            while (WeekAverageIterator.hasNext()) {
-                LearningStats userStats = (LearningStats) WeekAverageIterator.next();
-
-                if (weekCount > 4)
-                    twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
-
-                else {
-                    twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
-                    fourWeekAverage = fourWeekAverage + userStats.getMinutes();
-                }
-
-                System.out.println("week is" + weekCount + " and minutes is " + userStats.getMinutes() + "for email " + contact.getLogin() + "Time in " + userStats.getStartTime() + " " + userStats.getEndTime());
-                weekCount--;
-            }*/
 
 
             float fourWeekFloat = (float) fourWeekAverage / 4;
