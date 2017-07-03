@@ -6,6 +6,10 @@ apply from: 'gradle/dependencies.gradle'
 allprojects {
     group 'com.fulllearn'
     version '1.0'
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '3.5'
+    }
 }
 
 subprojects {
