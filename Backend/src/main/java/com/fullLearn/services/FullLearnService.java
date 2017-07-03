@@ -168,8 +168,7 @@ public class FullLearnService {
         //MailDispatcher.sendEmail();
         String cursorStr = null;
         do {
-            List<LearningStats> lea = ofy().load().type(LearningStats.class).list();
-            System.out.println("size of learning stats is " + lea.size());
+
             Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(30);
 
             if (cursorStr != null)
@@ -204,7 +203,7 @@ public class FullLearnService {
 
             Contacts contact = iterator.next();
 
-            List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).list();
+            List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <", endDate).list();
 
 
           Iterator weeklyStatsIterator = weeklyStateUser.iterator();
@@ -599,9 +598,31 @@ public class FullLearnService {
 
             Contacts contact = iterator.next();
 
-            List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).filter("frequency ==", Frequency.WEEK).order("startTime").list();
+            List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <", endDate).filter("frequency ==", Frequency.WEEK).order("startTime").list();
 
             Iterator WeekAverageIterator = StateUser.iterator();
+            int weekCount = 1;
+
+            int fourWeekAverage = 0;
+            int twelfthWeekAverage = 0;
+            while (WeekAverageIterator.hasNext()) {
+                LearningStats userStats = (LearningStats) WeekAverageIterator.next();
+
+                if (weekCount <= 8)
+                    twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
+
+                else {
+                    twelfthWeekAverage = twelfthWeekAverage + userStats.getMinutes();
+                    fourWeekAverage = fourWeekAverage + userStats.getMinutes();
+                }
+                    System.out.println("minutes for week " + weekCount + " is " + userStats.getMinutes() + " email " + contact.getLogin() + "in Time is " + userStats.getStartTime() + " - " + userStats.getEndTime());
+                weekCount++;
+
+
+            }
+
+
+            /*Iterator WeekAverageIterator = StateUser.iterator();
             int weekCount = StateUser.size();
             int fourWeekAverage = 0;
             int twelfthWeekAverage = 0;
@@ -618,13 +639,13 @@ public class FullLearnService {
 
                 System.out.println("week is" + weekCount + " and minutes is " + userStats.getMinutes() + "for email " + contact.getLogin() + "Time in " + userStats.getStartTime() + " " + userStats.getEndTime());
                 weekCount--;
-            }
+            }*/
 
 
             float fourWeekFloat = (float) fourWeekAverage / 4;
             float twelfthWeekFloat = (float) twelfthWeekAverage / 12;
-            System.out.println("week is" + weekCount + " and float minutes is for four weeks " + fourWeekFloat + "for email " + contact.getLogin() + "Time in " + startDate + " " + endDate);
-            System.out.println("week is" + weekCount + " and float minutes is for twelve weeks " + twelfthWeekFloat + "for email " + contact.getLogin() + "Time in " + startDate + " " + endDate);
+            System.out.println("week is" + weekCount + "  and float minutes is for four weeks " + fourWeekFloat + "for email " + contact.getLogin() + "Time in " + startDate + " " + endDate);
+            System.out.println("week is" + weekCount + "  and float minutes is for twelve weeks " + twelfthWeekFloat + "for email " + contact.getLogin() + "Time in " + startDate + " " + endDate);
 
 
             fourWeekAverage = (int) Math.round(fourWeekFloat);
