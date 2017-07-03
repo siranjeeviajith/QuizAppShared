@@ -38,22 +38,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/cron/sync/contacts</url-pattern>
     </servlet-mapping>
 
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>ContactServlet</web-resource-name>
-            <url-pattern>/cron/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-
-        </user-data-constraint>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-
     <servlet>
         <servlet-name>FullLearnProject</servlet-name>
         <servlet-class>com.fullLearn.servlets.crons.DailyUserStatsCronServlet</servlet-class>
@@ -63,47 +47,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/cron/sync/stats/daily</url-pattern>
     </servlet-mapping>
 
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>FullLearnProject</web-resource-name>
-            <url-pattern>/cron/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-
-        </user-data-constraint>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-
-
     <servlet>
         <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
         <servlet-class>com.fullLearn.servlets.crons.WeeklyReportCronServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
-        <url-pattern>/cron/calculate/week/stats</url-pattern>
+        <url-pattern>/cron/sync/stats/weekly</url-pattern>
     </servlet-mapping>
-
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>FullLearnProjectWeeklyReport</web-resource-name>
-            <url-pattern>/cron/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-
-        </user-data-constraint>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
-
 
     <servlet>
         <servlet-name>FullLearnProjectLearningStatsAverage</servlet-name>
@@ -111,23 +62,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet>
     <servlet-mapping>
         <servlet-name>FullLearnProjectLearningStatsAverage</servlet-name>
-        <url-pattern>/cron/weeks/stats/average</url-pattern>
+        <url-pattern>/cron/user/stats/average</url-pattern>
     </servlet-mapping>
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>FullLearnProjectLearningStatsAverage</web-resource-name>
-            <url-pattern>/cron/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-
-        </user-data-constraint>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
-
     <!-- Cron services end -->
 
 
@@ -188,4 +124,29 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 <!-- Task Queues End-->
 
+
+
+    <!-- Configurations -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>AdminOps</web-resource-name>
+            <url-pattern>/admin/*</url-pattern>
+            <url-pattern>/cron/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SecureAccess</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <url-pattern>*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+<!-- End Configurations -->
 </web-app>

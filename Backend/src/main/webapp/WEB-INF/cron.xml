@@ -16,14 +16,14 @@
     </cron>
 
     <cron>
-        <url>/cron/calculate/week/stats</url>
+        <url>/cron/sync/stats/weekly</url>
         <target>backend</target>
         <description>Weekly User Stats</description>
         <schedule>every monday 00:30</schedule>
     </cron>
 
     <cron>
-        <url>/cron/weeks/stats/average</url>
+        <url>/cron/user/stats/average</url>
         <target>backend</target>
         <description>Weekly Average Calculation</description>
         <schedule>every monday 00:45</schedule>
