@@ -86,7 +86,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet>
     <servlet-mapping>
         <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
-        <url-pattern>/cron/weekly/stats</url-pattern>
+        <url-pattern>/cron/calculate/week/stats</url-pattern>
     </servlet-mapping>
 
 

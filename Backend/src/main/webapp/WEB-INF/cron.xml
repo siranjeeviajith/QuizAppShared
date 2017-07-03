@@ -16,9 +16,9 @@
     </cron>
 
     <cron>
-        <url>/cron/weekly/stats</url>
+        <url>/cron/calculate/week/stats</url>
         <target>backend</target>
-        <description>Weekly Report</description>
+        <description>Weekly User Stats</description>
         <schedule>every monday 00:30</schedule>
     </cron>
 
