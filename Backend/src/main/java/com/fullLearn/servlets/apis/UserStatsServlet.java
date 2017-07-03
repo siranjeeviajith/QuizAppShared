@@ -1,4 +1,4 @@
-package com.fullLearn.servlets;
+package com.fullLearn.servlets.apis;
 
 import javax.servlet.http.*;
 import java.io.*;

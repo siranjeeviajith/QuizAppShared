@@ -164,7 +164,7 @@ public class FullLearnService {
 
         System.out.println("Weekly stats  ");
 
-        int usercount = 0;
+        int userCount = 0;
         //MailDispatcher.sendEmail();
         String cursorStr = null;
         do {
@@ -178,7 +178,7 @@ public class FullLearnService {
 
             List<Contacts> contactList = contactQuery.list();
 
-            usercount = usercount + contactList.size();
+            userCount = userCount + contactList.size();
 
             if (contactList.size() < 1) {
                 return true;

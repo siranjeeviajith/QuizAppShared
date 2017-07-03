@@ -1,4 +1,4 @@
-package com.fullLearn.servlets;
+package com.fullLearn.servlets.taskQueues;
 
 import com.fullLearn.services.ContactServices;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by user on 6/26/2017.
  */
-public class ContactSyncTaskQueue extends HttpServlet {
+public class ContactSyncTaskQueueServlet extends HttpServlet {
 
     ContactServices fc = new ContactServices();
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException

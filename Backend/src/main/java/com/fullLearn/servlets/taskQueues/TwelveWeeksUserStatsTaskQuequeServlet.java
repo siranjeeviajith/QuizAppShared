@@ -1,12 +1,9 @@
-package com.fullLearn.servlets;
+package com.fullLearn.servlets.taskQueues;
 
-import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.Frequency;
 import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
-import com.googlecode.objectify.ObjectifyService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +19,7 @@ import static com.fullLearn.services.FullLearnService.*;
 /**
  * Created by user on 6/21/2017.
  */
-public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
+public class TwelveWeeksUserStatsTaskQuequeServlet extends HttpServlet{
 
 
 

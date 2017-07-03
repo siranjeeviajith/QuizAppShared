@@ -1,4 +1,4 @@
-package com.fullLearn.servlets;
+package com.fullLearn.servlets.crons;
 
 import com.fullLearn.services.FullLearnService;
 
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by user on 6/12/2017.
  */
-public class FullLearnProjectWeeklyReportServlet extends HttpServlet {
+public class WeeklyReportCronServlet extends HttpServlet {
 
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

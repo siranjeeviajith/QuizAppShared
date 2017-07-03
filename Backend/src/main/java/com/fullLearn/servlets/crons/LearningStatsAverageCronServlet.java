@@ -1,10 +1,6 @@
-package com.fullLearn.servlets;
+package com.fullLearn.servlets.crons;
 
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.services.FullLearnService;
-import com.googlecode.objectify.ObjectifyService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +12,7 @@ import java.io.PrintWriter;
  * Created by user on 6/16/2017.
  */
 
-public class FullLearnProjectLearningStatsAverage extends HttpServlet {
+public class LearningStatsAverageCronServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter out = resp.getWriter();
 

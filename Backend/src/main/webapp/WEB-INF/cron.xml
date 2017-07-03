@@ -2,30 +2,30 @@
 <cronentries>
 
     <cron>
-        <url>/fetch/contacts</url>
+        <url>/cron/sync/contacts</url>
         <target>backend</target>
-        <description>Daily Updates</description>
+        <description>Daily Contacts Sync </description>
         <schedule>every day 00:01</schedule>
     </cron>
 
     <cron>
-        <url>/sync/stats/daily</url>
+        <url>/cron/sync/stats/daily</url>
         <target>backend</target>
-        <description>daily user data fetching job</description>
+        <description>Daily User Data Fetching</description>
         <schedule>every day 00:15</schedule>
     </cron>
 
     <cron>
-        <url>/api/report/weekly</url>
+        <url>/cron/weekly/stats</url>
         <target>backend</target>
-        <description>Weekly Report job</description>
+        <description>Weekly Report</description>
         <schedule>every monday 00:30</schedule>
     </cron>
 
     <cron>
-        <url>/api/report/stats/average</url>
+        <url>/cron/weeks/stats/average</url>
         <target>backend</target>
-        <description>Weekly Average calculation job</description>
+        <description>Weekly Average Calculation</description>
         <schedule>every monday 00:45</schedule>
     </cron>
 
