@@ -25,15 +25,6 @@ import static com.fullLearn.services.FullLearnService.*;
 public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
 
-    static {
-        ObjectifyService.register(Contacts.class);
-
-        ObjectifyService.register(LearningStats.class);
-        ObjectifyService.register(LearningStatsAverage.class);
-    }
-
-
-
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -41,6 +32,8 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
 
         String email=req.getParameter("email");
         String userId=req.getParameter("userId");
+
+        System.out.println("Fetching for user : "+email+" => "+userId);
 
         PrintWriter out=resp.getWriter();
 //        System.out.println("email "+email);
@@ -120,7 +113,7 @@ public class FullLearnProjectTaskQuequeServlet extends HttpServlet{
             Date endTime=cal4.getTime();
             long endTim=endTime.getTime();
 
-
+            System.out.println("st : "+startTim+", ed: "+endTim);
 
             String url = "";
             String methodType = "";
