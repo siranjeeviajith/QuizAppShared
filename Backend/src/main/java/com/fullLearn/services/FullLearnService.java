@@ -204,7 +204,7 @@ public class FullLearnService {
 
             Contacts contact = iterator.next();
 
-            List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <=", endDate).list();
+            List<LearningStats> weeklyStateUser = ofy().load().type(LearningStats.class).filter("userId ==", contact.getId()).filter("startTime >=", startDate).filter("startTime <", endDate).list();
 
 
           Iterator weeklyStatsIterator = weeklyStateUser.iterator();
