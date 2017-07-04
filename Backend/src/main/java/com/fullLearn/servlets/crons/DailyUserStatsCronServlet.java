@@ -1,10 +1,6 @@
-package com.fullLearn.servlets;
+package com.fullLearn.servlets.crons;
 
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.services.FullLearnService;
-import com.googlecode.objectify.ObjectifyService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 @SuppressWarnings("serial")
-public class DailyUserStatsServlet extends HttpServlet {
+public class DailyUserStatsCronServlet extends HttpServlet {
 
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

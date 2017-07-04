@@ -1,4 +1,4 @@
-package com.fullLearn.servlets;
+package com.fullLearn.servlets.apis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fullLearn.beans.LearningStatsAverage;

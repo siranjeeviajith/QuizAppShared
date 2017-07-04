@@ -15,7 +15,7 @@ import com.googlecode.objectify.ObjectifyService;
 
 
 @SuppressWarnings("serial")
-public class FullLearnProjectTwelveWeeksStatsServlet extends HttpServlet {
+public class TwelveWeeksUserStatsServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/plain");

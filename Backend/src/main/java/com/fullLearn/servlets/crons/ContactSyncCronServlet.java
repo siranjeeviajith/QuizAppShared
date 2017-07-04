@@ -1,4 +1,4 @@
-package com.fullLearn.servlets;
+package com.fullLearn.servlets.crons;
 
 import java.io.*;
 
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
-public class ContactServlet extends HttpServlet {
+public class ContactSyncCronServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 			resp.setContentType("application/json");
