@@ -4,6 +4,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fullLearn.beans.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -80,6 +82,8 @@ public class ContactServices {
 
 	public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
 		ObjectMapper obj = new ObjectMapper();
+
+		obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		String baseUrl = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit="+limit;
 		ArrayList<Contacts> userData;
 		String cursor = null;
@@ -96,7 +100,7 @@ public class ContactServices {
 
 			}
 
-
+			obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			System.out.println("url : "+baseUrl);
 			String methodType = "GET";
 			String contentType = "application/json";
@@ -104,6 +108,7 @@ public class ContactServices {
 			Map<String, String> datas = listOfDatas.request(accesstoken, baseUrl, methodType, contentType, cursorStr);
 
 			cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {});
+
 			userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
 
 			boolean status = saveContactsHelper.saveContacts(userData);

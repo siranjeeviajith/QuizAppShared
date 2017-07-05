@@ -1,55 +1,23 @@
 package com.fullLearn.beans;
 
 import com.googlecode.objectify.annotation.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 @Entity
 @Cache(expirationSeconds=86400)
+@Data
+
 public class Contacts {
 
 	@Id
-	@Getter
-	@Setter
 	private String id;
-
-	@Getter
-	@Setter
 	private String createdAt;
-
-	@Index
-	@Getter
-	@Setter
-	private Long modifiedAt;
-
-	@Getter
-	@Setter
+	@Index private Long modifiedAt;
 	private String accountId;
-
-	@Index
-	@Getter
-	@Setter
-	private String login;
-
-	@Getter
-	@Setter
+	@Index private String login;
 	private String firstName;
-
-	@Getter
-	@Setter
 	private String lastName;
-
-	@Getter
-	@Setter
 	private String photoId;
-
-	@Index
-	@Getter
-	@Setter
-	private String status;
-
-	@Getter
-	@Setter
+	@Index private String status;
 	private String title;
 
 
