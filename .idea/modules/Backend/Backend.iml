@@ -5,6 +5,11 @@
     <content url="file://$MODULE_DIR$/../../../Backend">
       <excludeFolder url="file://$MODULE_DIR$/../../../Backend/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../Backend/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../Backend/build/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../Backend/build/exploded-Backend" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../Backend/build/libs" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../Backend/build/staged-app" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../Backend/build/tmp" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

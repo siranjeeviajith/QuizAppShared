@@ -1,81 +1,56 @@
 package com.fullLearn.beans;
 
 import com.googlecode.objectify.annotation.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Cache(expirationSeconds=86400)
 public class Contacts {
-	
-	@Id private String id;
+
+	@Id
+	@Getter
+	@Setter
+	private String id;
+
+	@Getter
+	@Setter
 	private String createdAt;
+
 	@Index
+	@Getter
+	@Setter
 	private Long modifiedAt;
+
+	@Getter
+	@Setter
 	private String accountId;
-	@Index private String login;
+
+	@Index
+	@Getter
+	@Setter
+	private String login;
+
+	@Getter
+	@Setter
 	private String firstName;
+
+	@Getter
+	@Setter
 	private String lastName;
+
+	@Getter
+	@Setter
 	private String photoId;
-	@Index private String status;
+
+	@Index
+	@Getter
+	@Setter
+	private String status;
+
+	@Getter
+	@Setter
 	private String title;
 
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getCreatedAt() {
-		return createdAt;
-	}
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
-	}
-	public Long getModifiedAt() {
-		return modifiedAt;
-	}
-	public void setModifiedAt(Long modifiedAt) {
-		this.modifiedAt = modifiedAt;
-	}
-	public String getAccountId() {
-		return accountId;
-	}
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
-	}
-	public String getLogin() {
-		return login;
-	}
-	public void setLogin(String login) {
-		this.login = login;
-	}
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public String getPhotoId() {
-		return photoId;
-	}
-	public void setPhotoId(String photoId) {
-		this.photoId = photoId;
-	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
+
 }
