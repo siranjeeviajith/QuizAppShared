@@ -638,8 +638,6 @@ public class FullLearnService {
             /////   save entity to datastore
             saveUserStats(averageEntity);
         }
-
-
     }
 
     private static LearningStatsAverage mapUserDataAverageWeek(int fourWeekAverage, int twelfthWeekAverage, Contacts contact) {

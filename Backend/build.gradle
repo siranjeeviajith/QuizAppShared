@@ -1,15 +1,15 @@
 //apply from: '../gradle/dependencies.gradle'
 
 apply plugin: 'war'
-apply plugin: 'com.google.cloud.tools.appengine'
-
+apply plugin: 'com.google.cloud.tools.appengine' /// this will include all the task by the appengine like appengineRun, appenigenDeploy
 group 'com.fulllearn.backend'
 version '1.0'
 
 buildscript {
     repositories {
-        jcenter()
-        mavenCentral()
+
+        jcenter()  //A pre-configured repository that looks for dependencies in Bintray’s JCenter.
+        mavenCentral()  //  A pre-configured repository that looks for dependencies in Maven Central.
     }
     dependencies {
         classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'
@@ -23,7 +23,7 @@ dependencies {
 
 appengine {
     run {
-        port = config.gae.port.backend
+        port = config.gae.port.backend // defined in dependencies.gre
         storagePath = file("$projectDir/appengine-generated/")
        // datastorePath = file("$projectDir/appengine-generated/")
         jvmFlags = config.gae.defaultJvmFlags

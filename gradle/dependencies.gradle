@@ -4,10 +4,10 @@ ext {
             [
                     servletApi  : '2.5',
                     junit       : '4.12',
-                    jackson     : '2.8.8',
-                    objectify   : '5.1.17',
-                    slf4jLog4j12: '1.7.25',
-                    lombok      : '1.6.12',
+                    jackson     : '2.9.0.pr4',
+                    objectify   : '5.1.20',
+                    slf4jLog4j12: '1.8.0-alpha2',
+                    lombok      : '1.16.18',
                     gae         : '+'
             ]
 
