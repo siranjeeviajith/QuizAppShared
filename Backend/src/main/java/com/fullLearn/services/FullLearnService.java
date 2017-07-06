@@ -3,6 +3,10 @@ package com.fullLearn.services;
 
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.google.appengine.api.memcache.ErrorHandlers;
+import com.google.appengine.api.memcache.Expiration;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
@@ -24,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -33,12 +38,16 @@ public class FullLearnService {
     public static boolean fetchAllUserStats() throws IOException {
         System.out.println("fetchUserDetails ");
 
+        MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
+        syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
 
         int count = 0;
-        String cursorStr = null;
+
+        String key="dailyStatsCursor";
+        String cursorStr=(String)syncCache.get(key);
         do {
 
-            Query<Contacts> query = ofy().load().type(Contacts.class).limit(30);
+            Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
 
             // String cursorStr = request.getParameter("cursor");
             if (cursorStr != null)
@@ -57,7 +66,7 @@ public class FullLearnService {
 
             fetchUserDailyStats(iterator);
             cursorStr = iterator.getCursor().toWebSafeString();
-
+            syncCache.put(key,cursorStr, Expiration.byDeltaSeconds(300));
 
         } while (cursorStr != null);
 

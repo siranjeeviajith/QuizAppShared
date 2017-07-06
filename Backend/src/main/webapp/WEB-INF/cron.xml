@@ -6,6 +6,7 @@
         <target>backend</target>
         <description>Daily Contacts Sync </description>
         <schedule>every day 00:01</schedule>
+
     </cron>
 
     <cron>
@@ -13,6 +14,14 @@
         <target>backend</target>
         <description>Daily User Data Fetching</description>
         <schedule>every day 00:15</schedule>
+
+        <retry-parameters>
+            <min-backoff-seconds>10</min-backoff-seconds>
+            <max-doublings>5</max-doublings>
+            <job-retry-limit>5</job-retry-limit>
+            <job-age-limit>2d</job-age-limit>
+        </retry-parameters>
+
     </cron>
 
     <cron>
