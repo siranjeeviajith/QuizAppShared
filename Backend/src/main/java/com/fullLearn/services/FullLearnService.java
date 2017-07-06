@@ -42,12 +42,9 @@ public class FullLearnService {
         syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
 
         int count = 0;
-        String cursorStr;
+
         String key="dailyStatsCursor";
-        if(syncCache.get(key)==null)
-        cursorStr=null;
-        else
-            cursorStr=syncCache.get(key).toString();
+        String cursorStr=(String)syncCache.get(key);
         do {
 
             Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
