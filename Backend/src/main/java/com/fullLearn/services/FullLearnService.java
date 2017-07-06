@@ -4,6 +4,7 @@ package com.fullLearn.services;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.ErrorHandlers;
+import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
@@ -39,6 +40,7 @@ public class FullLearnService {
 
         MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
         syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
+
         int count = 0;
         String cursorStr;
         String key="dailyStatsCursor";
@@ -67,7 +69,7 @@ public class FullLearnService {
 
             fetchUserDailyStats(iterator);
             cursorStr = iterator.getCursor().toWebSafeString();
-            syncCache.put(key,cursorStr);
+            syncCache.put(key,cursorStr, Expiration.byDeltaSeconds(300));
 
         } while (cursorStr != null);
 
