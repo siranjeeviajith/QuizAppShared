@@ -1,175 +1,81 @@
 package com.fullLearn.services;
 
 import com.fullLearn.beans.*;
+import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.QueryResultIterator;
+import com.googlecode.objectify.cmd.Query;
+
 import java.util.*;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class AllAverageStatsServices {
 
-    public List<LearningStatsAverage> getLearningStats(String type, String order, int limit, int minAvg, int maxAvg) {
-        List<LearningStatsAverage> userDatas = null;
+    public Map<String, Object> getLearningStats(String type, String order, int limit, String cursorStr)
+    {
+        Map <String, Object> response = null;
 
-        if (type.equals("4")) {
-            if (order.equals("asce")) {
-                if (maxAvg == 0 && minAvg == 0) {
-                    userDatas = ofy().load().type(LearningStatsAverage.class).order("fourWeekAvg").limit(limit).list();
-                } else {
-
-                    userDatas = checkMinMaxAvg(maxAvg, minAvg, type, order, limit);
-
-                }
-            } else {
-                if (maxAvg == 0 && minAvg == 0) {
-                    userDatas = ofy().load().type(LearningStatsAverage.class).order("-fourWeekAvg").limit(limit).list();
-                } else {
-                    userDatas = checkMinMaxAvg(maxAvg, minAvg, type, order, limit);
-                }
+        if(type.equals("4"))
+        {
+            if(order.equals("asce"))
+            {
+                order="fourWeekAvg";
+                 response=getUserDataBylimit(cursorStr,order,limit);
+               }
+            else
+            {
+                order="-fourWeekAvg";
+                response=getUserDataBylimit(cursorStr,order,limit);
             }
 
-            return userDatas;
-        } else if (type.equals("12")) {
-            if (order.equals("asce")) {
-                if (minAvg == 0 && maxAvg == 0) {
-                    userDatas = ofy().load().type(LearningStatsAverage.class).order("twelveWeekAvg").limit(limit).list();
-                } else {
-                    userDatas = checkMinMaxAvg(maxAvg, minAvg, type, order, limit);
+            return response;
+        }
+        else if(type.equals("12"))
+        {
+            if(order.equals("asce"))
+            {
+                order="twelveWeekAvg";
+                response=getUserDataBylimit(cursorStr,order,limit);
                 }
-            } else {
-
-                if (minAvg == 0 && maxAvg == 0) {
-                    userDatas = ofy().load().type(LearningStatsAverage.class).order("-twelveWeekAvg").limit(limit).list();
-                } else {
-                    userDatas = checkMinMaxAvg(maxAvg, minAvg, type, order, limit);
-                }
-            }
-            return userDatas;
+            else
+            {
+                order="-twelveWeekAvg";
+                response=getUserDataBylimit(cursorStr,order,limit); }
+            return response;
         }
 
         return null;
 
     }
 
-    private List<LearningStatsAverage> checkMinMaxAvg(int maxAvg, int minAvg, String type, String order, int limit) {
-        List<LearningStatsAverage> userDatas = null;
+    private Map<String, Object> getUserDataBylimit(String cursorStr, String order, int limit) {
 
 
-        System.out.println("sorttype: "+type);
-        System.out.println("order: "+order);
-        System.out.println("limit :" +limit);
-        System.out.println("max avg: "+maxAvg);
-        System.out.println("min avg :"+ minAvg);
-        if (minAvg > 0 && maxAvg > 0) {
 
 
-            if (type.equals("4")) {
-                if (order.equals("asce")) {
+            Query<LearningStatsAverage> userDataQuery =ofy().load().type(LearningStatsAverage.class).order(order).limit(limit);
 
 
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("fourWeekAvg <", maxAvg).filter("fourWeekAvg >=",minAvg).order("fourWeekAvg").limit(limit).list();
+        if (cursorStr != null)
+                userDataQuery = userDataQuery.startAt(Cursor.fromWebSafeString(cursorStr));
 
+            QueryResultIterator<LearningStatsAverage> iterator = userDataQuery.iterator();
 
-                } else {
+            List<LearningStatsAverage> userDataList = userDataQuery.list();
 
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("fourWeekAvg <", maxAvg).filter("fourWeekAvg >=",minAvg).order("-fourWeekAvg").limit(limit).list();
-                }
-
-                return userDatas;
-
-
-            } else if (type.equals("12")) {
-                if (order.equals("asce")) {
-
-
-                    System.out.println("sortyoe is 12");
-
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("twelveWeekAvg <", maxAvg).filter("twelveWeekAvg >=",minAvg).order("twelveWeekAvg").limit(limit).list();
-
-
-                } else {
-
-                    System.out.println("error areas ");
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("twelveWeekAvg <", maxAvg).filter("twelveWeekAvg >=",minAvg).order("-twelveWeekAvg").limit(limit).list();
-
-                }
-                return userDatas;
+            while(iterator.hasNext())
+            {
+                iterator.next();
             }
 
+            cursorStr = iterator.getCursor().toWebSafeString();
 
-        } else if (maxAvg > 0) {
-
-
-            if (type.equals("4")) {
-                if (order.equals("asce")) {
-
-
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("fourWeekAvg <", maxAvg).order("fourWeekAvg").limit(limit).list();
-
-
-                } else {
-
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("fourWeekAvg <", maxAvg).order("-fourWeekAvg").limit(limit).list();
-                }
-
-                return userDatas;
+            Map<String,Object> response = new HashMap();
+            response.put("data",userDataList);
+            response.put("error", null);
+            response.put("response", true);
+            response.put("cursor",cursorStr);
+                return response;
 
 
-            } else if (type.equals("12")) {
-                if (order.equals("asce")) {
-
-
-                    System.out.println("sortyoe is 12");
-
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("twelveWeekAvg <", maxAvg).order("twelveWeekAvg").limit(limit).list();
-
-
-                } else {
-
-                    System.out.println("error areas ");
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("twelveWeekAvg <", maxAvg).order("-twelveWeekAvg").limit(limit).list();
-
-                }
-                return userDatas;
-            }
-        }
-
-
-         else if (minAvg > 0) {
-
-
-            if (type.equals("4")) {
-                if (order.equals("asce")) {
-
-
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("fourWeekAvg >=", minAvg).order("fourWeekAvg").limit(limit).list();
-
-
-                } else {
-
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("fourWeekAvg >=", minAvg).order("-fourWeekAvg").limit(limit).list();
-                }
-
-                return userDatas;
-
-
-            } else if (type.equals("12")) {
-                if (order.equals("asce")) {
-
-
-
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("twelveWeekAvg >=", minAvg).order("twelveWeekAvg").limit(limit).list();
-
-
-                } else {
-
-
-                    userDatas = ofy().load().type(LearningStatsAverage.class).filter("twelveWeekAvg >=", minAvg).order("-twelveWeekAvg").limit(limit).list();
-
-                }
-                return userDatas;
-            }
-
-        }
-        return userDatas;
     }
 }
-
