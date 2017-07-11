@@ -1,6 +1,7 @@
 package com.fullLearn.services;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -16,122 +17,120 @@ import com.googlecode.objectify.cmd.Query;
 public class ContactServices {
 
 	/*static {
-		ObjectifyService.register(Contacts.class);
+        ObjectifyService.register(Contacts.class);
 	}*/
 
 
-	// helpers
-	HTTPUrl listOfDatas = new HTTPUrl();
-	SaveContactsHelper saveContactsHelper = new SaveContactsHelper();
+    // helpers
+    HTTPUrl listOfDatas = new HTTPUrl();
+    SaveContactsHelper saveContactsHelper = new SaveContactsHelper();
 
 
-	public String getAccessToken() throws IOException {
+    public String getAccessToken() throws IOException {
 
-			URL url = new URL(Constants.FULL_AUTH_URL+"/o/oauth2/v1/token");
-			String params = "refresh_token="+Constants.REFRESH_TOKEN+"&client_id="+Constants.CLIENT_ID+"&client_secret="+Constants.CLIENT_SECRET+"&grant_type=refresh_token";
-		
-
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-		con.setRequestMethod("POST");
-		con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-		con.setDoOutput(true);
-
-		OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-		wr.write(params);
-		wr.flush();
-
-		// Get the response
-		String tokens = new String();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		String line;
-		while ((line = reader.readLine()) != null) {
-			tokens += line;
-		}
-
-		//Output the response
-		System.out.println(tokens);
-
-		// Mapping JSON
-		ObjectMapper obj = new ObjectMapper();
-
-		TokenAccess pojo = obj.readValue(tokens, TokenAccess.class);
-		//System.out.println(pojo.getAccess_token());
-		String accesstoken = pojo.getAccess_token();
-		return accesstoken;
-	}
-
-	public Long getLastModifiedContacts() {
-		try {
-			Query<Contacts> all = ofy().load().type(Contacts.class).order("-modifiedAt").limit(1);
-			List<Contacts> list = all.list();
-
-			if (list.size() != 0) {
-				Long lastModified = list.get(0).getModifiedAt();
-				return lastModified;
-			} else {
-				return null;
-			}
-		} catch (Exception ex) {
-			System.out.println("exception: " + ex);
-			return null;
-		}
-
-	}
+        URL url = new URL(Constants.FULL_AUTH_URL + "/o/oauth2/v1/token");
+        String params = "refresh_token=" + Constants.REFRESH_TOKEN + "&client_id=" + Constants.CLIENT_ID + "&client_secret=" + Constants.CLIENT_SECRET + "&grant_type=refresh_token";
 
 
-	public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
-		ObjectMapper obj = new ObjectMapper();
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-		obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		String baseUrl = Constants.AW_API_URL+"/api/v1/account/SEN42/user?limit="+limit;
-		ArrayList<Contacts> userData;
-		String cursor = null;
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        con.setDoOutput(true);
 
-		try {
-			if(lastModified != null)
-			{
-				System.out.println("Last Modified : "+lastModified);
-				baseUrl = baseUrl+"&since="+lastModified;
-			}
-			if (cursorStr != null) {
+        OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+        wr.write(params);
+        wr.flush();
 
-				baseUrl = baseUrl+"&cursor="+cursorStr;
+        // Get the response
+        String tokens = new String();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            tokens += line;
+        }
 
-			}
+        //Output the response
+        System.out.println(tokens);
 
-			obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			System.out.println("url : "+baseUrl);
-			String methodType = "GET";
-			String contentType = "application/json";
+        // Mapping JSON
+        ObjectMapper obj = new ObjectMapper();
 
-			Map<String, String> datas = listOfDatas.request(accesstoken, baseUrl, methodType, contentType, cursorStr);
+        TokenAccess pojo = obj.readValue(tokens, TokenAccess.class);
+        //System.out.println(pojo.getAccess_token());
+        String accesstoken = pojo.getAccess_token();
+        return accesstoken;
+    }
 
-			cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {});
+    public Long getLastModifiedContacts() {
+        try {
+            Query<Contacts> all = ofy().load().type(Contacts.class).order("-modifiedAt").limit(1);
+            List<Contacts> list = all.list();
 
-			userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {});
+            if (list.size() != 0) {
+                Long lastModified = list.get(0).getModifiedAt();
+                return lastModified;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            System.out.println("exception: " + ex);
+            return null;
+        }
 
-			boolean status = saveContactsHelper.saveContacts(userData);
+    }
 
-			System.out.println("fetched users : "+userData.size());
-			if (userData.size() < limit || userData == null) {
-				return true;
-			}
 
-			saveAllContacts(lastModified, accesstoken, limit, cursor);
-			return true;
-		}
-		catch(Exception ex)
-		{
-			    System.out.println(ex.getMessage());
-				String cursorValue = cursor;
-				System.out.println(cursorValue);
-				saveAllContacts(lastModified, accesstoken, limit, cursorValue);
-				return true;
+    public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
+        ObjectMapper obj = new ObjectMapper();
 
-		}
-	}
+        obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        String baseUrl = Constants.AW_API_URL + "/api/v1/account/SEN42/user?limit=" + limit;
+        ArrayList<Contacts> userData;
+        String cursor = null;
 
+        try {
+            if (lastModified != null) {
+                System.out.println("Last Modified : " + lastModified);
+                baseUrl = baseUrl + "&since=" + lastModified;
+            }
+            if (cursorStr != null) {
+
+                baseUrl = baseUrl + "&cursor=" + cursorStr;
+
+            }
+
+            obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            System.out.println("url : " + baseUrl);
+            String methodType = "GET";
+            String contentType = "application/json";
+
+            Map<String, String> datas = listOfDatas.request(accesstoken, baseUrl, methodType, contentType, cursorStr);
+
+            cursor = obj.readValue(obj.writeValueAsString(datas.get("cursor")), new TypeReference<String>() {
+            });
+
+            userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {
+            });
+
+            boolean status = saveContactsHelper.saveContacts(userData);
+
+            System.out.println("fetched users : " + userData.size());
+            if (userData.size() < limit || userData == null) {
+                return true;
+            }
+
+            saveAllContacts(lastModified, accesstoken, limit, cursor);
+            return true;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            String cursorValue = cursor;
+            System.out.println(cursorValue);
+            saveAllContacts(lastModified, accesstoken, limit, cursorValue);
+            return true;
+
+        }
+    }
 
 
 }

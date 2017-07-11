@@ -25,34 +25,30 @@ public class UserStatsServlet extends HttpServlet {
         //helpers
         UserStatsHelper us = new UserStatsHelper();
         String str = req.getPathInfo();
-        Map<String,Object> userDatas = null;
+        Map<String, Object> userDatas = null;
         try {
             if (str != null) {
 
                 LearningStatsAverage userStats = ws.getWeekStats(str);
 
-                if(userStats != null)
-                {
-                    Map<String,Object> userData = obj.readValue(obj.writeValueAsString(userStats), new TypeReference<Map<String,Object>>(){});
+                if (userStats != null) {
+                    Map<String, Object> userData = obj.readValue(obj.writeValueAsString(userStats), new TypeReference<Map<String, Object>>() {
+                    });
                     userDatas = us.getResponse(userData);
                     out.println(obj.writeValueAsString(userDatas));
-                }
-
-                else
-                {
-                    Map<String,Object> userData = new HashMap<>();
+                } else {
+                    Map<String, Object> userData = new HashMap<>();
                     userDatas = us.getResponse(userData);
                     out.println(obj.writeValueAsString(userDatas));
                 }
 
             } else {
-                Map<String,Object> msg  = new HashMap<>();
+                Map<String, Object> msg = new HashMap<>();
                 userDatas = us.getResponse(msg);
                 out.println(obj.writeValueAsString(userDatas));
             }
-        }catch(Exception ex)
-        {
-            Map<String,Object> msg  = new HashMap<>();
+        } catch (Exception ex) {
+            Map<String, Object> msg = new HashMap<>();
 
             userDatas = us.getResponse(msg);
             out.println(obj.writeValueAsString(userDatas));

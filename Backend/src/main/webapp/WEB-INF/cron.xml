@@ -4,7 +4,7 @@
     <cron>
         <url>/cron/sync/contacts</url>
         <target>backend</target>
-        <description>Daily Contacts Sync </description>
+        <description>Daily Contacts Sync</description>
         <schedule>every day 00:01</schedule>
 
     </cron>

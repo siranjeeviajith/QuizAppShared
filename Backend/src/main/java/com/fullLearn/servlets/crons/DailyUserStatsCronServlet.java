@@ -19,9 +19,7 @@ public class DailyUserStatsCronServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
 
-
         boolean status = FullLearnService.fetchAllUserStats();
-
 
 
         if (status) {
