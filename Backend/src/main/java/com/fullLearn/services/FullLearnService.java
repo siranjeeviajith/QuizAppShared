@@ -36,7 +36,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class FullLearnService {
 
     public static boolean fetchAllUserStats() throws IOException {
-        System.out.println("fetchUserDetails ");
 
         MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
         syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
@@ -69,6 +68,8 @@ public class FullLearnService {
             syncCache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
 
         } while (cursorStr != null);
+
+        syncCache.delete(key);
 
         return true;
     } // end of fetchUserDetails
