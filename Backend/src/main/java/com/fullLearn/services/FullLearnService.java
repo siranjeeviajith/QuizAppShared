@@ -119,7 +119,7 @@ public class FullLearnService {
                     dataMap = HTTP.request(url, methodType, contentType);
                 } catch (Exception e) {
                     i++;
-                    System.out.println("exception handled and i is " + i);
+                    System.out.println(e.getMessage());
                     continue;
                 }
 

@@ -20,11 +20,13 @@ public class AllAverageStatsServlet extends HttpServlet {
         UserStatsHelper us = new UserStatsHelper();
         ObjectMapper obj = new ObjectMapper();
         Map<String,Object> userDatas = null;
-        try {
+       try {
             String query = req.getQueryString();
-            String type = null;
+            int type = 0;
             String order = null;
             int limit = 0;
+            int minAvg=0;
+            int maxAvg=0;
             String cursorStr=null;
             if(query != null) {
                 if (query.contains("limit")) {
@@ -34,9 +36,9 @@ public class AllAverageStatsServlet extends HttpServlet {
                 }
 
                 if (query.contains("sortType")) {
-                    type = req.getParameter("sortType");
+                    type = Integer.parseInt(req.getParameter("sortType"));
                 } else {
-                    type = "4";
+                    type = 4;
                 }
 
                 if (query.contains("order")) {
@@ -52,28 +54,50 @@ public class AllAverageStatsServlet extends HttpServlet {
                 {
                     cursorStr=null;
                 }
+
+                if(query.contains("minAvg"))
+                {
+                    minAvg=Integer.parseInt(req.getParameter("minAvg"));
+                }
+                else
+                {
+                    minAvg=0;
+                }
+
+                if(query.contains("maxAvg"))
+                {
+                    maxAvg=Integer.parseInt(req.getParameter("maxAvg"));
+                }
+                else
+                {
+                    maxAvg=0;
+                }
             }
             else
             {
                 limit = 20;
-                type = "4";
+                type = 4;
                 order = "desc";
                 cursorStr=null;
             }
 
+            UserStatsHelper stateHelper=new UserStatsHelper();
 
             AllAverageStatsServices las = new AllAverageStatsServices();
-            Map<String, Object> userStats = las.getLearningStats(type, order, limit,cursorStr);
+            Map<String, Object> userStats = las.getLearningStats(type, order, limit,cursorStr,minAvg,maxAvg);
+            userStats=stateHelper.getResponse(userStats);
             out.println(new ObjectMapper().writeValueAsString(userStats));
 
 
         }
         catch(Exception ex)
         {
-            Map<String, Object> msg = new HashMap<String, Object>();
+            System.out.println(ex);
+            Map<String, Object> msg = new HashMap();
             msg.put("Msg", " Request Failed or Data not found or Check the URL");
             msg.put("error", " Request Failed");
             msg.put("response", false);
+            out.println(new ObjectMapper().writeValueAsString(msg));
         }
 
     }

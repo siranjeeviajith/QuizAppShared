@@ -10,78 +10,52 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class AllAverageStatsServices {
 
-    public Map<String, Object> getLearningStats(String type, String order, int limit, String cursorStr)
-    {
-
-        Query<LearningStatsAverage> userDataQuery =ofy().load().type(LearningStatsAverage.class);
-        Map <String, Object> response = null;
-
-        if(type.equals("4") && order.equals("asce"))
-        {
-            userDataQuery =ofy().load().type(LearningStatsAverage.class).order("fourWeekAvg").limit(limit);
-
-        }
-        else if(type.equals("4") && order.equals("desc"))
-        {
-            userDataQuery =ofy().load().type(LearningStatsAverage.class).order("-fourWeekAvg").limit(limit);
-        }
-        else if(type.equals("12") && order.equals("asce"))
-        {
-
-            userDataQuery =ofy().load().type(LearningStatsAverage.class).order("twelveWeekAvg").limit(limit);
-        }
-
-        else if(type.equals("12") && order.equals("desc"))
-        {
-            userDataQuery =ofy().load().type(LearningStatsAverage.class).order("-twelveWeekAvg").limit(limit);
-
-        }
-           response= getUserDataBylimit(userDataQuery,cursorStr);
-
-
-        return response;
-
-    }
-
-    private Map<String, Object> getUserDataBylimit(Query<LearningStatsAverage> userDataQuery, String cursorStr) {
+    public Map<String, Object> getLearningStats(int type, String order, int limit, String cursorStr,int minAvg, int maxAvg) {
 
 
 
-        if (cursorStr != null)
+
+        String orderFilter = (type == 4) ? "fourWeekAvg" : "twelveWeekAvg";
+
+
+        Query<LearningStatsAverage> userDataQuery = ofy().load().type(LearningStatsAverage.class).limit(limit);
+        System.out.println("checkpoint 1 "+userDataQuery.list().size());
+        if(cursorStr!=null){
             userDataQuery = userDataQuery.startAt(Cursor.fromWebSafeString(cursorStr));
+        }
+
+        if(minAvg>0){
+          userDataQuery=  userDataQuery.filter(orderFilter+" >=",minAvg);
+            System.out.println("check point 2 "+userDataQuery.list().size());
+        }
+        if(maxAvg>0){
+        userDataQuery= userDataQuery.filter(orderFilter+" <=",maxAvg);
+            System.out.println("check point 3 "+userDataQuery.list().size());
+        }
+
+        if (order.equals("desc"))
+            orderFilter = "-" + orderFilter;
+
+        userDataQuery=userDataQuery.order(orderFilter);
+        System.out.println("check point 4 "+userDataQuery.list().size());
+        List<LearningStatsAverage> userDataList = userDataQuery.list();
 
         QueryResultIterator<LearningStatsAverage> iterator = userDataQuery.iterator();
 
-        List<LearningStatsAverage> userDataList = userDataQuery.list();
-
-        while(iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             iterator.next();
         }
 
         cursorStr = iterator.getCursor().toWebSafeString();
+Map<String,Object> response=new HashMap<String,Object>();
+System.out.println("userstats "+userDataList);
+        response.put("stats", userDataList);
+        response.put("cursor", cursorStr);
 
-        Map<String,Object> response = new HashMap();
-        response.put("data",userDataList);
-        response.put("error", null);
-        response.put("response", true);
-        response.put("cursor",cursorStr);
         return response;
 
     }
 
 
 
-  /*  private Map<String, Object> getUserDataBylimit(String cursorStr, String order, int limit) {
-
-
-
-
-            Query<LearningStatsAverage> userDataQuery =ofy().load().type(LearningStatsAverage.class).order(order).limit(limit);
-
-
-
-
-
-    }*/
 }
