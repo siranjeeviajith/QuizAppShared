@@ -43,7 +43,7 @@ public class AllAverageStatsServices {
         List<LearningStatsAverage> userDataList = Lists.newArrayList(iterator);
         cursorStr = iterator.getCursor().toWebSafeString();
         Map<String, Object> response = new HashMap();
-        System.out.println("userstats " + userDataList);
+        g
         response.put("stats", userDataList);
         response.put("cursor", cursorStr);
 
