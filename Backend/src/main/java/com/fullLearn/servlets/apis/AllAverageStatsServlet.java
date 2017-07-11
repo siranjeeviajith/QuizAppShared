@@ -19,13 +19,16 @@ public class AllAverageStatsServlet extends HttpServlet {
         //helpers
         UserStatsHelper us = new UserStatsHelper();
         ObjectMapper obj = new ObjectMapper();
-        Map<String,Object> userDatas = null;
+        Map<String, Object> userDatas = null;
         try {
             String query = req.getQueryString();
-            String type = null;
+            int type = 0;
             String order = null;
             int limit = 0;
-            if(query != null) {
+            int minAvg = 0;
+            int maxAvg = 0;
+            String cursorStr = null;
+            if (query != null) {
                 if (query.contains("limit")) {
                     limit = Integer.valueOf(req.getParameter("limit"));
                 } else {
@@ -33,9 +36,9 @@ public class AllAverageStatsServlet extends HttpServlet {
                 }
 
                 if (query.contains("sortType")) {
-                    type = req.getParameter("sortType");
+                    type = Integer.parseInt(req.getParameter("sortType"));
                 } else {
-                    type = "4";
+                    type = 4;
                 }
 
                 if (query.contains("order")) {
@@ -43,39 +46,45 @@ public class AllAverageStatsServlet extends HttpServlet {
                 } else {
                     order = "desc";
                 }
-            }
-            else
-            {
+                if (query.contains("cursor")) {
+                    cursorStr = req.getParameter("cursor");
+                } else {
+                    cursorStr = null;
+                }
+
+                if (query.contains("minAvg")) {
+                    minAvg = Integer.parseInt(req.getParameter("minAvg"));
+                } else {
+                    minAvg = 0;
+                }
+
+                if (query.contains("maxAvg")) {
+                    maxAvg = Integer.parseInt(req.getParameter("maxAvg"));
+                } else {
+                    maxAvg = 0;
+                }
+            } else {
                 limit = 20;
-                type = "4";
+                type = 4;
                 order = "desc";
+                cursorStr = null;
             }
 
+            UserStatsHelper stateHelper = new UserStatsHelper();
 
             AllAverageStatsServices las = new AllAverageStatsServices();
-            List<LearningStatsAverage> userStats = las.getLearningStats(type, order, limit);
+            Map<String, Object> userStats = las.getLearningStats(type, order, limit, cursorStr, minAvg, maxAvg);
+            userStats = stateHelper.getResponse(userStats);
+            out.println(new ObjectMapper().writeValueAsString(userStats));
 
-            if(userStats.size() != 0  && userStats != null)
-            {
-                Map<String,Object> userDetails = new HashMap<String,Object>();
-                userDetails.put("datas",userStats);
-                userDatas = us.getResponse(userDetails);
-                out.println(obj.writeValueAsString(userDatas));
-            }
 
-            else
-            {
-                Map<String,Object> userData = new HashMap<>();
-                userDatas = us.getResponse(userData);
-                out.println(obj.writeValueAsString(userDatas));
-
-            }
-        }
-        catch(Exception ex)
-        {
-            Map<String,Object> msg  = new HashMap<>();
-            userDatas = us.getResponse(msg);
-            out.println(obj.writeValueAsString(userDatas));
+        } catch (Exception ex) {
+            System.out.println(ex);
+            Map<String, Object> msg = new HashMap();
+            msg.put("Msg", " Request Failed or Data not found or Check the URL");
+            msg.put("error", " Request Failed");
+            msg.put("response", false);
+            out.println(new ObjectMapper().writeValueAsString(msg));
         }
 
     }

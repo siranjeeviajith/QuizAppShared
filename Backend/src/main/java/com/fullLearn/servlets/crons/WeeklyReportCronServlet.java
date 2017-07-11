@@ -20,7 +20,7 @@ public class WeeklyReportCronServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
         boolean status = FullLearnService.generateWeeklyReport();
 
-        System.out.println("weekly report completed : "+status);
+        System.out.println("weekly report completed : " + status);
     }
 
 }

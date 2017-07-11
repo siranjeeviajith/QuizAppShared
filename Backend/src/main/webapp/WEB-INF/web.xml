@@ -15,7 +15,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <filter-name>ObjectifyFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-<!-- Objectify Filter End -->
+    <!-- Objectify Filter End -->
 
 
     <!-- Context Listener -->
@@ -67,7 +67,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <!-- Cron services end -->
 
 
-   <!-- Apis -->
+    <!-- Apis -->
     <servlet>
         <servlet-name>UserWeekStats</servlet-name>
         <servlet-class>com.fullLearn.servlets.apis.UserStatsServlet</servlet-class>
@@ -91,7 +91,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <!-- Apis End -->
 
 
-<!-- Servlets -->
+    <!-- Servlets -->
     <servlet>
         <servlet-name>FullLearnProjectTwelveWeeksStatsServlet</servlet-name>
         <servlet-class>com.fullLearn.servlets.TwelveWeeksUserStatsServlet</servlet-class>
@@ -100,10 +100,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>FullLearnProjectTwelveWeeksStatsServlet</servlet-name>
         <url-pattern>api/report/fetch/stats/twelveweeks</url-pattern>
     </servlet-mapping>
-<!-- Serlvets End -->
+    <!-- Serlvets End -->
 
 
-<!-- TaskQueues -->
+    <!-- TaskQueues -->
 
     <servlet>
         <servlet-name>ContactSyncTaskQueue</servlet-name>
@@ -122,8 +122,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>FullLearnProjectTaskQuequeServlet</servlet-name>
         <url-pattern>api/fetch/user/stats</url-pattern>
     </servlet-mapping>
-<!-- Task Queues End-->
-
+    <!-- Task Queues End-->
 
 
     <!-- Configurations -->
@@ -148,5 +147,5 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
-<!-- End Configurations -->
+    <!-- End Configurations -->
 </web-app>

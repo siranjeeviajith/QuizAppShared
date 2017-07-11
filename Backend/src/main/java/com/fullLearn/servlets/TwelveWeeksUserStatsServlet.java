@@ -22,7 +22,6 @@ public class TwelveWeeksUserStatsServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
 
-
         boolean status = FullLearnService.fetchAllUserTwelveWeekStats();
 
         //// this is just for displaying
@@ -35,7 +34,7 @@ public class TwelveWeeksUserStatsServlet extends HttpServlet {
         //String status= FullLearnService.create(userActivitiesDetail,"userid -jdfhsjfahskdfd","amandeep.santokh@conversionsupport.com");
 
 	/*out.println(status);
-	*/
+    */
 
     }
 }

@@ -43,8 +43,8 @@ public class FullLearnService {
 
         int count = 0;
 
-        String key="dailyStatsCursor";
-        String cursorStr=(String)syncCache.get(key);
+        String key = "dailyStatsCursor";
+        String cursorStr = (String) syncCache.get(key);
         do {
 
             Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
@@ -66,7 +66,7 @@ public class FullLearnService {
 
             fetchUserDailyStats(iterator);
             cursorStr = iterator.getCursor().toWebSafeString();
-            syncCache.put(key,cursorStr, Expiration.byDeltaSeconds(300));
+            syncCache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
 
         } while (cursorStr != null);
 
@@ -78,8 +78,9 @@ public class FullLearnService {
 
         while (contactList.hasNext()) {
             int i = 1;
+            Contacts contact = (Contacts) contactList.next();
             while (i <= 3) {
-                Contacts contact = (Contacts) contactList.next();
+
 
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.DATE, -1);
@@ -119,7 +120,7 @@ public class FullLearnService {
                     dataMap = HTTP.request(url, methodType, contentType);
                 } catch (Exception e) {
                     i++;
-                    System.out.println("exception handled and i is " + i);
+                    System.out.println(e.getMessage());
                     continue;
                 }
 
@@ -625,8 +626,6 @@ public class FullLearnService {
 
 
             }
-
-
 
 
             float fourWeekFloat = (float) fourWeekAverage / 4;
