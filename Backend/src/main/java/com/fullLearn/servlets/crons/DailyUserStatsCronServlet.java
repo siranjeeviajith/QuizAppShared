@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 @SuppressWarnings("serial")
+@Deprecated
 public class DailyUserStatsCronServlet extends HttpServlet {
 
 

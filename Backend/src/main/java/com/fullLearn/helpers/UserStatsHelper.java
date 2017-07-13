@@ -1,7 +1,7 @@
 package com.fullLearn.helpers;
 
 import java.util.*;
-
+@Deprecated
 public class UserStatsHelper {
     // To display data in JSON format
     public Map<String, Object> getResponse(Map<String, Object> datas) {

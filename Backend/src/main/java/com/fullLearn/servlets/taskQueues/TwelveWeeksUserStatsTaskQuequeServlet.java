@@ -19,6 +19,7 @@ import static com.fullLearn.services.FullLearnService.*;
 /**
  * Created by user on 6/21/2017.
  */
+@Deprecated
 public class TwelveWeeksUserStatsTaskQuequeServlet extends HttpServlet{
 
 

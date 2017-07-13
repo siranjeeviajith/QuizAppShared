@@ -19,6 +19,8 @@ buildscript {
 dependencies {
     providedCompile libs.servletApi
     compile libs.gae
+    compile libs.resteasy
+    compile libs.resteasy_jackson_provider
 }
 
 appengine {
