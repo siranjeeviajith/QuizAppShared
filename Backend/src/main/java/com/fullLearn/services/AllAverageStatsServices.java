@@ -9,7 +9,7 @@ import com.googlecode.objectify.cmd.Query;
 import java.util.*;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
-
+@Deprecated
 public class AllAverageStatsServices {
 
     public Map<String, Object> getLearningStats(int type, String order, int limit, String cursorStr, int minAvg, int maxAvg) {
@@ -41,9 +41,12 @@ public class AllAverageStatsServices {
         QueryResultIterator<LearningStatsAverage> iterator = userDataQuery.iterator();
 
         List<LearningStatsAverage> userDataList = Lists.newArrayList(iterator);
+
         cursorStr = iterator.getCursor().toWebSafeString();
+        if(userDataList.size()<limit)
+            cursorStr=null;
         Map<String, Object> response = new HashMap();
-        g
+
         response.put("stats", userDataList);
         response.put("cursor", cursorStr);
 

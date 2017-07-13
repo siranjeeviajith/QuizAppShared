@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by user on 6/12/2017.
  */
+@Deprecated
 public class WeeklyReportCronServlet extends HttpServlet {
 
 

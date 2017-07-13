@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 /**
  * Created by user on 6/16/2017.
  */
-
+@Deprecated
 public class LearningStatsAverageCronServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter out = resp.getWriter();

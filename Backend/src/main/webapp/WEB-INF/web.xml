@@ -6,125 +6,6 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
 
-    <!-- Objectify Filter -->
-    <filter>
-        <filter-name>ObjectifyFilter</filter-name>
-        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>ObjectifyFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <!-- Objectify Filter End -->
-
-
-    <!-- Context Listener -->
-    <listener>
-        <listener-class>
-            com.fullLearn.helpers.ObjectifyRegistrationListener
-        </listener-class>
-    </listener>
-    <!-- Context Listener End -->
-
-
-    <!-- Cron Services -->
-
-    <servlet>
-        <servlet-name>ContactServlet</servlet-name>
-        <servlet-class>com.fullLearn.servlets.crons.ContactSyncCronServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ContactServlet</servlet-name>
-        <url-pattern>/cron/sync/contacts</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>FullLearnProject</servlet-name>
-        <servlet-class>com.fullLearn.servlets.crons.DailyUserStatsCronServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FullLearnProject</servlet-name>
-        <url-pattern>/cron/sync/stats/daily</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
-        <servlet-class>com.fullLearn.servlets.crons.WeeklyReportCronServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FullLearnProjectWeeklyReport</servlet-name>
-        <url-pattern>/cron/sync/stats/weekly</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>FullLearnProjectLearningStatsAverage</servlet-name>
-        <servlet-class>com.fullLearn.servlets.crons.LearningStatsAverageCronServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FullLearnProjectLearningStatsAverage</servlet-name>
-        <url-pattern>/cron/user/stats/average</url-pattern>
-    </servlet-mapping>
-    <!-- Cron services end -->
-
-
-    <!-- Apis -->
-    <servlet>
-        <servlet-name>UserWeekStats</servlet-name>
-        <servlet-class>com.fullLearn.servlets.apis.UserStatsServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>UserWeekStats</servlet-name>
-        <url-pattern>api/learn/stats/userId/*</url-pattern>
-    </servlet-mapping>
-
-
-    <servlet>
-        <servlet-name>LearningStatsAvg</servlet-name>
-        <servlet-class>com.fullLearn.servlets.apis.AllAverageStatsServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LearningStatsAvg</servlet-name>
-        <url-pattern>api/learn/average/all</url-pattern>
-    </servlet-mapping>
-
-
-    <!-- Apis End -->
-
-
-    <!-- Servlets -->
-    <servlet>
-        <servlet-name>FullLearnProjectTwelveWeeksStatsServlet</servlet-name>
-        <servlet-class>com.fullLearn.servlets.TwelveWeeksUserStatsServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FullLearnProjectTwelveWeeksStatsServlet</servlet-name>
-        <url-pattern>api/report/fetch/stats/twelveweeks</url-pattern>
-    </servlet-mapping>
-    <!-- Serlvets End -->
-
-
-    <!-- TaskQueues -->
-
-    <servlet>
-        <servlet-name>ContactSyncTaskQueue</servlet-name>
-        <servlet-class>com.fullLearn.servlets.taskQueues.ContactSyncTaskQueueServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ContactSyncTaskQueue</servlet-name>
-        <url-pattern>/contact/sync/task/queue</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>FullLearnProjectTaskQuequeServlet</servlet-name>
-        <servlet-class>com.fullLearn.servlets.taskQueues.TwelveWeeksUserStatsTaskQuequeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FullLearnProjectTaskQuequeServlet</servlet-name>
-        <url-pattern>api/fetch/user/stats</url-pattern>
-    </servlet-mapping>
-    <!-- Task Queues End-->
-
-
     <!-- Configurations -->
     <security-constraint>
         <web-resource-collection>
@@ -148,4 +29,52 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         </user-data-constraint>
     </security-constraint>
     <!-- End Configurations -->
+
+    <!-- restEasy configurations -->
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/*</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>RESTEasyService</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.fullLearn.helpers.ApiApplication</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RESTEasyService</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- restEasy configuration end -->
+
+
+
+
+    <!-- Objectify Filter -->
+    <filter>
+        <filter-name>ObjectifyFilter</filter-name>
+        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ObjectifyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- Objectify Filter End -->
+
+
+    <!-- Context Listener -->
+    <listener>
+        <listener-class>
+            com.fullLearn.helpers.ObjectifyRegistrationListener
+        </listener-class>
+    </listener>
+    <!-- Context Listener End -->
+
+
+
+
+
 </web-app>

@@ -10,6 +10,7 @@ import java.io.IOException;
 /**
  * Created by user on 6/26/2017.
  */
+@Deprecated
 public class ContactSyncTaskQueueServlet extends HttpServlet {
 
     ContactServices fc = new ContactServices();

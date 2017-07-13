@@ -49,7 +49,7 @@ public class FullLearnService {
 
             Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
 
-            // String cursorStr = request.getParameter("cursor");
+
             if (cursorStr != null)
                 query = query.startAt(Cursor.fromWebSafeString(cursorStr));
 

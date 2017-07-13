@@ -7,20 +7,22 @@ import com.fullLearn.beans.*;
 
 import java.util.*;
 
+@Deprecated
 public class UserStatsServices {
 
     LearningStatsAverage ws = new LearningStatsAverage();
 
-    public LearningStatsAverage getWeekStats(String str) {
+    public Map<String, Object> getWeekStats(String userId) {
         ObjectMapper obj = new ObjectMapper();
 
-
-        String userId = str.substring(1);
         System.out.println("fetching avg for user: " + userId);
         LearningStatsAverage userDatas = ofy().load().type(LearningStatsAverage.class).id(userId).now();
-        System.out.println(userDatas);
 
-        return userDatas;
+
+        Map<String,Object> response=new HashMap();
+        response.put("stats",userDatas);
+
+        return response;
     }
 
 }
