@@ -1,23 +1,40 @@
 package com.fullLearn.services;
 
 
-import com.fullLearn.beans.*;
-import com.fullLearn.model.ChallengesInfo;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.repackaged.com.google.api.client.util.Lists;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fullLearn.beans.Contacts;
+import com.fullLearn.beans.Frequency;
+import com.fullLearn.beans.LearningStats;
+import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
+import com.fullLearn.model.ChallengesInfo;
 import com.googlecode.objectify.cmd.Query;
 
-import java.util.Map.Entry;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -25,51 +42,55 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class FullLearnService {
 
+    final static MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
+
+    public FullLearnService() {
+        cache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
+    }
 
     public Map<String, ChallengesInfo> challengesCountMap = new HashMap();
 
 
     public boolean fetchAllUserStats() throws IOException {
 
-        MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
-        syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
-
         int count = 0;
 
         String key = "dailyStatsCursor";
-        String cursorStr = (String) syncCache.get(key);
+        String cursorStr = (String) cache.get(key);
         do {
 
             Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
-
-
             if (cursorStr != null)
                 query = query.startAt(Cursor.fromWebSafeString(cursorStr));
 
             QueryResultIterator<Contacts> iterator = query.iterator();
 
-            List<Contacts> contactList = query.list();
-            count = count + contactList.size();
-            System.out.println("usercount : " + count);
-            System.out.println("size :" + contactList.size());
-            FullLearnService fullLearnService = new FullLearnService();
-            if (contactList.size() < 1) {
+            List<Contacts> contactList = Lists.newArrayList(iterator);
 
-                TrendingChallenges latestTrends = fullLearnService.mapTredingChallenges(challengesCountMap);
-                /// saving trends
-                saveUserStats(latestTrends);
-                return true;
+            count = count + contactList.size();
+            System.out.println("total :" + count);
+
+            if (contactList.size() < 1) {
+                break;
             }
 
             fetchUserDailyStats(iterator);
+
             cursorStr = iterator.getCursor().toWebSafeString();
-            syncCache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
+            cache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
 
         } while (cursorStr != null);
 
-        syncCache.delete(key);
+        cache.delete(key);
+
+        // saving trending challenges
+        TrendingChallenges latestTrends = mapTredingChallenges(challengesCountMap);
+
+        // saving trends
+        saveUserStats(latestTrends);
 
         return true;
+
     } // end of fetchUserDetails
 
     public void fetchUserDailyStats(QueryResultIterator contactList) throws IOException {
@@ -139,29 +160,32 @@ public class FullLearnService {
 
     } // end of fetchUserDailyStats method
 
-    private void calculateLearningTrends(Map<String, Integer> challenges_completed) {
+    private void calculateLearningTrends(Map<String, Integer> challenges) {
 
-        if (challenges_completed != null) {
-            for (Entry mapEntry : challenges_completed.entrySet()) {
-                String challengeTitle = (String) mapEntry.getKey();
-                int challengeDuration = (int) mapEntry.getValue();
-                if (challengesCountMap.containsKey(challengeTitle)) {
-                    ChallengesInfo challengeCount = challengesCountMap.get(challengeTitle);
-                    int noOfViews = challengeCount.getViews();
-                    noOfViews++;
-                    challengeCount.setViews(noOfViews);
-                    challengesCountMap.put(challengeTitle, challengeCount);
+        try {
 
-                } else {
-                    ChallengesInfo challengesInfo = new ChallengesInfo();
-                    challengesInfo.setDuration(challengeDuration);
-                    challengesInfo.setViews(1);
-                    challengesCountMap.put(challengeTitle, challengesInfo);
+            if (challenges == null || challenges.isEmpty()) {
+                return;
+            }
+
+            for (Entry mapEntry : challenges.entrySet()) {
+
+                String title = (String) mapEntry.getKey();
+
+                ChallengesInfo info = challengesCountMap.get(title);
+                if (info == null) {
+                    info = new ChallengesInfo();
+                    info.setDuration((int) mapEntry.getValue());
                 }
 
-            }
-        }
+                info.setViews(info.getViews() + 1);
 
+                challengesCountMap.put(title, info);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -676,14 +700,13 @@ public class FullLearnService {
 
         Set<Entry<String, ChallengesInfo>> set = challengeViewCount.entrySet();
         List<Entry<String, ChallengesInfo>> list = new ArrayList(set);
+
         Collections.sort(list, new Comparator<Map.Entry<String, ChallengesInfo>>() {
             public int compare(Map.Entry<String, ChallengesInfo> o1, Map.Entry<String, ChallengesInfo> o2) {
+
                 if (o1.getValue().getViews() > o2.getValue().getViews())
-
-
                     return -1;
                 else if (o1.getValue().getViews() < o2.getValue().getViews())
-
                     return 1;
                 else
                     return 0;
@@ -691,8 +714,10 @@ public class FullLearnService {
         });
 
         System.out.println("all list of trends: " + new ObjectMapper().writeValueAsString(list));
+
         Map<String, ChallengesInfo> mapOfTrends = new LinkedHashMap<>();
         TrendingChallenges latestTrendsDaily = new TrendingChallenges();
+
         int rowCount = 1;
         for (Map.Entry<String, ChallengesInfo> entry : list) {
             String title = entry.getKey();
