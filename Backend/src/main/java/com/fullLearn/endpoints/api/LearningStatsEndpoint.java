@@ -93,8 +93,23 @@ public class LearningStatsEndpoint {
         Map<String, Object> latestTrendsResponse = new HashMap();
         FullLearnService fullLearnService = new FullLearnService();
         List<TrendingChallenges> latestTrends = fullLearnService.getLatestTrends(date);
+        if(latestTrends!=null)
+        {
+            latestTrendsResponse.put("data", latestTrends);
+            latestTrendsResponse.put("error", null);
+            latestTrendsResponse.put("response", true);
+            return Response.status(Response.Status.OK).entity(latestTrendsResponse).build();
+        }
+        else
+        {
+            Map<String, Object> msg = new HashMap();
+            msg.put("msg", " trends not available");
+            msg.put("error", " Request Failed");
+            msg.put("response", false);
+            return Response.status(Response.Status.NOT_FOUND).entity(msg).build();
+        }
 
-        return Response.ok(latestTrends).build();
+
     }
 
 }
