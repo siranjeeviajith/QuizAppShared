@@ -1,33 +1,23 @@
 package com.fullLearn.services;
 
 
+import com.fullLearn.beans.*;
+import com.fullLearn.model.ChallengesInfo;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.Frequency;
-import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
 import com.googlecode.objectify.cmd.Query;
 
+import java.util.Map.Entry;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -35,7 +25,11 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class FullLearnService {
 
-    public static boolean fetchAllUserStats() throws IOException {
+
+    public Map<String, ChallengesInfo> challengesCountMap = new HashMap();
+
+
+    public boolean fetchAllUserStats() throws IOException {
 
         MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
         syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
@@ -58,8 +52,12 @@ public class FullLearnService {
             count = count + contactList.size();
             System.out.println("usercount : " + count);
             System.out.println("size :" + contactList.size());
-
+            FullLearnService fullLearnService = new FullLearnService();
             if (contactList.size() < 1) {
+
+                TrendingChallenges latestTrends = fullLearnService.mapTredingChallenges(challengesCountMap);
+                /// saving trends
+                saveUserStats(latestTrends);
                 return true;
             }
 
@@ -74,7 +72,7 @@ public class FullLearnService {
         return true;
     } // end of fetchUserDetails
 
-    public static void fetchUserDailyStats(QueryResultIterator contactList) throws IOException {
+    public void fetchUserDailyStats(QueryResultIterator contactList) throws IOException {
         //To do for iterating and getting data for each user by Calling HTTP class in helper package
 
         while (contactList.hasNext()) {
@@ -119,25 +117,55 @@ public class FullLearnService {
                 Map<String, Object> dataMap;
                 try {
                     dataMap = HTTP.request(url, methodType, contentType);
+
+
+                    System.out.println("user : " + contact.getLogin() + " => " + dataMap);
+
+                    LearningStats dailyEntity = MapUserDataAfterFetch(dataMap, contact.getLogin(), contact.getId(), startDate, endDate, Frequency.DAY);
+                    //  save daily entity to datastore
+                    saveUserStats(dailyEntity);
+
+                    /// calculating trends
+                    calculateLearningTrends(dailyEntity.getChallenges_details());
+
                 } catch (Exception e) {
                     i++;
                     System.out.println(e.getMessage());
                     continue;
                 }
-
-                System.out.println("user : " + contact.getLogin() + " => " + dataMap);
-
-                LearningStats dailyEntity = MapUserDataAfterFetch(dataMap, contact.getLogin(), contact.getId(), startDate, endDate, Frequency.DAY);
-                //  save daily entity to datastore
-                saveUserStats(dailyEntity);
                 break;
             }
         }
 
     } // end of fetchUserDailyStats method
 
+    private void calculateLearningTrends(Map<String, Integer> challenges_completed) {
 
-    public static void saveUserStats(Object entry) {
+        if (challenges_completed != null) {
+            for (Entry mapEntry : challenges_completed.entrySet()) {
+                String challengeTitle = (String) mapEntry.getKey();
+                int challengeDuration = (int) mapEntry.getValue();
+                if (challengesCountMap.containsKey(challengeTitle)) {
+                    ChallengesInfo challengeCount = challengesCountMap.get(challengeTitle);
+                    int noOfViews = challengeCount.getViews();
+                    noOfViews++;
+                    challengeCount.setViews(noOfViews);
+                    challengesCountMap.put(challengeTitle, challengeCount);
+
+                } else {
+                    ChallengesInfo challengesInfo = new ChallengesInfo();
+                    challengesInfo.setDuration(challengeDuration);
+                    challengesInfo.setViews(1);
+                    challengesCountMap.put(challengeTitle, challengesInfo);
+                }
+
+            }
+        }
+
+    }
+
+
+    public void saveUserStats(Object entry) {
 
         ofy().save().entity(entry).now();
         // end of storeUserActivityDetail method
@@ -146,7 +174,7 @@ public class FullLearnService {
     /////////////////////////     WEEKLY REPORTS
 
 
-    public static boolean generateWeeklyReport() throws JsonProcessingException {
+    public boolean generateWeeklyReport() throws JsonProcessingException {
 
 
         Calendar cal = Calendar.getInstance();
@@ -204,7 +232,7 @@ public class FullLearnService {
         return true;
     }
 
-    private static void generateWeeklyReportAllUserByBatch(QueryResultIterator<Contacts> iterator, long startDate, long endDate) throws JsonProcessingException {
+    private void generateWeeklyReportAllUserByBatch(QueryResultIterator<Contacts> iterator, long startDate, long endDate) throws JsonProcessingException {
 
 
         while (iterator.hasNext()) {
@@ -249,7 +277,7 @@ public class FullLearnService {
     }
 
 
-    private static LearningStats mapUserWeeklyStats(Contacts contact, int minutesAggregation, int challengeCompletedAggregation, long startDate, long endDate) {
+    private LearningStats mapUserWeeklyStats(Contacts contact, int minutesAggregation, int challengeCompletedAggregation, long startDate, long endDate) {
 
         LearningStats weeklyEntity = new LearningStats();
 
@@ -291,7 +319,7 @@ public class FullLearnService {
     }
 
 
-    public static void calculateAverage(String userId, String email) {
+    public void calculateAverage(String userId, String email) {
 
         System.out.println("email " + email);
         int day = 7 * 11;
@@ -417,7 +445,7 @@ public class FullLearnService {
 
     }
 
-    private static LearningStatsAverage mapUserDataAverage(int fourWeekAverage, int twelfthWeekAverage, String userId, String email) {
+    private LearningStatsAverage mapUserDataAverage(int fourWeekAverage, int twelfthWeekAverage, String userId, String email) {
 
 
         LearningStatsAverage averageEntity = new LearningStatsAverage();
@@ -430,89 +458,36 @@ public class FullLearnService {
     }
 
 
-    ////////////////////////////////            fetch data for 12 weeks for every user
-
-    public static boolean fetchAllUserTwelveWeekStats() throws IOException {
-
-        int count = 0;
-        String cursorStr = null;
-        do {
-
-            Query<Contacts> query = ofy().load().type(Contacts.class).limit(30);
-
-            if (cursorStr != null)
-                query = query.startAt(Cursor.fromWebSafeString(cursorStr));
-
-            QueryResultIterator<Contacts> iterator = query.iterator();
-
-            List<Contacts> contactList = query.list();
-            count = count + contactList.size();
-            System.out.println("usercount : " + count);
-            System.out.println("size :" + contactList.size());
-
-            if (contactList.size() < 1) {
-                return true;
-            }
-
-            fetchTwelveWeeksDataByBatch(iterator);
-            cursorStr = iterator.getCursor().toWebSafeString();
+    public LearningStats MapUserDataAfterFetch(Map<String, Object> dataMap, String email, String userId, long startDate, long endDate, Frequency frequency) {
 
 
-        } while (cursorStr != null);
-
-        return true;
-
-    }
-
-    private static void fetchTwelveWeeksDataByBatch(QueryResultIterator<Contacts> contactList) throws IOException {
-
-
-        while (contactList.hasNext()) {
-
-            Contacts contact = contactList.next();
-
-
-            // Add the task to the default queue.
-            Queue queue = QueueFactory.getQueue("StatsFetchingQueue");
-            queue.add(TaskOptions.Builder.withUrl("/api/fetch/user/stats").param("email", contact.getLogin()).param("userId", contact.getId()));
-
-
-        }
-    }
-
-    public static LearningStats MapUserDataAfterFetch(Map<String, Object> dataMap, String email, String userId, long startDate, long endDate, Frequency frequency) {
-
-
-        ObjectMapper objectmapper = new ObjectMapper();
-
-
-        LearningStats twelveWeeksEntity = new LearningStats();
+        LearningStats daily = new LearningStats();
 
         if ((boolean) dataMap.get("response") && dataMap.get("status").equals("Success")) {
 
 
             // set id
 
-            twelveWeeksEntity.setId(userId + ":" + startDate + ":" + endDate);
+            daily.setId(userId + ":" + startDate + ":" + endDate);
             //System.out.println("id :" + twelveWeeksEntity.getId());
             //  2. userid
 
-            twelveWeeksEntity.setUserId(userId);
+            daily.setUserId(userId);
             //System.out.println("userid :" + twelveWeeksEntity.getUserId());
             //System.out.println("contact id " + userId);
 
             // 6 and 7 startTime and endTime
 
-            twelveWeeksEntity.setStartTime(startDate);
+            daily.setStartTime(startDate);
             //System.out.println("start :" + twelveWeeksEntity.getStartTime());
-            twelveWeeksEntity.setEndTime(endDate);
+            daily.setEndTime(endDate);
 
             //  5. frequency for daily entrys
-            twelveWeeksEntity.setFrequency(frequency);
+            daily.setFrequency(frequency);
             // System.out.println("freq :" + twelveWeeksEntity.getFrequency());
 
             //9. email
-            twelveWeeksEntity.setEmail(email);
+            daily.setEmail(email);
             // 3,4,8 for minutes and challenges
 
 
@@ -520,12 +495,32 @@ public class FullLearnService {
             Map<String, Object> emailMap = (Map<String, Object>) mapToLearningStats.get(email);
 
             if (emailMap == null) {
-                twelveWeeksEntity.setMinutes(0);
-                twelveWeeksEntity.setChallenges_completed(0);
+                daily.setMinutes(0);
+                daily.setChallenges_completed(0);
             } else {
-                twelveWeeksEntity.setMinutes((int) emailMap.get("minutes"));
-                twelveWeeksEntity.setChallenges_completed((int) emailMap.get("challenges_completed"));
+                daily.setMinutes((int) emailMap.get("minutes"));
+                daily.setChallenges_completed((int) emailMap.get("challenges_completed"));
+                Map<String, Integer> challenges = new HashMap();
+                challenges = (Map<String, Integer>) emailMap.get("challenges_details");
+                if (challenges != null) {
+                    daily.setChallenges_details(challenges);
+                }
+               /* if(challenges != null) {
+                    daily.setChallenges_details(challenges);
+                    for (Entry mapEntry : challenges.entrySet()) {
+                        String challengeTitle = (String) mapEntry.getKey();
+                        if (challengesCountMap.containsKey(challengeTitle)) {
+                            int challengeCount = challengesCountMap.get(challengeTitle);
+                            challengeCount++;
+                            challengesCountMap.put(challengeTitle, challengeCount);
 
+                        } else {
+                            int intialCount = 1;
+                            challengesCountMap.put(challengeTitle, intialCount);
+                        }
+
+                    }
+                }*/
 
             }
 
@@ -533,11 +528,11 @@ public class FullLearnService {
         }// end of if
 
 
-        return twelveWeeksEntity;
+        return daily;
 
     }
 
-    public static boolean calculateAllUserStatsAverage() {
+    public boolean calculateAllUserStatsAverage() {
 
 
         int usercount = 0;
@@ -573,7 +568,7 @@ public class FullLearnService {
 
     }
 
-    private static void calculateAverageWeek(QueryResultIterator<Contacts> iterator) {
+    private void calculateAverageWeek(QueryResultIterator<Contacts> iterator) {
 
 
         int day = (7 * 12);
@@ -638,18 +633,18 @@ public class FullLearnService {
             fourWeekAverage = (int) Math.round(fourWeekFloat);
             twelfthWeekAverage = (int) Math.round(twelfthWeekFloat);
 
-
+            FullLearnService fullLearnService = new FullLearnService();
             System.out.println("week is" + weekCount + " and minutes is for four weeks " + fourWeekAverage + "for email " + contact.getLogin() + "Time in " + startDate + " " + endDate);
             System.out.println("week is" + weekCount + " and minutes is for twelve weeks " + twelfthWeekAverage + "for email " + contact.getLogin() + "Time in " + startDate + " " + endDate);
-            LearningStatsAverage averageEntity = mapUserDataAverageWeek(fourWeekAverage, twelfthWeekAverage, contact);
+            LearningStatsAverage averageEntity = fullLearnService.mapUserDataAverageWeek(fourWeekAverage, twelfthWeekAverage, contact);
 
 
             /////   save entity to datastore
-            saveUserStats(averageEntity);
+            fullLearnService.saveUserStats(averageEntity);
         }
     }
 
-    private static LearningStatsAverage mapUserDataAverageWeek(int fourWeekAverage, int twelfthWeekAverage, Contacts contact) {
+    private LearningStatsAverage mapUserDataAverageWeek(int fourWeekAverage, int twelfthWeekAverage, Contacts contact) {
 
         LearningStatsAverage averageEntity = new LearningStatsAverage();
 
@@ -658,5 +653,71 @@ public class FullLearnService {
         averageEntity.setTwelveWeekAvg(twelfthWeekAverage);
         averageEntity.setEmail(contact.getLogin());
         return averageEntity;
+    }
+
+    public TrendingChallenges mapTredingChallenges(Map<String, ChallengesInfo> challengeViewCount) throws JsonProcessingException {
+
+        //// startTime and endTime
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+
+        Date start = cal.getTime();
+        long date = start.getTime();
+
+
+        ////  sorting of map by values
+
+        Set<Entry<String, ChallengesInfo>> set = challengeViewCount.entrySet();
+        List<Entry<String, ChallengesInfo>> list = new ArrayList(set);
+        Collections.sort(list, new Comparator<Map.Entry<String, ChallengesInfo>>() {
+            public int compare(Map.Entry<String, ChallengesInfo> o1, Map.Entry<String, ChallengesInfo> o2) {
+                if (o1.getValue().getViews() > o2.getValue().getViews())
+
+
+                    return -1;
+                else if (o1.getValue().getViews() < o2.getValue().getViews())
+
+                    return 1;
+                else
+                    return 0;
+            }
+        });
+
+        System.out.println("all list of trends: " + new ObjectMapper().writeValueAsString(list));
+        Map<String, ChallengesInfo> mapOfTrends = new LinkedHashMap<>();
+        TrendingChallenges latestTrendsDaily = new TrendingChallenges();
+        int rowCount = 1;
+        for (Map.Entry<String, ChallengesInfo> entry : list) {
+            String title = entry.getKey();
+            ChallengesInfo challengesInfo = entry.getValue();
+            int viewCount = challengesInfo.getViews();
+
+            if (rowCount > 10 || viewCount < 2)
+                break;
+            mapOfTrends.put(title, challengesInfo);
+
+            rowCount++;
+        }
+        System.out.println("10 trends :" + new ObjectMapper().writeValueAsString(mapOfTrends));
+        latestTrendsDaily.setTrends(mapOfTrends);
+        latestTrendsDaily.setId(date);
+        latestTrendsDaily.setTime(date);
+
+        return latestTrendsDaily;
+    }
+
+    public List<TrendingChallenges> getLatestTrends(long date) {
+
+
+        List<TrendingChallenges> latestTrendQuery = ofy().load().type(TrendingChallenges.class).filter("time", date).list();
+        return latestTrendQuery;
+
     }
 }
