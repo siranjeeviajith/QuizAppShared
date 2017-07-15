@@ -28,8 +28,8 @@ public class FullLearnService {
 
     public Map<String, ChallengesInfo> challengesCountMap = new HashMap();
 
+
     public boolean fetchAllUserStats() throws IOException {
-        System.out.println("fetchUserDetails ");
 
         MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
         syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
@@ -52,10 +52,12 @@ public class FullLearnService {
             count = count + contactList.size();
             System.out.println("usercount : " + count);
             System.out.println("size :" + contactList.size());
-
+            FullLearnService fullLearnService = new FullLearnService();
             if (contactList.size() < 1) {
 
-                mapTredingChallenges(challengesCountMap);
+                TrendingChallenges latestTrends = fullLearnService.mapTredingChallenges(challengesCountMap);
+                /// saving trends
+                saveUserStats(latestTrends);
                 return true;
             }
 
@@ -64,6 +66,8 @@ public class FullLearnService {
             syncCache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
 
         } while (cursorStr != null);
+
+        syncCache.delete(key);
 
         return true;
     } // end of fetchUserDetails
@@ -651,7 +655,7 @@ public class FullLearnService {
         return averageEntity;
     }
 
-    public boolean mapTredingChallenges(Map<String, ChallengesInfo> challengeViewCount) throws JsonProcessingException {
+    public TrendingChallenges mapTredingChallenges(Map<String, ChallengesInfo> challengeViewCount) throws JsonProcessingException {
 
         //// startTime and endTime
 
@@ -701,12 +705,12 @@ public class FullLearnService {
 
             rowCount++;
         }
-        System.out.println("10 trends :"+ new ObjectMapper().writeValueAsString(mapOfTrends));
+        System.out.println("10 trends :" + new ObjectMapper().writeValueAsString(mapOfTrends));
         latestTrendsDaily.setTrends(mapOfTrends);
         latestTrendsDaily.setId(date);
         latestTrendsDaily.setTime(date);
-        saveUserStats(latestTrendsDaily);
-        return true;
+
+        return latestTrendsDaily;
     }
 
     public List<TrendingChallenges> getLatestTrends(long date) {
