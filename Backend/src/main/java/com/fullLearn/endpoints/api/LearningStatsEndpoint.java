@@ -3,6 +3,7 @@ package com.fullLearn.endpoints.api;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -10,25 +11,19 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
+import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.beans.LearningStatsAverage;
-import com.fullLearn.helpers.UserStatsHelper;
-import com.fullLearn.services.AllAverageStatsServices;
-import com.fullLearn.services.UserStatsServices;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import static com.fullLearn.services.LearningStatsService.getAllUserStats;
-import static com.fullLearn.services.LearningStatsService.getStatsByUserId;
+import com.fullLearn.services.FullLearnService;
+import com.fullLearn.services.LearningStatsService;
 
 
-@Path("/api/learn/stats")
+@Path("/api/learn")
 @Provider
 public class LearningStatsEndpoint {
 
 
     @GET
-    @Path("/all")
+    @Path("/stats/all")
     @Produces("application/json")
     public Response getAllUser(@QueryParam("limit") int limit, @QueryParam("cursor") String cursorStr,
                                @QueryParam("sortType") int type, @QueryParam("order") String order,
@@ -45,8 +40,8 @@ public class LearningStatsEndpoint {
             if (order == null)
                 order = "desc";
 
-
-            Map<String, Object> userStats = getAllUserStats(type, order, limit, cursorStr, minAvg, maxAvg);
+            LearningStatsService learningStatsService = new LearningStatsService();
+            Map<String, Object> userStats = learningStatsService.getAllUserStats(type, order, limit, cursorStr, minAvg, maxAvg);
             userStats.put("error", null);
             userStats.put("response", true);
             return Response.status(Response.Status.OK).entity(userStats).build();
@@ -66,13 +61,13 @@ public class LearningStatsEndpoint {
     }
 
     @GET
-    @Path("/user/{userid}")
+    @Path("/stats/user/{userid}")
     @Produces("application/json")
     public Response getUser(@PathParam("userid") String userId) {
-
+        LearningStatsService learningStatsService = new LearningStatsService();
 
         Map<String, Object> userData = new HashMap();
-        LearningStatsAverage userStats = getStatsByUserId(userId);
+        LearningStatsAverage userStats = learningStatsService.getStatsByUserId(userId);
         if (userStats != null) {
             userData.put("data", userStats);
             userData.put("error", null);
@@ -87,6 +82,19 @@ public class LearningStatsEndpoint {
         }
 
 
+    }
+
+    @GET
+    @Path("challenges/trends/{date}")
+    @Produces("application/json")
+
+    public Response getDailyTrends(@PathParam("date") long date) {
+
+        Map<String, Object> latestTrendsResponse = new HashMap();
+        FullLearnService fullLearnService = new FullLearnService();
+        List<TrendingChallenges> latestTrends = fullLearnService.getLatestTrends(date);
+
+        return Response.ok(latestTrends).build();
     }
 
 }

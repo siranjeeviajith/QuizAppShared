@@ -13,8 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Created by user on 7/13/2017.
@@ -30,7 +30,10 @@ public class UserStatsCronEndpoint {
     @Produces("application/json")
     public Response dailyUserStatsSync() throws IOException {
 
-        boolean status = FullLearnService.fetchAllUserStats();
+        FullLearnService fullLearnService = new FullLearnService();
+        boolean status = fullLearnService.fetchAllUserStats();
+
+
         return Response.ok().build();
     }
 
@@ -39,9 +42,11 @@ public class UserStatsCronEndpoint {
     @Produces("application/json")
     public Response learningStatsAverage() {
 
-        boolean statusForAverage = FullLearnService.calculateAllUserStatsAverage();
 
-            return Response.ok().build();
+        FullLearnService fullLearnService = new FullLearnService();
+        boolean statusForAverage = fullLearnService.calculateAllUserStatsAverage();
+
+        return Response.ok().build();
 
     }
 
@@ -51,9 +56,10 @@ public class UserStatsCronEndpoint {
     @Produces("application/json")
     public Response weeklyStatsReport() throws JsonProcessingException {
 
-        boolean status = FullLearnService.generateWeeklyReport();
+        FullLearnService fullLearnService = new FullLearnService();
+        boolean status = fullLearnService.generateWeeklyReport();
 
-            return Response.ok().build();
+        return Response.ok().build();
 
     }
 

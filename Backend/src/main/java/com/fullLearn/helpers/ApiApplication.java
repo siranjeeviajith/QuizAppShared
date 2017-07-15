@@ -19,6 +19,7 @@ public class ApiApplication extends Application {
         classes.add(LearningStatsEndpoint.class);
         classes.add(ContactSyncCronEndpoint.class);
         classes.add(UserStatsCronEndpoint.class);
+
         return classes;
     }
 }

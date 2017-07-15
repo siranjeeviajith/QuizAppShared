@@ -17,16 +17,14 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  */
 public class LearningStatsService {
 
-    public static LearningStatsAverage getStatsByUserId(String id)
-    {
+    public LearningStatsAverage getStatsByUserId(String id) {
         LearningStatsAverage userDatas = ofy().load().type(LearningStatsAverage.class).id(id).now();
 
         return userDatas;
     }
 
 
-    public static Map<String, Object> getAllUserStats(int type, String order, int limit, String cursorStr, int minAvg, int maxAvg)
-    {
+    public Map<String, Object> getAllUserStats(int type, String order, int limit, String cursorStr, int minAvg, int maxAvg) {
         String orderFilter = (type == 4) ? "fourWeekAvg" : "twelveWeekAvg";
 
 
@@ -55,8 +53,8 @@ public class LearningStatsService {
         List<LearningStatsAverage> userDataList = Lists.newArrayList(iterator);
 
         cursorStr = iterator.getCursor().toWebSafeString();
-        if(userDataList.size()<limit)
-            cursorStr=null;
+        if (userDataList.size() < limit)
+            cursorStr = null;
         Map<String, Object> response = new HashMap();
 
         response.put("stats", userDataList);

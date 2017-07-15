@@ -31,19 +31,15 @@ public class ContactSyncCronEndpoint {
 
 
         int limit = 30;
-        String cursorStr=null;
+        String cursorStr = null;
         System.out.println("fetching all users");
 
         Long lastModified = fc.getLastModifiedContacts();
 
-        ContactServices contactservice=new ContactServices();
+        ContactServices contactservice = new ContactServices();
 
-        contactservice.saveAllContacts(lastModified,accessToken,limit,cursorStr);
+        contactservice.saveAllContacts(lastModified, accessToken, limit, cursorStr);
 
-        /*
-        Queue queue = QueueFactory.getDefaultQueue();
-        queue.add(TaskOptions.Builder.withUrl("/contact/sync/task/queue").param("accesstoken", accessToken).param("limit", limitStr));
-*/
 
         return Response.ok().build();
     }

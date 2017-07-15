@@ -15,6 +15,7 @@ public class ObjectifyRegistrationListener implements ServletContextListener {
         ObjectifyService.register(Contacts.class);
         ObjectifyService.register(LearningStats.class);
         ObjectifyService.register(LearningStatsAverage.class);
+        ObjectifyService.register(TrendingChallenges.class);
     }
 
     public void contextDestroyed(ServletContextEvent arg0) {
