@@ -81,9 +81,11 @@ public class LearningStatsEndpoint {
         LearningStatsService learningStatsService = new LearningStatsService();
 
         Map<String, Object> userData = new HashMap();
+        Map<String,Object> data=new HashMap<>();
         LearningStatsAverage userStats = learningStatsService.getStatsByUserId(userId);
         if (userStats != null) {
-            userData.put("data", userStats);
+            data.put("stats",userStats);
+            userData.put("data",data);
             userData.put("error", null);
             userData.put("response", true);
             return Response.status(Response.Status.OK).entity(userData).build();
