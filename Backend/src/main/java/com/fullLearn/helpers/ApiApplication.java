@@ -4,15 +4,16 @@ import com.fullLearn.endpoints.api.LearningStatsEndpoint;
 import com.fullLearn.endpoints.cron.ContactSyncCronEndpoint;
 import com.fullLearn.endpoints.cron.UserStatsCronEndpoint;
 
-
-import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.ws.rs.core.Application;
 
 /**
  * Created by user on 7/12/2017.
  */
 public class ApiApplication extends Application {
+
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();

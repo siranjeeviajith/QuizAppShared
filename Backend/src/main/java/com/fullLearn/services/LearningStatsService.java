@@ -55,10 +55,12 @@ public class LearningStatsService {
         cursorStr = iterator.getCursor().toWebSafeString();
         if (userDataList.size() < limit)
             cursorStr = null;
+
         Map<String,Object> response=new HashMap<>();
         Map<String, Object> data = new HashMap();
-        data.put("stats",userDataList);
-        response.put("data", data);
+
+            data.put("stats",userDataList);
+            response.put("data", data);
         response.put("cursor", cursorStr);
 
         return response;
