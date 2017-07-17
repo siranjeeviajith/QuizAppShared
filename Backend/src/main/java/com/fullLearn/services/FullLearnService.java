@@ -505,22 +505,7 @@ public class FullLearnService {
                 if (challenges != null) {
                     daily.setChallenges_details(challenges);
                 }
-               /* if(challenges != null) {
-                    daily.setChallenges_details(challenges);
-                    for (Entry mapEntry : challenges.entrySet()) {
-                        String challengeTitle = (String) mapEntry.getKey();
-                        if (challengesCountMap.containsKey(challengeTitle)) {
-                            int challengeCount = challengesCountMap.get(challengeTitle);
-                            challengeCount++;
-                            challengesCountMap.put(challengeTitle, challengeCount);
 
-                        } else {
-                            int intialCount = 1;
-                            challengesCountMap.put(challengeTitle, intialCount);
-                        }
-
-                    }
-                }*/
 
             }
 
@@ -679,11 +664,8 @@ public class FullLearnService {
         Collections.sort(list, new Comparator<Map.Entry<String, ChallengesInfo>>() {
             public int compare(Map.Entry<String, ChallengesInfo> o1, Map.Entry<String, ChallengesInfo> o2) {
                 if (o1.getValue().getViews() > o2.getValue().getViews())
-
-
                     return -1;
                 else if (o1.getValue().getViews() < o2.getValue().getViews())
-
                     return 1;
                 else
                     return 0;

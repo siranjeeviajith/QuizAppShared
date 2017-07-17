@@ -3,6 +3,7 @@ package com.fullLearn.helpers;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.LearningStats;
 import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.beans.TrendingChallenges;
 import com.googlecode.objectify.ObjectifyService;
 
 import javax.servlet.ServletContextEvent;
