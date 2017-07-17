@@ -122,7 +122,7 @@ public class ContactServices {
             userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {
             });
 
-            boolean status = saveContactsHelper.saveContacts(userData);
+             saveContactsHelper.saveContacts(userData);
 
             System.out.println("fetched users : " + userData.size());
             if (userData.size() < limit || userData == null) {
