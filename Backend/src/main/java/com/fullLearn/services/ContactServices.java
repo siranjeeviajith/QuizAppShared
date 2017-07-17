@@ -1,18 +1,26 @@
 package com.fullLearn.services;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
-
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fullLearn.beans.*;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.helpers.*;
-import com.googlecode.objectify.ObjectifyService;
+import com.fullLearn.beans.Contacts;
+import com.fullLearn.beans.TokenAccess;
+import com.fullLearn.helpers.Constants;
+import com.fullLearn.helpers.HTTPUrl;
+import com.fullLearn.helpers.SaveContactsHelper;
 import com.googlecode.objectify.cmd.Query;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class ContactServices {
 
@@ -102,6 +110,7 @@ public class ContactServices {
 
             obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             System.out.println("url : " + baseUrl);
+
             String methodType = "GET";
             String contentType = "application/json";
 
@@ -113,7 +122,7 @@ public class ContactServices {
             userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {
             });
 
-            boolean status = saveContactsHelper.saveContacts(userData);
+             saveContactsHelper.saveContacts(userData);
 
             System.out.println("fetched users : " + userData.size());
             if (userData.size() < limit || userData == null) {

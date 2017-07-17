@@ -3,7 +3,7 @@ package com.fullLearn.services;
 import com.fullLearn.beans.*;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
-import com.google.appengine.repackaged.com.google.api.client.util.Lists;
+import com.google.common.collect.Lists;
 import com.googlecode.objectify.cmd.Query;
 
 import java.util.*;

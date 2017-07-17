@@ -7,7 +7,6 @@ import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.appengine.repackaged.com.google.api.client.util.Lists;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +18,7 @@ import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
 import com.fullLearn.model.ChallengesInfo;
+import com.google.common.collect.Lists;
 import com.googlecode.objectify.cmd.Query;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class FullLearnService {
                 break;
             }
 
-            fetchUserDailyStats(iterator);
+            fetchUserDailyStats(contactList);
 
             cursorStr = iterator.getCursor().toWebSafeString();
             cache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
@@ -93,12 +93,12 @@ public class FullLearnService {
 
     } // end of fetchUserDetails
 
-    public void fetchUserDailyStats(QueryResultIterator contactList) throws IOException {
+    public void fetchUserDailyStats(List<Contacts> contactList) throws IOException {
         //To do for iterating and getting data for each user by Calling HTTP class in helper package
 
-        while (contactList.hasNext()) {
+        for(Contacts contact:contactList) {
             int i = 1;
-            Contacts contact = (Contacts) contactList.next();
+
             while (i <= 3) {
 
 
@@ -529,22 +529,7 @@ public class FullLearnService {
                 if (challenges != null) {
                     daily.setChallenges_details(challenges);
                 }
-               /* if(challenges != null) {
-                    daily.setChallenges_details(challenges);
-                    for (Entry mapEntry : challenges.entrySet()) {
-                        String challengeTitle = (String) mapEntry.getKey();
-                        if (challengesCountMap.containsKey(challengeTitle)) {
-                            int challengeCount = challengesCountMap.get(challengeTitle);
-                            challengeCount++;
-                            challengesCountMap.put(challengeTitle, challengeCount);
 
-                        } else {
-                            int intialCount = 1;
-                            challengesCountMap.put(challengeTitle, intialCount);
-                        }
-
-                    }
-                }*/
 
             }
 
@@ -715,7 +700,7 @@ public class FullLearnService {
 
         System.out.println("all list of trends: " + new ObjectMapper().writeValueAsString(list));
 
-        Map<String, ChallengesInfo> mapOfTrends = new LinkedHashMap<>();
+        LinkedHashMap<String, ChallengesInfo> mapOfTrends = new LinkedHashMap<>();
         TrendingChallenges latestTrendsDaily = new TrendingChallenges();
 
         int rowCount = 1;
