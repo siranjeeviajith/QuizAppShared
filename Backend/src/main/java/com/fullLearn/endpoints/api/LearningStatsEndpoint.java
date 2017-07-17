@@ -1,25 +1,39 @@
 package com.fullLearn.endpoints.api;
 
 
+import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.beans.TrendingChallenges;
+import com.fullLearn.services.FullLearnService;
+import com.fullLearn.services.LearningStatsService;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
-import com.fullLearn.beans.TrendingChallenges;
-import com.fullLearn.beans.LearningStatsAverage;
-import com.fullLearn.services.FullLearnService;
-import com.fullLearn.services.LearningStatsService;
 
 
 @Path("/api/learn")
 @Provider
 public class LearningStatsEndpoint {
+
+    @Deprecated
+    @GET
+    @Path("/average/all")
+    @Produces("application/json")
+    public Response getAllUserOldApi(@QueryParam("limit") int limit, @QueryParam("cursor") String cursorStr,
+                               @QueryParam("sortType") int type, @QueryParam("order") String order,
+                               @QueryParam("minAvg") int minAvg, @QueryParam("maxAvg") int maxAvg)
+            throws IOException {
+        return getAllUser(limit, cursorStr, type, order, minAvg, maxAvg);
+    }
 
 
     @GET
