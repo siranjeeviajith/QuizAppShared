@@ -15,7 +15,7 @@ import com.fullLearn.beans.LearningStatsAverage;
 public class SaveContactsHelper {
     public void saveContacts(ArrayList<Contacts> contacts) throws IOException {
 
-        List<Contacts> saveContactList = new ArrayList();
+        List<Contacts> saveContactList = new ArrayList<>();
         List<String> deleteContactsList = new ArrayList<>();
         Iterator contactsIterator = contacts.iterator();
         while (contactsIterator.hasNext()) {
@@ -30,11 +30,11 @@ public class SaveContactsHelper {
 
 
         }
-        if (saveContactList.isEmpty()) {
+        if (!saveContactList.isEmpty()) {
             System.out.println("save");
             ofy().save().entities(saveContactList).now();
         }
-        if (deleteContactsList.isEmpty()) {
+        if (!deleteContactsList.isEmpty()) {
             System.out.println("deleting contacts size: "+deleteContactsList.size());
             ofy().delete().type(Contacts.class).ids(deleteContactsList).now();
             ofy().delete().type(LearningStatsAverage.class).ids(deleteContactsList).now();
