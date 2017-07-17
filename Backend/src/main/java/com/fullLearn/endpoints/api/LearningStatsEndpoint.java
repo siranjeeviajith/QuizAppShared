@@ -24,7 +24,6 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class LearningStatsEndpoint {
 
-    @Deprecated
     @GET
     @Path("/average/all")
     @Produces("application/json")
@@ -46,7 +45,6 @@ public class LearningStatsEndpoint {
 
         try {
 
-
             if (limit == 0)
                 limit = 20;
             if (type == 0)
@@ -55,15 +53,16 @@ public class LearningStatsEndpoint {
                 order = "desc";
 
             LearningStatsService learningStatsService = new LearningStatsService();
+
             Map<String, Object> userStats = learningStatsService.getAllUserStats(type, order, limit, cursorStr, minAvg, maxAvg);
             userStats.put("error", null);
             userStats.put("response", true);
-            return Response.status(Response.Status.OK).entity(userStats).build();
 
+            return Response.status(Response.Status.OK).entity(userStats).build();
 
         } catch (Exception ex) {
             System.out.println(ex);
-            Map<String, Object> msg = new HashMap();
+            Map<String, Object> msg = new HashMap<>();
             msg.put("msg", " Request Failed or Data not found or Check the URL");
             msg.put("error", " Request Failed");
             msg.put("response", false);
@@ -75,12 +74,19 @@ public class LearningStatsEndpoint {
     }
 
     @GET
+    @Path("/stats/userId/{userid}")
+    @Produces("application/json")
+    public Response getUserOldApi(@PathParam("userid") String userId) {
+        return getUser(userId);
+    }
+
+    @GET
     @Path("/stats/user/{userid}")
     @Produces("application/json")
     public Response getUser(@PathParam("userid") String userId) {
         LearningStatsService learningStatsService = new LearningStatsService();
 
-        Map<String, Object> userData = new HashMap();
+        Map<String, Object> userData = new HashMap<>();
         LearningStatsAverage userStats = learningStatsService.getStatsByUserId(userId);
         if (userStats != null) {
             userData.put("data", userStats);
@@ -88,14 +94,12 @@ public class LearningStatsEndpoint {
             userData.put("response", true);
             return Response.status(Response.Status.OK).entity(userData).build();
         } else {
-            Map<String, Object> msg = new HashMap();
+            Map<String, Object> msg = new HashMap<>();
             msg.put("msg", " userId cannot find");
             msg.put("error", " Request Failed");
             msg.put("response", false);
             return Response.status(Response.Status.NOT_FOUND).entity(msg).build();
         }
-
-
     }
 
     @GET
@@ -104,7 +108,7 @@ public class LearningStatsEndpoint {
 
     public Response getDailyTrends(@PathParam("date") long date) {
 
-        Map<String, Object> latestTrendsResponse = new HashMap();
+        Map<String, Object> latestTrendsResponse = new HashMap<>();
         FullLearnService fullLearnService = new FullLearnService();
         List<TrendingChallenges> latestTrends = fullLearnService.getLatestTrends(date);
         if(latestTrends!=null)
@@ -116,7 +120,7 @@ public class LearningStatsEndpoint {
         }
         else
         {
-            Map<String, Object> msg = new HashMap();
+            Map<String, Object> msg = new HashMap<>();
             msg.put("msg", " trends not available");
             msg.put("error", " Request Failed");
             msg.put("response", false);

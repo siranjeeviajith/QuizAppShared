@@ -6,6 +6,45 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
 
+    <!-- Objectify Filter -->
+    <filter>
+        <filter-name>ObjectifyFilter</filter-name>
+        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ObjectifyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- Objectify Filter End -->
+
+    <!-- Context Listener -->
+    <listener>
+        <listener-class>
+            com.fullLearn.helpers.ObjectifyRegistrationListener
+        </listener-class>
+    </listener>
+    <!-- Context Listener End -->
+
+    <!-- restEasy configurations -->
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/*</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>RESTEasyService</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.fullLearn.helpers.ApiApplication</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RESTEasyService</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- restEasy configuration end -->
+
     <!-- Configurations -->
     <security-constraint>
         <web-resource-collection>
@@ -29,52 +68,5 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         </user-data-constraint>
     </security-constraint>
     <!-- End Configurations -->
-
-    <!-- restEasy configurations -->
-    <context-param>
-        <param-name>resteasy.servlet.mapping.prefix</param-name>
-        <param-value>/*</param-value>
-    </context-param>
-    <servlet>
-        <servlet-name>RESTEasyService</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-        <init-param>
-            <param-name>javax.ws.rs.Application</param-name>
-            <param-value>com.fullLearn.helpers.ApiApplication</param-value>
-        </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>RESTEasyService</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- restEasy configuration end -->
-
-
-
-
-    <!-- Objectify Filter -->
-    <filter>
-        <filter-name>ObjectifyFilter</filter-name>
-        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>ObjectifyFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <!-- Objectify Filter End -->
-
-
-    <!-- Context Listener -->
-    <listener>
-        <listener-class>
-            com.fullLearn.helpers.ObjectifyRegistrationListener
-        </listener-class>
-    </listener>
-    <!-- Context Listener End -->
-
-
-
-
 
 </web-app>

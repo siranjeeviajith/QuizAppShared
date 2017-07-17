@@ -1,16 +1,14 @@
 package com.fullLearn.endpoints.cron;
 
 import com.fullLearn.services.ContactServices;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
+
+import java.io.IOException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 
 /**
  * Created by user on 7/13/2017.
@@ -32,8 +30,6 @@ public class ContactSyncCronEndpoint {
 
         int limit = 30;
         String cursorStr = null;
-        System.out.println("fetching all users");
-
         Long lastModified = fc.getLastModifiedContacts();
 
         ContactServices contactservice = new ContactServices();
