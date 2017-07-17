@@ -24,7 +24,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class LearningStatsEndpoint {
 
-    @Deprecated
+    //depracated
     @GET
     @Path("/average/all")
     @Produces("application/json")
