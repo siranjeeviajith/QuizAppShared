@@ -7,6 +7,7 @@ import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.common.collect.Lists;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +19,6 @@ import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
 import com.fullLearn.model.ChallengesInfo;
-import com.google.common.collect.Lists;
 import com.googlecode.objectify.cmd.Query;
 
 import java.io.IOException;
@@ -133,6 +133,7 @@ public class FullLearnService {
 
                 url = Constants.AU_API_URL + "/v1/completedMinutes?apiKey=" + Constants.AU_APIKEY + "&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
 
+                System.out.println("url : "+url);
                 methodType = "POST";
                 contentType = "application/json";
                 Map<String, Object> dataMap;
@@ -150,8 +151,8 @@ public class FullLearnService {
                     calculateLearningTrends(dailyEntity.getChallenges_details());
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     i++;
-                    System.out.println(e.getMessage());
                     continue;
                 }
                 break;
