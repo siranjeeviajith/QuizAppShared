@@ -23,7 +23,7 @@ import javax.ws.rs.ext.Provider;
 @Path("/api/learn")
 @Provider
 public class LearningStatsEndpoint {
-
+/////DEPRICATED
     @GET
     @Path("/average/all")
     @Produces("application/json")
@@ -31,7 +31,37 @@ public class LearningStatsEndpoint {
                                @QueryParam("sortType") int type, @QueryParam("order") String order,
                                @QueryParam("minAvg") int minAvg, @QueryParam("maxAvg") int maxAvg)
             throws IOException {
-        return getAllUser(limit, cursorStr, type, order, minAvg, maxAvg);
+
+
+        try {
+
+            if (limit == 0)
+                limit = 20;
+            if (type == 0)
+                type = 4;
+            if (order == null)
+                order = "desc";
+            String methodName="getAllUserOldApi";
+            LearningStatsService learningStatsService = new LearningStatsService();
+
+            Map<String, Object> userStats = learningStatsService.getAllUserStats(type, order, limit, cursorStr, minAvg, maxAvg);
+            userStats.put("error", null);
+            userStats.put("response", true);
+
+            return Response.status(Response.Status.OK).entity(userStats).build();
+
+        } catch (Exception ex) {
+            System.out.println(ex);
+            Map<String, Object> msg = new HashMap<>();
+            msg.put("msg", " Request Failed or Data not found or Check the URL");
+            msg.put("error", " Request Failed");
+            msg.put("response", false);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(msg).build();
+
+
+        }
+
+
     }
 
 
@@ -51,8 +81,7 @@ public class LearningStatsEndpoint {
                 type = 4;
             if (order == null)
                 order = "desc";
-
-            LearningStatsService learningStatsService = new LearningStatsService();
+LearningStatsService learningStatsService = new LearningStatsService();
 
             Map<String, Object> userStats = learningStatsService.getAllUserStats(type, order, limit, cursorStr, minAvg, maxAvg);
             userStats.put("error", null);
@@ -73,11 +102,28 @@ public class LearningStatsEndpoint {
 
     }
 
+    /////DEPRICATED
     @GET
     @Path("/stats/userId/{userid}")
     @Produces("application/json")
     public Response getUserOldApi(@PathParam("userid") String userId) {
-        return getUser(userId);
+        LearningStatsService learningStatsService = new LearningStatsService();
+        Map<String,Object> response=new HashMap<>();
+        LearningStatsAverage userStats = learningStatsService.getStatsByUserId(userId);
+        if (userStats != null) {
+
+
+            response.put("data",userStats);
+            response.put("error", null);
+            response.put("response", true);
+            return Response.status(Response.Status.OK).entity(response).build();
+        } else {
+            Map<String, Object> msg = new HashMap<>();
+            msg.put("msg", " userId cannot find");
+            msg.put("error", " Request Failed");
+            msg.put("response", false);
+            return Response.status(Response.Status.NOT_FOUND).entity(msg).build();
+        }
     }
 
     @GET
@@ -85,14 +131,16 @@ public class LearningStatsEndpoint {
     @Produces("application/json")
     public Response getUser(@PathParam("userid") String userId) {
         LearningStatsService learningStatsService = new LearningStatsService();
-
+Map<String,Object> response=new HashMap<>();
         Map<String, Object> userData = new HashMap<>();
         LearningStatsAverage userStats = learningStatsService.getStatsByUserId(userId);
         if (userStats != null) {
-            userData.put("data", userStats);
-            userData.put("error", null);
-            userData.put("response", true);
-            return Response.status(Response.Status.OK).entity(userData).build();
+
+            userData.put("stats", userStats);
+            response.put("data",userData);
+            response.put("error", null);
+            response.put("response", true);
+            return Response.status(Response.Status.OK).entity(response).build();
         } else {
             Map<String, Object> msg = new HashMap<>();
             msg.put("msg", " userId cannot find");
