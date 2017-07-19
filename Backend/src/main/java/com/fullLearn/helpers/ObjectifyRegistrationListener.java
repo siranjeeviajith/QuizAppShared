@@ -8,7 +8,11 @@ import com.googlecode.objectify.ObjectifyService;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
@@ -18,7 +22,14 @@ public class ObjectifyRegistrationListener implements ServletContextListener {
 
     private final static Logger logger=Logger.getLogger(ObjectifyRegistrationListener.class.getName());
     public void contextInitialized(ServletContextEvent arg0) {
-        logger.setLevel(Level.INFO);
+        try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
+        } catch (SecurityException | IOException e1) {
+            e1.printStackTrace();
+        }
+        logger.setLevel(Level.FINE);
+        logger.addHandler(new ConsoleHandler());
+
         logger.info("Registering Ofy Entities");
        // System.out.println("Registering Ofy Entities");
         ObjectifyService.register(Contacts.class);

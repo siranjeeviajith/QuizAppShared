@@ -2,10 +2,13 @@ package com.fullLearn.helpers;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.*;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,7 +22,14 @@ public class SaveContactsHelper {
     private final static Logger logger=Logger.getLogger(SaveContactsHelper.class.getName());
 
     public void saveContacts(ArrayList<Contacts> contacts) throws IOException {
-logger.setLevel(Level.ALL);
+        try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
+        } catch (SecurityException | IOException e1) {
+            e1.printStackTrace();
+        }
+        logger.setLevel(Level.FINE);
+        logger.addHandler(new ConsoleHandler());
+
         List<Contacts> saveContactList = new ArrayList<>();
         List<String> deleteContactsList = new ArrayList<>();
         Iterator contactsIterator = contacts.iterator();

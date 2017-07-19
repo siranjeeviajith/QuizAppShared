@@ -3,7 +3,11 @@ package com.fullLearn.helpers;
 import com.fullLearn.services.ContactServices;
 import com.google.apphosting.api.ApiProxy;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
@@ -22,9 +26,15 @@ private final static Logger logger=Logger.getLogger(Constants.class.getName());
     public static final String AU_APIKEY = "b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d";
 
     static {
+        try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
+        } catch (SecurityException | IOException e1) {
+            e1.printStackTrace();
+        }
+        logger.setLevel(Level.FINE);
+        logger.addHandler(new ConsoleHandler());
 
         IS_LIVE = isLive();
-logger.setLevel(Level.INFO);
 logger.info("is AppMode Live: " + IS_LIVE);
         //System.out.println("is AppMode Live: " + IS_LIVE);
 

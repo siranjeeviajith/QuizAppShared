@@ -10,16 +10,15 @@ import com.fullLearn.helpers.HTTPUrl;
 import com.fullLearn.helpers.SaveContactsHelper;
 import com.googlecode.objectify.cmd.Query;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -37,7 +36,14 @@ public class ContactServices {
 
 
     public String getAccessToken() throws IOException {
-logger.setLevel(Level.ALL);
+        try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
+        } catch (SecurityException | IOException e1) {
+            e1.printStackTrace();
+        }
+        logger.setLevel(Level.FINE);
+        logger.addHandler(new ConsoleHandler());
+
         URL url = new URL(Constants.FULL_AUTH_URL + "/o/oauth2/v1/token");
 
         String params = "refresh_token=" + Constants.REFRESH_TOKEN + "&client_id=" + Constants.CLIENT_ID + "&client_secret=" + Constants.CLIENT_SECRET + "&grant_type=refresh_token";
