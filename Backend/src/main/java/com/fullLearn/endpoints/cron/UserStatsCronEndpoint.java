@@ -27,6 +27,8 @@ public class UserStatsCronEndpoint {
     @Produces("application/json")
     public Response dailyUserStatsSync() throws IOException {
 
+
+
         boolean status = fullLearnService.fetchAllUserStats();
         return Response.ok().build();
     }

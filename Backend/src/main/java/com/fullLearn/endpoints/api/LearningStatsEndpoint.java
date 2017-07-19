@@ -5,11 +5,16 @@ import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.services.FullLearnService;
 import com.fullLearn.services.LearningStatsService;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,7 +28,13 @@ import javax.ws.rs.ext.Provider;
 @Path("/api/learn")
 @Provider
 public class LearningStatsEndpoint {
-/////DEPRICATED
+
+
+
+
+
+
+    /////DEPRICATED
     @GET
     @Path("/average/all")
     @Produces("application/json")
@@ -31,6 +42,7 @@ public class LearningStatsEndpoint {
                                @QueryParam("sortType") int type, @QueryParam("order") String order,
                                @QueryParam("minAvg") int minAvg, @QueryParam("maxAvg") int maxAvg)
             throws IOException {
+
 
 
         try {
@@ -154,31 +166,31 @@ Map<String,Object> response=new HashMap<>();
     @Path("challenges/trends/{date}")
     @Produces("application/json")
 
-    public Response getDailyTrends(@PathParam("date") long date) {
+    public Response getDailyTrends(@PathParam("date") long date) throws JsonMappingException{
 
-        Map<String, Object> latestTrendsResponse = new HashMap<>();
-        FullLearnService fullLearnService = new FullLearnService();
-        List<TrendingChallenges> latestTrends = fullLearnService.getLatestTrends(date);
-        if(latestTrends!=null)
-        {
-            latestTrendsResponse.put("data", latestTrends);
-            latestTrendsResponse.put("error", null);
-            latestTrendsResponse.put("response", true);
-            return Response.status(Response.Status.OK).entity(latestTrendsResponse).build();
-        }
-        else
-        {
-            Map<String, Object> msg = new HashMap<>();
-            msg.put("msg", " trends not available");
-            msg.put("error", " Request Failed");
-            msg.put("response", false);
-            return Response.status(Response.Status.NOT_FOUND).entity(msg).build();
-        }
+
+            Map<String, Object> latestTrendsResponse = new HashMap<>();
+            FullLearnService fullLearnService = new FullLearnService();
+            TrendingChallenges latestTrends = fullLearnService.getLatestTrends(date);
+            if (latestTrends != null) {
+                latestTrendsResponse.put("data", latestTrends);
+                latestTrendsResponse.put("error", null);
+                latestTrendsResponse.put("response", true);
+                return Response.status(Response.Status.OK).entity(latestTrendsResponse).build();
+            } else {
+                Map<String, Object> msg = new HashMap<>();
+                msg.put("msg", " trends not available");
+                msg.put("error", " Request Failed");
+                msg.put("response", false);
+                return Response.status(Response.Status.NOT_FOUND).entity(msg).build();
+            }
 
 
     }
 
-}
+    }
+
+
 
 
 

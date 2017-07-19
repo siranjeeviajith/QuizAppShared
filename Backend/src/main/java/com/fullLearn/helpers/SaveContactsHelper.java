@@ -5,6 +5,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,15 +15,18 @@ import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.LearningStatsAverage;
 
 public class SaveContactsHelper {
-    public void saveContacts(ArrayList<Contacts> contacts) throws IOException {
 
+    private final static Logger logger=Logger.getLogger(SaveContactsHelper.class.getName());
+
+    public void saveContacts(ArrayList<Contacts> contacts) throws IOException {
+logger.setLevel(Level.ALL);
         List<Contacts> saveContactList = new ArrayList<>();
         List<String> deleteContactsList = new ArrayList<>();
         Iterator contactsIterator = contacts.iterator();
         while (contactsIterator.hasNext()) {
             Contacts contact = (Contacts) contactsIterator.next();
             if (contact.getStatus().equals("ACTIVE")) {
-                System.out.println("active");
+
 
                 saveContactList.add(contact);
             } else {
@@ -31,11 +36,12 @@ public class SaveContactsHelper {
 
         }
         if (!saveContactList.isEmpty()) {
-            System.out.println("save");
+            logger.info("saving contacts size : "+saveContactList.size());
             ofy().save().entities(saveContactList).now();
         }
         if (!deleteContactsList.isEmpty()) {
-            System.out.println("deleting contacts size: "+deleteContactsList.size());
+            logger.info("deleting contacts size: "+deleteContactsList.size());
+            //System.out.println("deleting contacts size: "+deleteContactsList.size());
             ofy().delete().type(Contacts.class).ids(deleteContactsList).now();
             ofy().delete().type(LearningStatsAverage.class).ids(deleteContactsList).now();
         }
