@@ -36,13 +36,7 @@ public class ContactServices {
 
 
     public String getAccessToken() throws IOException {
-        try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
-        }
-        logger.setLevel(Level.FINE);
-        logger.addHandler(new ConsoleHandler());
+
 
         URL url = new URL(Constants.FULL_AUTH_URL + "/o/oauth2/v1/token");
 

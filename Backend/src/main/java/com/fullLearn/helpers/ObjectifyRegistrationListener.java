@@ -22,13 +22,9 @@ public class ObjectifyRegistrationListener implements ServletContextListener {
 
     private final static Logger logger=Logger.getLogger(ObjectifyRegistrationListener.class.getName());
     public void contextInitialized(ServletContextEvent arg0) {
-        try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
-        }
+
         logger.setLevel(Level.FINE);
-        logger.addHandler(new ConsoleHandler());
+
 
         logger.info("Registering Ofy Entities");
        // System.out.println("Registering Ofy Entities");

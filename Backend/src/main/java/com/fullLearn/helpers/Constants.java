@@ -26,13 +26,7 @@ private final static Logger logger=Logger.getLogger(Constants.class.getName());
     public static final String AU_APIKEY = "b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d";
 
     static {
-        try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
-        }
-        logger.setLevel(Level.FINE);
-        logger.addHandler(new ConsoleHandler());
+
 
         IS_LIVE = isLive();
 logger.info("is AppMode Live: " + IS_LIVE);

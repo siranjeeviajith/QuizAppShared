@@ -69,13 +69,7 @@ public class FullLearnService {
         String key = "dailyStatsCursor";
         String cursorStr = (String) cache.get(key);
         do {
-            try {
-                LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
-            } catch (SecurityException | IOException e1) {
-                e1.printStackTrace();
-            }
-            logger.setLevel(Level.FINE);
-            logger.addHandler(new ConsoleHandler());
+
 
             Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
             if (cursorStr != null)

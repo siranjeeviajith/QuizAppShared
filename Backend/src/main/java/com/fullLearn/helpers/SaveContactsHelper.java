@@ -22,13 +22,7 @@ public class SaveContactsHelper {
     private final static Logger logger=Logger.getLogger(SaveContactsHelper.class.getName());
 
     public void saveContacts(ArrayList<Contacts> contacts) throws IOException {
-        try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
-        }
-        logger.setLevel(Level.FINE);
-        logger.addHandler(new ConsoleHandler());
+
 
         List<Contacts> saveContactList = new ArrayList<>();
         List<String> deleteContactsList = new ArrayList<>();
