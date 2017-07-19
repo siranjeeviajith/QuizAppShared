@@ -1,6 +1,14 @@
 package com.fullLearn.helpers;
 
+import com.fullLearn.services.ContactServices;
 import com.google.apphosting.api.ApiProxy;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * Created by user on 6/26/2017.
@@ -8,7 +16,7 @@ import com.google.apphosting.api.ApiProxy;
 public class Constants {
     static boolean IS_LIVE;
     private static String appId = ApiProxy.getCurrentEnvironment().getAppId();
-
+private final static Logger logger=Logger.getLogger(Constants.class.getName());
     public static String FULL_AUTH_URL;
     public static String CLIENT_ID;
     public static String CLIENT_SECRET;
@@ -19,9 +27,10 @@ public class Constants {
 
     static {
 
-        IS_LIVE = isLive();
 
-        System.out.println("is AppMode Live: " + IS_LIVE);
+        IS_LIVE = isLive();
+logger.info("is AppMode Live: " + IS_LIVE);
+        //System.out.println("is AppMode Live: " + IS_LIVE);
 
         if (IS_LIVE) {
             System.out.println("Live");

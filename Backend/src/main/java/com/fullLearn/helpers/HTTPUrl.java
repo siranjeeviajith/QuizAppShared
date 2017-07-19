@@ -37,7 +37,7 @@ public class HTTPUrl {
                 return null;
             }
         } catch (Exception ex) {
-            System.out.println(cursorStr);
+            //System.out.println(cursorStr);
             HttpURLConnection con = (HttpURLConnection) new URL(urlString).openConnection();
             con.setConnectTimeout(60000);
             request(accesstoken, urlString, methodType, contentType, cursorStr);

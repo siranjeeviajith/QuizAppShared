@@ -10,15 +10,16 @@ import com.fullLearn.helpers.HTTPUrl;
 import com.fullLearn.helpers.SaveContactsHelper;
 import com.googlecode.objectify.cmd.Query;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -27,7 +28,7 @@ public class ContactServices {
 	/*static {
         ObjectifyService.register(Contacts.class);
 	}*/
-
+    private final static Logger logger=Logger.getLogger(ContactServices.class.getName());
 
     // helpers
     HTTPUrl listOfDatas = new HTTPUrl();
@@ -36,7 +37,9 @@ public class ContactServices {
 
     public String getAccessToken() throws IOException {
 
+
         URL url = new URL(Constants.FULL_AUTH_URL + "/o/oauth2/v1/token");
+
         String params = "refresh_token=" + Constants.REFRESH_TOKEN + "&client_id=" + Constants.CLIENT_ID + "&client_secret=" + Constants.CLIENT_SECRET + "&grant_type=refresh_token";
 
 
@@ -59,7 +62,8 @@ public class ContactServices {
         }
 
         //Output the response
-        System.out.println(tokens);
+        logger.info(tokens);
+        //System.out.println(tokens);
 
         // Mapping JSON
         ObjectMapper obj = new ObjectMapper();
@@ -82,7 +86,8 @@ public class ContactServices {
                 return null;
             }
         } catch (Exception ex) {
-            System.out.println("exception: " + ex);
+            logger.severe("exception: " + ex);
+            //System.out.println("exception: " + ex);
             return null;
         }
 
@@ -109,7 +114,8 @@ public class ContactServices {
             }
 
             obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            System.out.println("url : " + baseUrl);
+            logger.info("url : " + baseUrl);
+            //System.out.println("url : " + baseUrl);
 
             String methodType = "GET";
             String contentType = "application/json";
@@ -123,8 +129,8 @@ public class ContactServices {
             });
 
              saveContactsHelper.saveContacts(userData);
-
-            System.out.println("fetched users : " + userData.size());
+logger.info("fetched users : " + userData.size());
+            //System.out.println("fetched users : " + userData.size());
             if (userData.size() < limit || userData == null) {
                 return true;
             }
@@ -132,9 +138,11 @@ public class ContactServices {
             saveAllContacts(lastModified, accesstoken, limit, cursor);
             return true;
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            logger.severe(ex.getMessage());
+            //System.out.println(ex.getMessage());
             String cursorValue = cursor;
-            System.out.println(cursorValue);
+            logger.info(cursorValue);
+            //System.out.println(cursorValue);
             saveAllContacts(lastModified, accesstoken, limit, cursorValue);
             return true;
 
