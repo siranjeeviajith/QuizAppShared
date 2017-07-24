@@ -21,13 +21,15 @@ dependencies {
     compile libs.gae
     compile libs.resteasy
     compile libs.resteasy_jackson_provider
+    compile files("$projectDir/../SharedLibs/fullauth-api-java-client-1.2.6.jar")
+    //runtime files("$projectDir/SharedLibs/fullauth-api-java-client-1.2.6.jar")
 }
 
 appengine {
     run {
         port = config.gae.port.backend // defined in dependencies.gre
         storagePath = file("$projectDir/appengine-generated/")
-       // datastorePath = file("$projectDir/appengine-generated/")
+
         jvmFlags = config.gae.defaultJvmFlags
       //  serverVersion = '2-alpha'
     }
@@ -37,8 +39,7 @@ appengine {
         project = "full-learn"
         stopPreviousVersion = false
         promote = false
-//        stopPreviousVersion = true
-//        promote = true
+//
 
     }
 }
@@ -54,4 +55,7 @@ task reloadApp(type: Copy) {
         into project.tasks.explodeWar.explodedAppDirectory
         with war
     }
+}
+task strPrint {
+    print file("$projectDir/../SharedLibs/fullauth-api-java-client-1.2.6.jar")
 }

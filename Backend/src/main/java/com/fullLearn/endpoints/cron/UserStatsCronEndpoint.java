@@ -13,7 +13,7 @@ import javax.ws.rs.ext.Provider;
 
 
 /**
- * Created by user on 7/13/2017.
+ * Created by amandeep on 7/13/2017.
  */
 
 @Path("/cron/sync/stats")

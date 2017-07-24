@@ -1,7 +1,7 @@
 package com.fullLearn.beans;
 
 /**
- * Created by user on 6/12/2017.
+ * Created by amandeep on 6/12/2017.
  */
 public enum Frequency {
 
