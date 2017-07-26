@@ -54,6 +54,8 @@ public class FireBaseService {
             if (deviceList.size() < 1) {
                 break;
             }
+            System.out.println("notificationToAlluser");
+            //notifyToAllUsers("sdfadsfasdfasdfsdf", "d0LKhSEz5OU:APA91bEIulux80LIPJruXXJBzyxL5KMXp-qZB1nC8L3LubAnNYy-zHooycPLeFOy8BYsJv02Dkplz-ZYb7c62nLrchV5FdBSbkUH-0_dvP3SWWKqDShv8w0dvlnwXG0X9moSkFWyTGHL"/*device.getPushToken()*/);
 
             for (UserDevice device : deviceList) {
 
@@ -88,6 +90,7 @@ public class FireBaseService {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Authorization", "key=" + Constants.SERVER_KEY);
+        connection.setDoOutput(true);
         String title = "Full Learn Weekly Summary";
         String msg="";
 
@@ -134,11 +137,14 @@ public class FireBaseService {
         errorList.add("InvalidRegistration");
         errorList.add("NotRegistered");
         errorList.add("MismatchSenderId");
-
+        System.out.println("response in string  is "+line);
         Map<String,Object> response;
         response=new ObjectMapper().readValue(line, new TypeReference<Map<String,Object>>() {});
         List<String> resposeError= (List<String>) response.get("error");
-        if(errorList.contains(resposeError.get(0)))
+        if(resposeError == null) {
+            logger.info("notification sent to "+userId);
+            return;
+        }
         logger.severe(line);
 
 

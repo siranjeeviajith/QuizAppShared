@@ -13,15 +13,15 @@ import java.io.IOException;
 /**
  * Created by amandeep on 24/07/17.
  */
-@Path("/learn/average/user")
+@Path("cron/learn/average/user")
 @Provider
 public class NotificationCronEndpoint {
 FireBaseService fireBaseService=new FireBaseService();
-    @POST
+    @GET
     @Produces("application/json")
     @Path("/notify")
     public void sendNotification() throws IOException {
-
+        System.out.println("notification endpoint");
         fireBaseService.sendNotificationToAllUsers();
 
     }
