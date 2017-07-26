@@ -1,10 +1,10 @@
 package com.fullLearn.helpers;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fullLearn.endpoints.api.LearningStatsEndpoint;
 import com.fullLearn.endpoints.api.UserDevicesEndpoint;
 import com.fullLearn.endpoints.cron.ContactSyncCronEndpoint;
 import com.fullLearn.endpoints.cron.UserStatsCronEndpoint;
+import com.fullLearn.endpoints.cron.NotificationCronEndpoint;
 import com.fullLearn.filter.AccessTokenFilter;
 
 import java.util.HashSet;
@@ -27,7 +27,7 @@ public class ApiApplication extends Application {
         classes.add(ContactSyncCronEndpoint.class);
         classes.add(UserStatsCronEndpoint.class);
         classes.add(UserDevicesEndpoint.class);
-
+        classes.add(NotificationCronEndpoint.class);
         return classes;
     }
 

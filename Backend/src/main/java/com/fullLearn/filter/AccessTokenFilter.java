@@ -66,7 +66,7 @@ public class AccessTokenFilter implements ContainerRequestFilter {
             OauthAccessToken token = authService.getTokenInfo(accessToken);
             ResteasyProviderFactory.pushContext(OauthAccessToken.class,token);
         } catch (TokenResponseException e) {
-                logger.info("exception msΩg : "+ e.getMessage());
+                logger.info("exception msg : "+ e.getMessage());
             requestContext.abortWith(Response.status(401).entity(response).build());
             return;
 

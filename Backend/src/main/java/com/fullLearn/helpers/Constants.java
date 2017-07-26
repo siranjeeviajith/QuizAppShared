@@ -25,6 +25,9 @@ private final static Logger logger=Logger.getLogger(Constants.class.getName());
     public static String AU_API_URL;
     public static final String AU_APIKEY = "b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d";
     public static  boolean devServer;
+    public static final String SERVER_KEY="AAAA-hY_3kw:APA91bEtwFaf3h4xKi6QT1UyfumYhpb2hAWQFh" +
+                                                    "fx2jfHWHiByYf_3yHhvTYIIwF9NV2ZHSiW-HlqydlTlDkURHWR7" +
+                                                        "ms1uWaicbq-6DSk3wxPr5UTMhRjWAiQvN0tZsjHIuYgd3ajzjkp";
     static {
 
 

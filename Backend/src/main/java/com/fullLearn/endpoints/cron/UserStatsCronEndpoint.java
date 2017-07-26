@@ -2,8 +2,12 @@ package com.fullLearn.endpoints.cron;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fullLearn.services.FullLearnService;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 
 import java.io.IOException;
+
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -49,6 +53,11 @@ public class UserStatsCronEndpoint {
     public Response weeklyStatsReport() throws JsonProcessingException {
 
         boolean status = fullLearnService.generateWeeklyReport();
+        if(status){
+            Queue queue = QueueFactory.getDefaultQueue();
+            queue.add(TaskOptions.Builder.withUrl("/task/learn/average/user/notify"));
+        }
+
         return Response.ok().build();
     }
 }

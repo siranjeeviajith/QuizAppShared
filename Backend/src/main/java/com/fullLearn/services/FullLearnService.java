@@ -255,7 +255,6 @@ public class FullLearnService {
 
             generateWeeklyReportAllUserByBatch(iterator, startDate, endDate);
             cursorStr = iterator.getCursor().toWebSafeString();
-
         } while (cursorStr != null);
 
 
