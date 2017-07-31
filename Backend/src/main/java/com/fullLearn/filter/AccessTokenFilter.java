@@ -61,8 +61,6 @@ public class AccessTokenFilter implements ContainerRequestFilter {
                 .devServer(Constants.devServer)
                 .build();
         try {
-
-
             OauthAccessToken token = authService.getTokenInfo(accessToken);
             ResteasyProviderFactory.pushContext(OauthAccessToken.class,token);
         } catch (TokenResponseException e) {

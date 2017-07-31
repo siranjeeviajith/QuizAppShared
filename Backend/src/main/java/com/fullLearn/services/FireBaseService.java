@@ -62,9 +62,7 @@ public class FireBaseService {
                 if (device.getPushToken() != null) {
                     try {
                         notifyToAllUsers(device.getUserId(), device.getPushToken());
-                    }
-                    catch(Exception e)
-                    {
+                    } catch (Exception e) {
                         logger.severe(e.getMessage());
                         continue;
                     }
@@ -92,17 +90,15 @@ public class FireBaseService {
         connection.setRequestProperty("Authorization", "key=" + Constants.SERVER_KEY);
         connection.setDoOutput(true);
         String title = "Full Learn Weekly Summary";
-        String msg="";
+        String msg = "";
 
-        int fourWeekAvg=learningStatsAvg.getFourWeekAvg();
-        if(fourWeekAvg>300){
-            msg = "Awesome work on learning, your average score is "+fourWeekAvg+" mins, keep it up!";
-        }
-        else if(fourWeekAvg>=150 && fourWeekAvg<=300){
-            msg="Good Job, your learning goal looks good, average score is now : "+fourWeekAvg+" mins, Keep learning!";
-        }
-        else if(fourWeekAvg<150){
-            msg = "Your Learning Score is LOW, Average Score is :"+fourWeekAvg+" mins";
+        int fourWeekAvg = learningStatsAvg.getFourWeekAvg();
+        if (fourWeekAvg > 300) {
+            msg = "Awesome work on learning, your average score is " + fourWeekAvg + " mins, keep it up!";
+        } else if (fourWeekAvg >= 150 && fourWeekAvg <= 300) {
+            msg = "Good Job, your learning goal looks good, average score is now : " + fourWeekAvg + " mins, Keep learning!";
+        } else if (fourWeekAvg < 150) {
+            msg = "Your Learning Score is LOW, Average Score is :" + fourWeekAvg + " mins";
         }
 
 
@@ -132,17 +128,18 @@ public class FireBaseService {
         writer.close();
         reader.close();
 
-        List<String> errorList=new ArrayList<>();
+        List<String> errorList = new ArrayList<>();
         errorList.add("Unavailable");
         errorList.add("InvalidRegistration");
         errorList.add("NotRegistered");
         errorList.add("MismatchSenderId");
-        System.out.println("response in string  is "+line);
-        Map<String,Object> response;
-        response=new ObjectMapper().readValue(line, new TypeReference<Map<String,Object>>() {});
-        List<String> resposeError= (List<String>) response.get("error");
-        if(resposeError == null) {
-            logger.info("notification sent to "+userId);
+        System.out.println("response in string  is " + line);
+        Map<String, Object> response;
+        response = new ObjectMapper().readValue(line, new TypeReference<Map<String, Object>>() {
+        });
+        List<String> resposeError = (List<String>) response.get("error");
+        if (resposeError == null) {
+            logger.info("notification sent to " + userId);
             return;
         }
         logger.severe(line);

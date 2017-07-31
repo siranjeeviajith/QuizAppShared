@@ -29,7 +29,7 @@ appengine {
     run {
         port = config.gae.port.backend // defined in dependencies.gre
         storagePath = file("$projectDir/appengine-generated/")
-
+// datastorePath = file("$projectDir/appengine-generated/")
         jvmFlags = config.gae.defaultJvmFlags
       //  serverVersion = '2-alpha'
     }
@@ -55,7 +55,4 @@ task reloadApp(type: Copy) {
         into project.tasks.explodeWar.explodedAppDirectory
         with war
     }
-}
-task strPrint {
-    print file("$projectDir/../SharedLibs/fullauth-api-java-client-1.2.6.jar")
 }

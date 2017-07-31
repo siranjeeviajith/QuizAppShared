@@ -18,7 +18,7 @@ public class LearningStats {
 	@Index
 	private String userId;
  	@Ignore
-	private Map<String,Integer> challenges_details;
+	private Map<String,Object> challenges_details;
 	@Index
 	private int minutes;
 	@Index

@@ -59,12 +59,13 @@ public class UserDevicesEndpoint {
         return Response.status(200).entity(response).build();
 
     }
-
+    @Secured
     @DELETE
     @PermitAll
     @Produces("application/json")
+    @Consumes("application/json")
     @Path("/device/{id}")
-    public Response deleteUserDeviceDetails(@PathParam("id") String id) {
+    public Response deleteUserDeviceDetails(@PathParam("id") String id, @Context OauthAccessToken token) {
 
         Map<String, Object> response = new HashMap<>();
 

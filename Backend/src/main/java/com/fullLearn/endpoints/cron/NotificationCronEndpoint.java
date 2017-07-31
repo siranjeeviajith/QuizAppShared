@@ -23,6 +23,5 @@ FireBaseService fireBaseService=new FireBaseService();
     public void sendNotification() throws IOException {
         System.out.println("notification endpoint");
         fireBaseService.sendNotificationToAllUsers();
-
     }
 }

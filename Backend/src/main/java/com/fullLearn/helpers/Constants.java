@@ -28,6 +28,7 @@ private final static Logger logger=Logger.getLogger(Constants.class.getName());
     public static final String SERVER_KEY="AAAA-hY_3kw:APA91bEtwFaf3h4xKi6QT1UyfumYhpb2hAWQFh" +
                                                     "fx2jfHWHiByYf_3yHhvTYIIwF9NV2ZHSiW-HlqydlTlDkURHWR7" +
                                                         "ms1uWaicbq-6DSk3wxPr5UTMhRjWAiQvN0tZsjHIuYgd3ajzjkp";
+
     static {
 
 
@@ -52,7 +53,7 @@ logger.info("is AppMode Live: " + IS_LIVE);
             CLIENT_SECRET = "e7m9Gb9nUzLoaCWXy8OdBI6zlh7cx8OmUXMeXRMh";
             REFRESH_TOKEN = "32915f76aa3WgtVbAzss-26W1KMIdU7WqO4cLE5rRXwfl";
             AW_API_URL = "https://api-dot-staging-fullspectrum.appspot.com";
-            AU_API_URL = "https://mint4-dot-live-adaptivecourse.appspot.com";
+                AU_API_URL = "https://adaptivecourse.appspot.com";
             devServer=true;
 
         }

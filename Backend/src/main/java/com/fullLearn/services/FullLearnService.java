@@ -17,6 +17,8 @@ import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
 import com.fullLearn.model.ChallengesInfo;
 import com.googlecode.objectify.cmd.Query;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -137,6 +139,7 @@ public class FullLearnService {
                 ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
                 url = Constants.AU_API_URL + "/v1/completedMinutes?apiKey=" + Constants.AU_APIKEY + "&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
+               //url= "https://adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=amandeep.santokh@full.co&startTime=1200854400000&endTime=1601459199000";
                 logger.info("url : " + url);
                 //System.out.println("url : "+url);
                 methodType = "POST";
@@ -166,7 +169,8 @@ public class FullLearnService {
 
     } // end of fetchUserDailyStats method
 
-    private void calculateLearningTrends(Map<String, Integer> challenges) {
+    private void calculateLearningTrends(Map<String, Object> challenges) {
+
 
         try {
 
@@ -181,7 +185,10 @@ public class FullLearnService {
                 ChallengesInfo info = challengesCountMap.get(title);
                 if (info == null) {
                     info = new ChallengesInfo();
-                    info.setDuration((int) mapEntry.getValue());
+                    Map<String,Object> titleDetails= (Map<String, Object>) mapEntry.getValue();
+                    info.setDuration((int) titleDetails.get("minutes"));
+                    info.setImage((String) titleDetails.get("image"));
+                    info.setUrl((String) titleDetails.get("link"));
                 }
 
                 info.setViews(info.getViews() + 1);
@@ -477,7 +484,7 @@ public class FullLearnService {
     }
 
 
-    public LearningStats MapUserDataAfterFetch(Map<String, Object> dataMap, String email, String userId, long startDate, long endDate, Frequency frequency) {
+    public LearningStats MapUserDataAfterFetch(Map<String, Object> dataMap, String email, String userId, long startDate, long endDate, Frequency frequency) throws JsonProcessingException {
 
 
         LearningStats daily = new LearningStats();
@@ -508,15 +515,14 @@ public class FullLearnService {
 
             Map<String, Object> mapToLearningStats = (Map<String, Object>) dataMap.get("data");
             Map<String, Object> emailMap = (Map<String, Object>) mapToLearningStats.get(email);
-
-            if (emailMap == null) {
+               if (emailMap == null) {
                 daily.setMinutes(0);
                 daily.setChallenges_completed(0);
             } else {
                 daily.setMinutes((int) emailMap.get("minutes"));
                 daily.setChallenges_completed((int) emailMap.get("challenges_completed"));
-                Map<String, Integer> challenges = new HashMap();
-                challenges = (Map<String, Integer>) emailMap.get("challenges_details");
+                Map<String, Object> challenges = new HashMap();
+                challenges = (Map<String, Object>) emailMap.get("challenges_details");
                 if (challenges != null) {
                     daily.setChallenges_details(challenges);
                 }
