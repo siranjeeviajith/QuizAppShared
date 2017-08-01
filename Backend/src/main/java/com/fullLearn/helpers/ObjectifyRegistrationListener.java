@@ -1,9 +1,6 @@
 package com.fullLearn.helpers;
 
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.LearningStatsAverage;
-import com.fullLearn.beans.TrendingChallenges;
+import com.fullLearn.beans.*;
 import com.googlecode.objectify.ObjectifyService;
 
 import javax.servlet.ServletContextEvent;
@@ -16,19 +13,15 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Created by user on 6/28/2017.
+ * Created by amandeep on 6/28/2017.
  */
 public class ObjectifyRegistrationListener implements ServletContextListener {
 
     private final static Logger logger=Logger.getLogger(ObjectifyRegistrationListener.class.getName());
     public void contextInitialized(ServletContextEvent arg0) {
-        try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream("logging.properties"));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
-        }
-        logger.setLevel(Level.FINE);
-        logger.addHandler(new ConsoleHandler());
+
+
+
 
         logger.info("Registering Ofy Entities");
        // System.out.println("Registering Ofy Entities");
@@ -36,6 +29,7 @@ public class ObjectifyRegistrationListener implements ServletContextListener {
         ObjectifyService.register(LearningStats.class);
         ObjectifyService.register(LearningStatsAverage.class);
         ObjectifyService.register(TrendingChallenges.class);
+        ObjectifyService.register(UserDevice.class);
     }
 
     public void contextDestroyed(ServletContextEvent arg0) {

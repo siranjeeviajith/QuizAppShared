@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 /**
- * Created by user on 7/12/2017.
+ * Created by amandeep on 7/12/2017.
  */
 public class LearningStatsService {
 

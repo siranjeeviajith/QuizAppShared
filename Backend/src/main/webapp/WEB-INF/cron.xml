@@ -39,4 +39,11 @@
     </cron>
 
 
+    <cron>
+        <url>/cron/learn/average/user/notify</url>
+        <target>backend</target>
+        <description>Weekly Notification </description>
+        <schedule>every monday 04:30</schedule>
+    </cron>
+
 </cronentries>

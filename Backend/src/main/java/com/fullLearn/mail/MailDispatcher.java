@@ -8,7 +8,7 @@ import javax.mail.internet.*;
 import java.util.Properties;
 
 /**
- * Created by user on 6/14/2017.
+ * Created by amandeep on 6/14/2017.
  */
 public class MailDispatcher {
 
