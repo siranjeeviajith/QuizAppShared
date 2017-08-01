@@ -36,8 +36,6 @@ public class SaveContactsHelper {
             } else {
                 deleteContactsList.add(contact.getId());
             }
-
-
         }
         if (!saveContactList.isEmpty()) {
             logger.info("saving contacts size : "+saveContactList.size());
@@ -49,6 +47,5 @@ public class SaveContactsHelper {
             ofy().delete().type(Contacts.class).ids(deleteContactsList).now();
             ofy().delete().type(LearningStatsAverage.class).ids(deleteContactsList).now();
         }
-
     }
 }

@@ -25,10 +25,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class ContactServices {
 
-	/*static {
-        ObjectifyService.register(Contacts.class);
-	}*/
-    private final static Logger logger=Logger.getLogger(ContactServices.class.getName());
+
+    private final static Logger logger = Logger.getLogger(ContactServices.class.getName());
 
     // helpers
     HTTPUrl listOfDatas = new HTTPUrl();
@@ -112,7 +110,6 @@ public class ContactServices {
                 baseUrl = baseUrl + "&cursor=" + cursorStr;
 
             }
-
             obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             logger.info("url : " + baseUrl);
             //System.out.println("url : " + baseUrl);
@@ -128,8 +125,8 @@ public class ContactServices {
             userData = obj.readValue(obj.writeValueAsString(datas.get("users")), new TypeReference<ArrayList<Contacts>>() {
             });
 
-             saveContactsHelper.saveContacts(userData);
-logger.info("fetched users : " + userData.size());
+            saveContactsHelper.saveContacts(userData);
+            logger.info("fetched users : " + userData.size());
             //System.out.println("fetched users : " + userData.size());
             if (userData.size() < limit || userData == null) {
                 return true;
@@ -145,7 +142,6 @@ logger.info("fetched users : " + userData.size());
             //System.out.println(cursorValue);
             saveAllContacts(lastModified, accesstoken, limit, cursorValue);
             return true;
-
         }
     }
 

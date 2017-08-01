@@ -43,5 +43,6 @@ subprojects {
        compileOnly libs.lombok
 
         testCompile libs.junit
+
     }
 }
