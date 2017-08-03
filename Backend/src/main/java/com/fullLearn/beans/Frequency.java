@@ -9,8 +9,8 @@ public enum Frequency {
     WEEK,
     MONTH,
     YEAR;
-    public enum Week
-    {
+
+    public enum Week {
         FOURTH,
         TWELFTH
     }

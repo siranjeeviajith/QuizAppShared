@@ -1,13 +1,14 @@
 package com.fullLearn.services;
 
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.LearningStatsAverage;
-import com.fullLearn.beans.UserDevice;
-import com.fullLearn.helpers.Constants;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.common.collect.Lists;
+
+import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.beans.UserDevice;
+import com.fullLearn.helpers.Constants;
 import com.googlecode.objectify.cmd.Query;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 

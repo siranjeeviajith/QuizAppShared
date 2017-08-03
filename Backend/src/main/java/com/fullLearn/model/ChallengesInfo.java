@@ -1,14 +1,16 @@
 package com.fullLearn.model;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by amandeep on 7/14/2017.
  */
 @Data
-public class ChallengesInfo implements Serializable{
+@NoArgsConstructor
+public class ChallengesInfo implements Serializable {
 
     public int views;
     public int duration;

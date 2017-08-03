@@ -1,7 +1,6 @@
 package com.fullLearn.services;
 
 
-import com.fullLearn.beans.*;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.ErrorHandlers;
@@ -12,12 +11,15 @@ import com.google.common.collect.Lists;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.fullLearn.beans.Contacts;
+import com.fullLearn.beans.Frequency;
+import com.fullLearn.beans.LearningStats;
+import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTP;
 import com.fullLearn.model.ChallengesInfo;
 import com.googlecode.objectify.cmd.Query;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,26 +35,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 
 public class FullLearnService {
-    private final static Logger logger = Logger.getLogger(FullLearnService.class.getName());
-
-
     final static MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
+    private final static Logger logger = Logger.getLogger(FullLearnService.class.getName());
+    public Map<String, ChallengesInfo> challengesCountMap = new HashMap();
 
     public FullLearnService() {
         cache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
     }
-
-    public Map<String, ChallengesInfo> challengesCountMap = new HashMap();
-
 
     public boolean fetchAllUserStats() throws IOException {
         logger.setLevel(Level.ALL);
@@ -139,7 +135,7 @@ public class FullLearnService {
                 ///// Start time will be dynamic and will be yesterdays date of event and endTime will also be dynamic and and will current time .
 
                 url = Constants.AU_API_URL + "/v1/completedMinutes?apiKey=" + Constants.AU_APIKEY + "&email=" + contact.getLogin() + "&startTime=" + startDate + "&endTime=" + endDate;
-               //url= "https://adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=amandeep.santokh@full.co&startTime=1200854400000&endTime=1601459199000";
+                //url= "https://adaptivecourse.appspot.com/v1/completedMinutes?apiKey=b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d&email=amandeep.santokh@full.co&startTime=1200854400000&endTime=1601459199000";
                 logger.info("url : " + url);
                 //System.out.println("url : "+url);
                 methodType = "POST";
@@ -185,8 +181,8 @@ public class FullLearnService {
                 ChallengesInfo info = challengesCountMap.get(title);
                 if (info == null) {
                     info = new ChallengesInfo();
-                    Map<String,Object> titleDetails= (Map<String, Object>) mapEntry.getValue();
-                    info.setDuration((int) titleDetails.get("minutes"));
+                    Map<String, Object> titleDetails = (Map<String, Object>) mapEntry.getValue();
+                    info.setDuration((int) titleDetails.get("mins"));
                     info.setImage((String) titleDetails.get("image"));
                     info.setUrl((String) titleDetails.get("link"));
                 }
@@ -197,7 +193,7 @@ public class FullLearnService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -458,7 +454,6 @@ public class FullLearnService {
         float twelfthWeekFloat = (float) twelfthWeekAverage / 12;
 
 
-
         fourWeekAverage = (int) Math.round(fourWeekFloat);
         twelfthWeekAverage = (int) Math.round(twelfthWeekFloat);
 
@@ -515,7 +510,7 @@ public class FullLearnService {
 
             Map<String, Object> mapToLearningStats = (Map<String, Object>) dataMap.get("data");
             Map<String, Object> emailMap = (Map<String, Object>) mapToLearningStats.get(email);
-               if (emailMap == null) {
+            if (emailMap == null) {
                 daily.setMinutes(0);
                 daily.setChallenges_completed(0);
             } else {
@@ -636,7 +631,7 @@ public class FullLearnService {
             twelfthWeekAverage = (int) Math.round(twelfthWeekFloat);
 
             FullLearnService fullLearnService = new FullLearnService();
-          LearningStatsAverage averageEntity = fullLearnService.mapUserDataAverageWeek(fourWeekAverage, twelfthWeekAverage, contact);
+            LearningStatsAverage averageEntity = fullLearnService.mapUserDataAverageWeek(fourWeekAverage, twelfthWeekAverage, contact);
 
 
             /////   save entity to datastore
