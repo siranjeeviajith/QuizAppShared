@@ -1,11 +1,18 @@
 package com.fullLearn.mail;
 
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.LearningStats;
-
-import javax.mail.*;
-import javax.mail.internet.*;
 import java.util.Properties;
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 /**
  * Created by amandeep on 6/14/2017.
@@ -25,11 +32,10 @@ public class MailDispatcher {
         props.put("mail.smtp.auth", true);
 
 
-
-        Session session = Session.getInstance(props,null);
+        Session session = Session.getInstance(props, null);
         MimeMessage message = new MimeMessage(session);
 
-        System.out.println("Port: "+session.getProperty("mail.smtp.port"));
+        System.out.println("Port: " + session.getProperty("mail.smtp.port"));
 
         // Create the email addresses involved
         try {
@@ -63,13 +69,13 @@ public class MailDispatcher {
             // Send message
             Transport transport = session.getTransport("smtp");
             transport.connect("smtp.gmail.com", "amandeep.pannu8233", "Chandela8859@#");
-            System.out.println("Transport: "+transport.toString());
+            System.out.println("Transport: " + transport.toString());
             transport.sendMessage(message, message.getAllRecipients());
 
 
         } catch (AddressException e) {
 
-                System.out.println("Address exceiption ");
+            System.out.println("Address exceiption ");
 
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -78,7 +84,7 @@ public class MailDispatcher {
             e.printStackTrace();
         }
     }
-    }
+}
 
 
 

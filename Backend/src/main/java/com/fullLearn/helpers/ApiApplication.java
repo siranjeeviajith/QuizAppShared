@@ -3,8 +3,8 @@ package com.fullLearn.helpers;
 import com.fullLearn.endpoints.api.LearningStatsEndpoint;
 import com.fullLearn.endpoints.api.UserDevicesEndpoint;
 import com.fullLearn.endpoints.cron.ContactSyncCronEndpoint;
-import com.fullLearn.endpoints.cron.UserStatsCronEndpoint;
 import com.fullLearn.endpoints.cron.NotificationCronEndpoint;
+import com.fullLearn.endpoints.cron.UserStatsCronEndpoint;
 import com.fullLearn.filter.AccessTokenFilter;
 
 import java.util.HashSet;
@@ -18,8 +18,9 @@ import javax.ws.rs.core.Application;
 public class ApiApplication extends Application {
 
 
+    AccessTokenFilter accessTokenFilter = new AccessTokenFilter();
     private Set<Object> singletons = new HashSet<Object>();
-    AccessTokenFilter accessTokenFilter=new AccessTokenFilter();
+
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();

@@ -1,39 +1,33 @@
 package com.fullLearn.helpers;
 
-import com.fullLearn.services.ContactServices;
 import com.google.apphosting.api.ApiProxy;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
  * Created by amandeep on 6/26/2017.
  */
 public class Constants {
-    static boolean IS_LIVE;
-    private static String appId = ApiProxy.getCurrentEnvironment().getAppId();
-private final static Logger logger=Logger.getLogger(Constants.class.getName());
+    public static final String AU_APIKEY = "b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d";
+    public static final String SERVER_KEY = "AAAA-hY_3kw:APA91bEtwFaf3h4xKi6QT1UyfumYhpb2hAWQFh" +
+            "fx2jfHWHiByYf_3yHhvTYIIwF9NV2ZHSiW-HlqydlTlDkURHWR7" +
+            "ms1uWaicbq-6DSk3wxPr5UTMhRjWAiQvN0tZsjHIuYgd3ajzjkp";
+    private final static Logger logger = Logger.getLogger(Constants.class.getName());
     public static String FULL_AUTH_URL;
     public static String CLIENT_ID;
     public static String CLIENT_SECRET;
     public static String REFRESH_TOKEN;
     public static String AW_API_URL;
     public static String AU_API_URL;
-    public static final String AU_APIKEY = "b2739ff0eb7543e5a5c43e88f3cb2a0bd0d0247d";
-    public static  boolean devServer;
-    public static final String SERVER_KEY="AAAA-hY_3kw:APA91bEtwFaf3h4xKi6QT1UyfumYhpb2hAWQFh" +
-                                                    "fx2jfHWHiByYf_3yHhvTYIIwF9NV2ZHSiW-HlqydlTlDkURHWR7" +
-                                                        "ms1uWaicbq-6DSk3wxPr5UTMhRjWAiQvN0tZsjHIuYgd3ajzjkp";
+    public static boolean devServer;
+    static boolean IS_LIVE;
+    private static String appId = ApiProxy.getCurrentEnvironment().getAppId();
 
     static {
 
 
         IS_LIVE = isLive();
-logger.info("is AppMode Live: " + IS_LIVE);
+        logger.info("is AppMode Live: " + IS_LIVE);
         //System.out.println("is AppMode Live: " + IS_LIVE);
 
         if (IS_LIVE) {
@@ -45,7 +39,7 @@ logger.info("is AppMode Live: " + IS_LIVE);
             AW_API_URL = "https://api.anywhereworks.com";
             AU_API_URL = "https://my.adaptiveu.io";
 
-            devServer=false;
+            devServer = false;
         } else {
             System.out.println("Stagging");
             FULL_AUTH_URL = "https://staging-fullcreative-dot-full-auth.appspot.com";
@@ -53,8 +47,8 @@ logger.info("is AppMode Live: " + IS_LIVE);
             CLIENT_SECRET = "e7m9Gb9nUzLoaCWXy8OdBI6zlh7cx8OmUXMeXRMh";
             REFRESH_TOKEN = "32915f76aa3WgtVbAzss-26W1KMIdU7WqO4cLE5rRXwfl";
             AW_API_URL = "https://api-dot-staging-fullspectrum.appspot.com";
-                AU_API_URL = "https://adaptivecourse.appspot.com";
-            devServer=true;
+            AU_API_URL = "https://adaptivecourse.appspot.com";
+            devServer = true;
 
         }
     }

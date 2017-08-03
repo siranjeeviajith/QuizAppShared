@@ -9,7 +9,8 @@ buildscript {
     repositories {
 
         jcenter()  //A pre-configured repository that looks for dependencies in Bintray’s JCenter.
-        mavenCentral()  //  A pre-configured repository that looks for dependencies in Maven Central.
+        mavenCentral()
+        //  A pre-configured repository that looks for dependencies in Maven Central.
     }
     dependencies {
         classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'
@@ -22,7 +23,6 @@ dependencies {
     compile libs.resteasy
     compile libs.resteasy_jackson_provider
     compile files("$projectDir/../SharedLibs/fullauth-api-java-client-1.2.6.jar")
-    //runtime files("$projectDir/SharedLibs/fullauth-api-java-client-1.2.6.jar")
 }
 
 appengine {
@@ -31,16 +31,14 @@ appengine {
         storagePath = file("$projectDir/appengine-generated/")
 // datastorePath = file("$projectDir/appengine-generated/")
         jvmFlags = config.gae.defaultJvmFlags
-      //  serverVersion = '2-alpha'
+        //  serverVersion = '2-alpha'
     }
 
     deploy {
-        version = 6
+        version = 7
         project = "full-learn"
         stopPreviousVersion = false
         promote = false
-//
-
     }
 }
 

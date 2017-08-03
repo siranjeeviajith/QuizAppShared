@@ -1,9 +1,10 @@
 package com.fullLearn.services;
 
-import com.fullLearn.beans.LearningStatsAverage;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.common.collect.Lists;
+
+import com.fullLearn.beans.LearningStatsAverage;
 import com.googlecode.objectify.cmd.Query;
 
 import java.util.HashMap;
@@ -56,11 +57,11 @@ public class LearningStatsService {
         if (userDataList.size() < limit)
             cursorStr = null;
 
-        Map<String,Object> response=new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap();
 
-            data.put("stats",userDataList);
-            response.put("data", data);
+        data.put("stats", userDataList);
+        response.put("data", data);
         response.put("cursor", cursorStr);
 
         return response;
