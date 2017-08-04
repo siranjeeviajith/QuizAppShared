@@ -5,8 +5,9 @@
     <content url="file://$MODULE_DIR$/../../../Backend">
       <excludeFolder url="file://$MODULE_DIR$/../../../Backend/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../Backend/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../Backend/out" />
     </content>
-    <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
