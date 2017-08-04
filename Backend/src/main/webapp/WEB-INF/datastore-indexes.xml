@@ -12,4 +12,10 @@
         <property name="startTime" direction="asc"/>
     </datastore-index>
 
+    <datastore-index kind="LearningStats" ancestor="false" source="manual">
+        <property name="frequency" direction="asc"/>
+        <property name="userId" direction="asc"/>
+        <property name="startTime" direction="desc"/>
+    </datastore-index>
+
 </datastore-indexes>

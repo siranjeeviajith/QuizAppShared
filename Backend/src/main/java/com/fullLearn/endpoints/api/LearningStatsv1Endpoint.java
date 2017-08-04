@@ -2,14 +2,22 @@ package com.fullLearn.endpoints.api;
 
 import com.fullLearn.beans.Frequency;
 import com.fullLearn.services.LearningStatsService;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 
 @Path("/api/v1/learn")
 public class LearningStatsv1Endpoint {
+
+    LearningStatsService learningStatsService = new LearningStatsService();
 
     @GET
     @Path("/stats/report/user/{userid}")
@@ -18,27 +26,22 @@ public class LearningStatsv1Endpoint {
 
         Map<String, Object> userStats = new HashMap<>();
         Map<String, Object> userData = new HashMap<>();
-        try{
+        try {
             if (type == null)
                 type = Frequency.WEEK;
 
-            if (limit == 0) {
+            if (limit <= 0) {
                 limit = 12;
-            }
-            else if (limit > 20) {
+            } else if (limit > 20) {
                 limit = 20;
             }
-            else if(limit < 0){
-                limit = 1;
-            }
 
-            LearningStatsService learningStatsService = new LearningStatsService();
-            userData.put("stats",learningStatsService.getStatsByTypeForUserId(userId, type, limit));
-            userStats.put("data",userData);
+            userData.put("stats", learningStatsService.getStatsByTypeForUserId(userId, type, limit));
+            userStats.put("data", userData);
             userStats.put("response", true);
             return Response.status(Response.Status.OK).entity(userStats).build();
 
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             System.out.println(ex);
 
             userStats.put("msg", "Request Failed or Data not found or Check the URL");
