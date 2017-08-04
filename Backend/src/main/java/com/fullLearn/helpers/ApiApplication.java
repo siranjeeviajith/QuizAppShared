@@ -1,6 +1,7 @@
 package com.fullLearn.helpers;
 
 import com.fullLearn.endpoints.api.LearningStatsEndpoint;
+import com.fullLearn.endpoints.api.LearningStatsv1Endpoint;
 import com.fullLearn.endpoints.api.UserDevicesEndpoint;
 import com.fullLearn.endpoints.cron.ContactSyncCronEndpoint;
 import com.fullLearn.endpoints.cron.NotificationCronEndpoint;
@@ -29,6 +30,7 @@ public class ApiApplication extends Application {
         classes.add(UserStatsCronEndpoint.class);
         classes.add(UserDevicesEndpoint.class);
         classes.add(NotificationCronEndpoint.class);
+        classes.add(LearningStatsv1Endpoint.class);
         return classes;
     }
 
