@@ -70,8 +70,8 @@ public class LearningStatsService {
 
     public List<LearningStats> getStatsByTypeForUserId(String userId, Frequency type, int limit) {
 
-        return ofy().load().type(LearningStats.class).filter("userId ==", userId)
-                .filter("frequency ==",type)
+        return ofy().load().type(LearningStats.class).filter("userId", userId)
+                .filter("frequency",type)
                 .order("-startTime").limit(limit).list();
 
     }
