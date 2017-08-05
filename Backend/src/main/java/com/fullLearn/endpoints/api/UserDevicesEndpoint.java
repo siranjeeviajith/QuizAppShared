@@ -1,6 +1,7 @@
 package com.fullLearn.endpoints.api;
 
 
+import com.fullLearn.beans.ApiResponse;
 import com.fullLearn.beans.UserDevice;
 import com.fullLearn.helpers.Secured;
 import com.fullLearn.helpers.Utils;
@@ -42,25 +43,22 @@ public class UserDevicesEndpoint {
     @Consumes("application/json")
     @Path("/device")
     public Response getUserDeviceDetails(@Context HttpServletRequest req, @Context OauthAccessToken token, UserDevice device) throws IOException {
-        Map<String, Object> deviceData = new HashMap<>();
-        Map<String, Object> response = new HashMap<>();
+
+        ApiResponse apiResponse = new ApiResponse();
         device.setUserId(token.getUserId());
         if (device.getId() == null) {
-            response.put("msg", "id cannot be null");
-            response.put("response", false);
-            response.put("error", "request failed");
-            return Response.status(400).entity(response).build();
+
+            apiResponse.setResponse(false);
+            apiResponse.setError("Request failed");
+            apiResponse.setMsg("id cannot be null");
+            return Response.status(400).entity(apiResponse).build();
 
         }
 
-        UserDevice device1 = userDevicesService.saveUserDevice(device);
-        deviceData.put("device", device1);
-        response.put("data", deviceData);
-        response.put("response", true);
-        response.put("error", null);
-
+        apiResponse.addData("device",userDevicesService.saveUserDevice(device));
+        apiResponse.setResponse(true);
         logger.info("response is ready");
-        return Response.status(200).entity(response).build();
+        return Response.status(200).entity(apiResponse).build();
 
     }
 
@@ -72,21 +70,21 @@ public class UserDevicesEndpoint {
     @Path("/device/{id}")
     public Response deleteUserDeviceDetails(@PathParam("id") String id, @Context OauthAccessToken token) {
 
-        Map<String, Object> response = new HashMap<>();
-
+        ApiResponse apiResponse = new ApiResponse();
 
         UserDevice deletedDevice = userDevicesService.deleteUserDevice(id);
         if (deletedDevice == null) {
-            response.put("msg", "id not found");
-            response.put("response", false);
-            response.put("error", "request failed");
-            return Response.status(404).entity(response).build();
-        }
-        response.put("response", true);
-        response.put("error", null);
-        logger.info("response is ready");
-        return Response.status(200).entity(response).build();
 
+            apiResponse.setMsg("Id not found");
+            apiResponse.setResponse(false);
+            apiResponse.setError("Request failed");
+            return Response.status(404).entity(apiResponse).build();
+
+        }
+
+        apiResponse.setResponse(true);
+        logger.info("response is ready");
+        return Response.status(200).entity(apiResponse).build();
 
     }
 }

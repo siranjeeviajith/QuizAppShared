@@ -1,5 +1,6 @@
 package com.fullLearn.endpoints.api;
 
+import com.fullLearn.beans.ApiResponse;
 import com.fullLearn.beans.Frequency;
 import com.fullLearn.services.LearningStatsService;
 import javax.ws.rs.*;
@@ -16,8 +17,7 @@ public class LearningStatsv1Endpoint {
     @Produces("application/json")
     public Response getUser(@PathParam("userid") String userId, @QueryParam("type") Frequency type, @QueryParam("limit") int limit) {
 
-        Map<String, Object> userStats = new HashMap<>();
-        Map<String, Object> userData = new HashMap<>();
+        ApiResponse apiResponse = new ApiResponse();
         try{
             if (type == null)
                 type = Frequency.WEEK;
@@ -33,18 +33,18 @@ public class LearningStatsv1Endpoint {
             }
 
             LearningStatsService learningStatsService = new LearningStatsService();
-            userData.put("stats",learningStatsService.getStatsByTypeForUserId(userId, type, limit));
-            userStats.put("data",userData);
-            userStats.put("response", true);
-            return Response.status(Response.Status.OK).entity(userStats).build();
+            apiResponse.addData("stats",learningStatsService.getStatsByTypeForUserId(userId, type, limit));
+            apiResponse.setResponse(true);
+            return Response.status(Response.Status.OK).entity(apiResponse).build();
 
         }catch (Exception ex) {
             System.out.println(ex);
 
-            userStats.put("msg", "Request Failed or Data not found or Check the URL");
-            userStats.put("error", "Request Failed");
-            userStats.put("response", false);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(userStats).build();
+            apiResponse.setResponse(false);
+            apiResponse.setMsg("Request Failed or Data not found or Check the URL");
+            apiResponse.setError("Request Failed");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(apiResponse).build();
+
         }
 
     }
