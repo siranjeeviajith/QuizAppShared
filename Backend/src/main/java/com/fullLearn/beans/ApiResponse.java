@@ -8,16 +8,19 @@ import java.util.Map;
 @Data
 public class ApiResponse {
     private boolean response;
-    private Object data;
+    private Map<String,Object> data;
     private String msg;
     private String error;
 
-    public ApiResponse(){}
-
-    public Map<String,Object> addData(String key, Object value){
-
-        Map<String, Object> mapObject =  new LinkedHashMap<>();
-        mapObject.put(key,value);
-        return mapObject;
+    public ApiResponse(){
+        data = new LinkedHashMap<>();
     }
+
+    public void addData(String key, Object value){
+        if(data == null ) {
+            data = new LinkedHashMap<>();
+        }
+        data.put(key,value);
+    }
+
 }
