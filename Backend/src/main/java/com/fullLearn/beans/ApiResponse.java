@@ -15,6 +15,8 @@ public class ApiResponse {
     public ApiResponse(){}
 
     public void addData(String key, Object value){
+        if(data == null)
+            data = new LinkedHashMap<String,Object>();
         data.put(key,value);
     }
 }
