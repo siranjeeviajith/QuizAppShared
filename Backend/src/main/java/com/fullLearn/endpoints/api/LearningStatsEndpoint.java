@@ -1,6 +1,7 @@
 package com.fullLearn.endpoints.api;
 
 
+import com.fullLearn.beans.ApiResponse;
 import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.services.FullLearnService;
@@ -87,22 +88,23 @@ public class LearningStatsEndpoint {
                 type = 4;
             if (order == null)
                 order = "desc";
+
             LearningStatsService learningStatsService = new LearningStatsService();
 
             Map<String, Object> userStats = learningStatsService.getAllUserStats(type, order, limit, cursorStr, minAvg, maxAvg);
             userStats.put("error", null);
             userStats.put("response", true);
-
             return Response.status(Response.Status.OK).entity(userStats).build();
 
         } catch (Exception ex) {
-            System.out.println(ex);
-            Map<String, Object> msg = new HashMap<>();
-            msg.put("msg", " Request Failed or Data not found or Check the URL");
-            msg.put("error", " Request Failed");
-            msg.put("response", false);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(msg).build();
 
+            System.out.println(ex);
+
+            ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setResponse(false);
+            apiResponse.setError("Request Failed");
+            apiResponse.setMsg("Request Failed or Data not found or Check the URL");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(apiResponse).build();
 
         }
 
@@ -136,23 +138,23 @@ public class LearningStatsEndpoint {
     @Path("/stats/user/{userid}")
     @Produces("application/json")
     public Response getUser(@PathParam("userid") String userId) {
+
+        ApiResponse apiResponse = new ApiResponse();
         LearningStatsService learningStatsService = new LearningStatsService();
-        Map<String, Object> response = new HashMap<>();
-        Map<String, Object> userData = new HashMap<>();
         LearningStatsAverage userStats = learningStatsService.getStatsByUserId(userId);
         if (userStats != null) {
 
-            userData.put("stats", userStats);
-            response.put("data", userData);
-            response.put("error", null);
-            response.put("response", true);
-            return Response.status(Response.Status.OK).entity(response).build();
+            apiResponse.addData("stats", userStats);
+            apiResponse.setResponse(true);
+            return Response.status(Response.Status.OK).entity(apiResponse).build();
+
         } else {
-            Map<String, Object> msg = new HashMap<>();
-            msg.put("msg", " userId cannot find");
-            msg.put("error", " Request Failed");
-            msg.put("response", false);
-            return Response.status(Response.Status.NOT_FOUND).entity(msg).build();
+
+            apiResponse.setResponse(false);
+            apiResponse.setError("Request Failed");
+            apiResponse.setMsg("userId cannot find");
+            return Response.status(Response.Status.NOT_FOUND).entity(apiResponse).build();
+
         }
     }
 
@@ -162,29 +164,25 @@ public class LearningStatsEndpoint {
 
     public Response getDailyTrends(@PathParam("date") long date) throws JsonMappingException {
 
-
-        Map<String, Object> latestTrendsResponse = new HashMap<>();
         FullLearnService fullLearnService = new FullLearnService();
         TrendingChallenges latestTrends = fullLearnService.getLatestTrends(date);
         if (latestTrends != null) {
+
+            Map<String, Object> latestTrendsResponse = new HashMap<>();
             latestTrendsResponse.put("data", latestTrends);
             latestTrendsResponse.put("error", null);
             latestTrendsResponse.put("response", true);
             return Response.status(Response.Status.OK).entity(latestTrendsResponse).build();
+
         } else {
-            Map<String, Object> msg = new HashMap<>();
-            msg.put("msg", " trends not available");
-            msg.put("error", " Request Failed");
-            msg.put("response", false);
-            return Response.status(Response.Status.NOT_FOUND).entity(msg).build();
+
+            ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setResponse(false);
+            apiResponse.setError("Request Failed");
+            apiResponse.setMsg("Trends not available");
+            return Response.status(Response.Status.NOT_FOUND).entity(apiResponse).build();
+
         }
 
-
     }
-
 }
-
-
-
-
-
