@@ -21,9 +21,7 @@ public class ObjectifyRegistrationListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent arg0) {
 
-
         logger.info("Registering Ofy Entities");
-        // System.out.println("Registering Ofy Entities");
         ObjectifyService.register(Contacts.class);
         ObjectifyService.register(LearningStats.class);
         ObjectifyService.register(LearningStatsAverage.class);

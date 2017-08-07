@@ -6,7 +6,6 @@
         <target>backend</target>
         <description>Daily Contacts Sync</description>
         <schedule>every day 00:01</schedule>
-
     </cron>
 
     <cron>

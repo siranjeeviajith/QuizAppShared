@@ -1,15 +1,17 @@
 package com.fullLearn.services;
 
-import com.fullLearn.beans.Frequency;
-import com.fullLearn.beans.LearningStats;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.common.collect.Lists;
 
+import com.fullLearn.beans.Frequency;
+import com.fullLearn.beans.LearningStats;
 import com.fullLearn.beans.LearningStatsAverage;
 import com.googlecode.objectify.cmd.Query;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -71,7 +73,7 @@ public class LearningStatsService {
     public List<LearningStats> getStatsByTypeForUserId(String userId, Frequency type, int limit) {
 
         return ofy().load().type(LearningStats.class).filter("userId", userId)
-                .filter("frequency",type)
+                .filter("frequency", type)
                 .order("-startTime").limit(limit).list();
 
     }
