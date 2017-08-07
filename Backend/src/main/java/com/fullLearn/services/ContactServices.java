@@ -40,7 +40,6 @@ public class ContactServices {
 
         String params = "refresh_token=" + Constants.REFRESH_TOKEN + "&client_id=" + Constants.CLIENT_ID + "&client_secret=" + Constants.CLIENT_SECRET + "&grant_type=refresh_token";
 
-
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
         con.setRequestMethod("POST");
@@ -93,6 +92,7 @@ public class ContactServices {
 
 
     public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
+
         ObjectMapper obj = new ObjectMapper();
 
         obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

@@ -9,8 +9,6 @@ import com.fullLearn.services.UserDevicesService;
 import com.fullauth.api.model.oauth.OauthAccessToken;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.annotation.security.PermitAll;

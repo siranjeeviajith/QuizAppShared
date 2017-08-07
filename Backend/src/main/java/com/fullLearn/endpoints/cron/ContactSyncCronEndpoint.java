@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
@@ -20,22 +19,16 @@ public class ContactSyncCronEndpoint {
 
     @GET
     @Path("/contacts")
-    @Produces("application/json")
     public Response dailyContactSync() throws IOException {
 
-        ContactServices fc = new ContactServices();
+        ContactServices contactService = new ContactServices();
+
         // Access Token
-        String accessToken = fc.getAccessToken();
+        String accessToken = contactService.getAccessToken();
 
+        Long lastModified = contactService.getLastModifiedContacts();
 
-        int limit = 30;
-        String cursorStr = null;
-        Long lastModified = fc.getLastModifiedContacts();
-
-        ContactServices contactservice = new ContactServices();
-
-        contactservice.saveAllContacts(lastModified, accessToken, limit, cursorStr);
-
+        contactService.saveAllContacts(lastModified, accessToken, 30, null);
 
         return Response.ok().build();
     }
