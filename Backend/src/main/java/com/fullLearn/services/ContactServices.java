@@ -3,21 +3,18 @@ package com.fullLearn.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fullLearn.beans.ContactJson;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.TokenAccess;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTPUrl;
 import com.fullLearn.helpers.SaveContactsHelper;
-import com.googlecode.objectify.cmd.Query;
-
-import java.io.BufferedReader;
+import com.fullauth.api.http.HttpMethod;
+import com.fullauth.api.http.HttpRequest;
+import com.fullauth.api.http.HttpResponse;
+import com.fullauth.api.http.UrlFetcher;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -36,59 +33,93 @@ public class ContactServices {
     public String getAccessToken() throws IOException {
 
 
-        URL url = new URL(Constants.FULL_AUTH_URL + "/o/oauth2/v1/token");
-
+        String url = Constants.FULL_AUTH_URL + "/o/oauth2/v1/token";
+        HttpRequest httpRequest = new HttpRequest(url, HttpMethod.POST);
+        httpRequest.setContentType("application/x-www-form-urlencoded");
         String params = "refresh_token=" + Constants.REFRESH_TOKEN + "&client_id=" + Constants.CLIENT_ID + "&client_secret=" + Constants.CLIENT_SECRET + "&grant_type=refresh_token";
+        httpRequest.setPayload(params.getBytes("UTF-8"));
 
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        HttpResponse httpResponse = UrlFetcher.makeRequest(httpRequest);
+        if (httpResponse.getStatusCode() == 200) {
 
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        con.setDoOutput(true);
+            String tokens = httpResponse.getResponseContent();
+            logger.info(tokens);
 
-        OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-        wr.write(params);
-        wr.flush();
-
-        // Get the response
-        String tokens = new String();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            tokens += line;
+            ObjectMapper obj = new ObjectMapper();
+            TokenAccess pojo = obj.readValue(tokens, TokenAccess.class);
+            String accesstoken = pojo.getAccess_token();
+            return accesstoken;
         }
-
-        //Output the response
-        logger.info(tokens);
-        //System.out.println(tokens);
-
-        // Mapping JSON
-        ObjectMapper obj = new ObjectMapper();
-
-        TokenAccess pojo = obj.readValue(tokens, TokenAccess.class);
-        //System.out.println(pojo.getAccess_token());
-        String accesstoken = pojo.getAccess_token();
-        return accesstoken;
+        System.out.println("Error occured "+httpResponse.getResponseContent());
+        return null;
     }
 
     public Long getLastModifiedContacts() {
-        try {
-            Query<Contacts> all = ofy().load().type(Contacts.class).order("-modifiedAt").limit(1);
-            List<Contacts> list = all.list();
 
-            if (list.size() != 0) {
-                Long lastModified = list.get(0).getModifiedAt();
-                return lastModified;
-            } else {
+        try {
+            Contacts contacts = ofy().load().type(Contacts.class).order("-modifiedAt").first().now();
+            if (contacts == null)
                 return null;
-            }
-        } catch (Exception ex) {
-            logger.severe("exception: " + ex);
-            //System.out.println("exception: " + ex);
+            return contacts.getModifiedAt();
+        }catch( Exception e){
+            logger.severe("Exception: " + e);
             return null;
         }
 
     }
+
+    // syncContacts
+    public int syncContacts() throws Exception {
+
+        int limit = 30;
+        int count = 0;
+        String cursor = null;
+        String baseUrl = Constants.AW_API_URL + "/api/v1/account/SEN42/user?limit="+limit;
+        Long lastModified = getLastModifiedContacts();
+        String accesstoken = getAccessToken();
+        if (lastModified != null)
+            baseUrl = baseUrl + "&since=" + lastModified;
+        do{
+            if (cursor != null)
+                baseUrl = baseUrl + "&cursor=" + cursor;
+            HttpRequest httpRequest = new HttpRequest(baseUrl, HttpMethod.GET);
+            httpRequest.setContentType("application/json");
+            httpRequest.setConnectionTimeOut(60000);
+            httpRequest.addHeader("Authorization", "Bearer " + accesstoken);
+
+            HttpResponse httpResponse = UrlFetcher.makeGetRequest(baseUrl);
+            if (httpResponse.getStatusCode() == 200) {
+
+                String contacts = httpResponse.getResponseContent();
+                ObjectMapper obj = new ObjectMapper();
+                ContactJson contactJson = obj.readValue(contacts, ContactJson.class);
+
+                if(contactJson.isOk()){
+                    Map<String,Object> data = contactJson.getData();
+                    cursor = (String) data.get("cursor");
+                    String usersDataAsString =  (String) data.get("users");
+                    ArrayList<Contacts> userData = obj.readValue(usersDataAsString ,new TypeReference<ArrayList<Contacts>>(){});
+
+                    SaveContactsHelper saveContactsHelper = new SaveContactsHelper();
+                    saveContactsHelper.saveContacts(userData);
+                    count = count + userData.size();
+                    logger.info("fetched users : " + userData.size());
+                    if (userData.size() < limit || userData.isEmpty())
+                        return count;
+                }
+                else
+                    continue;
+            }
+            else {
+                System.out.println("Error occured " + httpResponse.getResponseContent());
+                throw new Exception(httpResponse.getResponseContent());
+            }
+
+        }while(cursor != null);
+
+        return count;
+    }
+
 
 
     public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
