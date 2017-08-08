@@ -69,7 +69,7 @@ public class ContactServices {
     }
 
     // syncContacts
-    public int syncContacts() throws IOException {
+    public int syncContacts() throws Exception {
 
         int limit = 30;
         int count = 0;
@@ -80,7 +80,8 @@ public class ContactServices {
         if (lastModified != null)
             baseUrl = baseUrl + "&since=" + lastModified;
         do{
-            baseUrl = baseUrl + "&cursor=" + cursor;
+            if (lastModified != null)
+                baseUrl = baseUrl + "&cursor=" + cursor;
             HttpRequest httpRequest = new HttpRequest(baseUrl, HttpMethod.GET);
             httpRequest.setContentType("application/json");
             httpRequest.setConnectionTimeOut(60000);
@@ -107,8 +108,10 @@ public class ContactServices {
                         return count;
                 }
             }
-            else
-                System.out.println("Error occured "+ httpResponse.getResponseContent());
+            else {
+                System.out.println("Error occured " + httpResponse.getResponseContent());
+                throw new Exception(httpResponse.getResponseContent());
+            }
 
         }while(cursor != null);
 
