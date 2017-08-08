@@ -80,7 +80,7 @@ public class ContactServices {
         if (lastModified != null)
             baseUrl = baseUrl + "&since=" + lastModified;
         do{
-            if (lastModified != null)
+            if (cursor != null)
                 baseUrl = baseUrl + "&cursor=" + cursor;
             HttpRequest httpRequest = new HttpRequest(baseUrl, HttpMethod.GET);
             httpRequest.setContentType("application/json");
@@ -107,6 +107,8 @@ public class ContactServices {
                     if (userData.size() < limit || userData.isEmpty())
                         return count;
                 }
+                else
+                    continue;
             }
             else {
                 System.out.println("Error occured " + httpResponse.getResponseContent());
