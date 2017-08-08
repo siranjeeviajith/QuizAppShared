@@ -13,6 +13,7 @@ import com.fullauth.api.http.HttpMethod;
 import com.fullauth.api.http.HttpRequest;
 import com.fullauth.api.http.HttpResponse;
 import com.fullauth.api.http.UrlFetcher;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class ContactServices {
             String accesstoken = pojo.getAccess_token();
             return accesstoken;
         }
-        System.out.println("Error occured "+httpResponse.getResponseContent());
+        System.out.println("Error occured " + httpResponse.getResponseContent());
         return null;
     }
 
@@ -61,7 +62,7 @@ public class ContactServices {
             if (contacts == null)
                 return null;
             return contacts.getModifiedAt();
-        }catch( Exception e){
+        } catch (Exception e) {
             logger.severe("Exception: " + e);
             return null;
         }
@@ -74,12 +75,15 @@ public class ContactServices {
         int limit = 30;
         int count = 0;
         String cursor = null;
-        String baseUrl = Constants.AW_API_URL + "/api/v1/account/SEN42/user?limit="+limit;
+
         Long lastModified = getLastModifiedContacts();
         String accesstoken = getAccessToken();
+
+        String baseUrl = Constants.AW_API_URL + "/api/v1/account/SEN42/user?limit=" + limit;
         if (lastModified != null)
             baseUrl = baseUrl + "&since=" + lastModified;
-        do{
+
+        do {
             if (cursor != null)
                 baseUrl = baseUrl + "&cursor=" + cursor;
             HttpRequest httpRequest = new HttpRequest(baseUrl, HttpMethod.GET);
@@ -94,11 +98,12 @@ public class ContactServices {
                 ObjectMapper obj = new ObjectMapper();
                 ContactJson contactJson = obj.readValue(contacts, ContactJson.class);
 
-                if(contactJson.isOk()){
-                    Map<String,Object> data = contactJson.getData();
+                if (contactJson.isOk()) {
+                    Map<String, Object> data = contactJson.getData();
                     cursor = (String) data.get("cursor");
-                    String usersDataAsString =  (String) data.get("users");
-                    ArrayList<Contacts> userData = obj.readValue(usersDataAsString ,new TypeReference<ArrayList<Contacts>>(){});
+                    String usersDataAsString = (String) data.get("users");
+                    ArrayList<Contacts> userData = obj.readValue(usersDataAsString, new TypeReference<ArrayList<Contacts>>() {
+                    });
 
                     SaveContactsHelper saveContactsHelper = new SaveContactsHelper();
                     saveContactsHelper.saveContacts(userData);
@@ -106,22 +111,20 @@ public class ContactServices {
                     logger.info("fetched users : " + userData.size());
                     if (userData.size() < limit || userData.isEmpty())
                         return count;
-                }
-                else
+                } else
                     continue;
-            }
-            else {
+            } else {
                 System.out.println("Error occured " + httpResponse.getResponseContent());
                 throw new Exception(httpResponse.getResponseContent());
             }
 
-        }while(cursor != null);
+        } while (cursor != null);
 
         return count;
     }
 
 
-
+    @Deprecated
     public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
 
         ObjectMapper obj = new ObjectMapper();
