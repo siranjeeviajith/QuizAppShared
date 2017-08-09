@@ -2,34 +2,31 @@ package com.fullLearn.endpoints.cron;
 
 import com.fullLearn.services.ContactServices;
 
-import java.io.IOException;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Created by amandeep on 7/13/2017.
  */
 
+@Slf4j
 @Path("/cron/sync")
 @Provider
 public class ContactSyncCronEndpoint {
 
+    final ContactServices contactService = new ContactServices();
+
     @GET
     @Path("/contacts")
-    public Response dailyContactSync() throws IOException {
+    public Response dailyContactSync() throws Exception {
 
-        ContactServices contactService = new ContactServices();
+        int count = contactService.syncContacts();
 
-        // Access Token
-        String accessToken = contactService.getAccessToken();
-
-        Long lastModified = contactService.getLastModifiedContacts();
-
-        contactService.saveAllContacts(lastModified, accessToken, 30, null);
-
+        log.info("synced contacts : {}", count);
         return Response.ok().build();
     }
 }
