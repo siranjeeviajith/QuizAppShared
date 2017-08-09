@@ -1,9 +1,9 @@
-package com.fullLearn.beans;
+package com.fullLearn.model;
 
 import lombok.Data;
 
 @Data
-public class LearningStatsChallangeInfo {
+public class AUStatsChallangeInfo {
     private int minutes;
     private String link;
     private String image;

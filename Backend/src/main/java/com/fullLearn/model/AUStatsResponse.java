@@ -1,5 +1,6 @@
-package com.fullLearn.beans;
+package com.fullLearn.model;
 
+import com.fullLearn.model.AUStatsChallanges;
 import lombok.Data;
 
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
 public class AUStatsResponse {
     private boolean response;
     private String msg;
-    private Map<String,LearningStatsChallanges> data;
+    private Map<String,AUStatsChallanges> data;
     private String status;
     private int code;
     private Object error;

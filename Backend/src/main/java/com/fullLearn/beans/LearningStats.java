@@ -1,6 +1,7 @@
 package com.fullLearn.beans;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fullLearn.model.AUStatsChallangeInfo;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -25,7 +26,7 @@ public class LearningStats {
     private String userId;
     @Ignore
     @JsonProperty("challenges_details")
-    private Map<String, LearningStatsChallangeInfo> challengesDetails;
+    private Map<String, AUStatsChallangeInfo> challengesDetails;
     @Index
     private int minutes;
     @Index

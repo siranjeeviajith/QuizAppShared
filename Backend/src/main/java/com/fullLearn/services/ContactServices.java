@@ -3,7 +3,7 @@ package com.fullLearn.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.beans.ContactJson;
+import com.fullLearn.model.ContactJson;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.TokenAccess;
 import com.fullLearn.helpers.Constants;
