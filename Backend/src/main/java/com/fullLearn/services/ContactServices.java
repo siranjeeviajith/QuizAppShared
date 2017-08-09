@@ -107,8 +107,10 @@ public class ContactServices {
                     if (userData.size() < limit || userData.isEmpty())
                         return count;
                 }
-                else
-                    continue;
+                else{
+                    System.out.println("Error occured at server side: " + httpResponse.getResponseContent());
+                    throw new Exception(httpResponse.getResponseContent());
+                }
             }
             else {
                 System.out.println("Error occured " + httpResponse.getResponseContent());

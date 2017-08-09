@@ -1,5 +1,6 @@
 package com.fullLearn.beans;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -23,11 +24,13 @@ public class LearningStats {
     @Index
     private String userId;
     @Ignore
-    private Map<String, Object> challenges_details;
+    @JsonProperty("challenges_details")
+    private Map<String, LearningStatsChallangeInfo> challengesDetails;
     @Index
     private int minutes;
     @Index
-    private int challenges_completed;
+    @JsonProperty("challenges_completed")
+    private int challengesCompleted;
     @Index
     private String email;
     @Index
@@ -37,7 +40,6 @@ public class LearningStats {
     @Index
     private long endTime;
 
-    //default constructor
     public LearningStats() {
 
     }
