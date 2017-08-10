@@ -80,11 +80,13 @@ public class ContactServices {
         if (lastModified != null)
             baseUrl = baseUrl + "&since=" + lastModified;
 
+        String url = baseUrl;
         do {
-            if (cursor != null)
-                baseUrl = baseUrl + "&cursor=" + cursor;
 
-            HttpRequest httpRequest = new HttpRequest(baseUrl, HttpMethod.GET);
+            if (cursor != null)
+                url = baseUrl + "&cursor=" + cursor;
+
+            HttpRequest httpRequest = new HttpRequest(url, HttpMethod.GET);
             httpRequest.setContentType("application/json");
             httpRequest.setConnectionTimeOut(60000);
             httpRequest.addHeader("Authorization", "Bearer "+accesstoken);
@@ -107,7 +109,7 @@ public class ContactServices {
                     saveContactsHelper.saveContacts(userData);
                     count = count + userData.size();
                     logger.info("fetched users : " + userData.size());
-                    if (userData.size() < limit || userData.isEmpty())
+                    if (userData.size() < limit || userData == null)
                         return count;
                 } else{
                     System.out.println("Error occured at server side :" + httpResponse.getResponseContent());

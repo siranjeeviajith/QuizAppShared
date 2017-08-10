@@ -28,7 +28,6 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class UserStatsCronEndpoint {
 
-    //FullLearnService fullLearnService = new FullLearnService();
     AUStatsService statsService = new AUStatsService();
 
     @GET
@@ -37,7 +36,6 @@ public class UserStatsCronEndpoint {
     public Response dailyUserStatsSync() throws Exception {
 
         int count = statsService.fetchAllUserDailyStats();
-        //boolean count = new FullLearnService().fetchAllUserStats();
 
         log.info("Learning Stats : {}", count);
         return Response.ok().build();
