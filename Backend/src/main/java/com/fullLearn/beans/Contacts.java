@@ -1,5 +1,6 @@
 package com.fullLearn.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -27,6 +28,7 @@ public class Contacts {
     @Index
     private String status;
     private String title;
-
+    @JsonIgnore
+    private boolean bot;
 
 }

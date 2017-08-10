@@ -24,9 +24,8 @@ public class ContactSyncCronEndpoint {
     @Path("/contacts")
     public Response dailyContactSync() throws Exception {
 
-        int count = contactService.syncContacts();
+        log.info("synced contacts : {}", contactService.syncContacts());
 
-        log.info("synced contacts : {}", count);
         return Response.ok().build();
     }
 }

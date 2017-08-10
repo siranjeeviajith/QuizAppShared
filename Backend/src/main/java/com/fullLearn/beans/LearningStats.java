@@ -27,11 +27,13 @@ public class LearningStats {
     @Ignore
     @JsonProperty("challenges_details")
     private Map<String, AUStatsChallangeInfo> challengesDetails;
+    //private Map<String, Object> challenges_details;
     @Index
     private int minutes;
     @Index
     @JsonProperty("challenges_completed")
     private int challengesCompleted;
+    //private int challenges_completed;
     @Index
     private String email;
     @Index

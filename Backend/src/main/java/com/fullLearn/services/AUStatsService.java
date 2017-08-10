@@ -137,6 +137,7 @@ public class AUStatsService {
         long endTime = end.getTime();
 
         AUStatsResponse auStatsResponse = fetchUserAUStats(contact.getLogin(),startTime,endTime);
+
         LearningStats dailyEntity = mapUserLearningStats(auStatsResponse, contact, startTime, endTime, Frequency.DAY);
         ofy().save().entity(dailyEntity).now();
         calculateLearningTrends(dailyEntity.getChallengesDetails());

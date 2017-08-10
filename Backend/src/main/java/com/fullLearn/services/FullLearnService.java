@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 
-public class FullLearnService {
+public class FullLearnService {/*
     final static MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
     private final static Logger logger = Logger.getLogger(FullLearnService.class.getName());
     public Map<String, ChallengesInfo> challengesCountMap = new HashMap();
@@ -739,5 +739,5 @@ public class FullLearnService {
         latestTrendQuery.setTrends(trends);
         return latestTrendQuery;
 
-    }
+    }*/
 }
