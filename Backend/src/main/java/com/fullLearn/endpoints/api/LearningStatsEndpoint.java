@@ -165,7 +165,7 @@ public class LearningStatsEndpoint {
     public Response getDailyTrends(@PathParam("date") long date) throws JsonMappingException {
 
         FullLearnService fullLearnService = new FullLearnService();
-        TrendingChallenges latestTrends = fullLearnService.getLatestTrends(date);
+        /*TrendingChallenges latestTrends = fullLearnService.getLatestTrends(date);
         if (latestTrends != null) {
 
             Map<String, Object> latestTrendsResponse = new HashMap<>();
@@ -182,7 +182,7 @@ public class LearningStatsEndpoint {
             apiResponse.setMsg("Trends not available");
             return Response.status(Response.Status.NOT_FOUND).entity(apiResponse).build();
 
-        }
-
+        }*/
+        return null;
     }
 }

@@ -3,16 +3,20 @@ package com.fullLearn.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.beans.ContactJson;
+import com.fullLearn.model.ContactJson;
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.TokenAccess;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTPUrl;
 import com.fullLearn.helpers.SaveContactsHelper;
+import com.fullauth.api.enums.OauthExpiryType;
+import com.fullauth.api.exception.TokenResponseException;
 import com.fullauth.api.http.HttpMethod;
 import com.fullauth.api.http.HttpRequest;
 import com.fullauth.api.http.HttpResponse;
 import com.fullauth.api.http.UrlFetcher;
+import com.fullauth.api.model.oauth.OauthAccessToken;
+import com.fullauth.api.service.FullAuthOauthService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,35 +27,28 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class ContactServices {
 
-
     private final static Logger logger = Logger.getLogger(ContactServices.class.getName());
-
-    // helpers
-    HTTPUrl listOfDatas = new HTTPUrl();
-    SaveContactsHelper saveContactsHelper = new SaveContactsHelper();
 
 
     public String getAccessToken() throws IOException {
 
 
-        String url = Constants.FULL_AUTH_URL + "/o/oauth2/v1/token";
-        HttpRequest httpRequest = new HttpRequest(url, HttpMethod.POST);
-        httpRequest.setContentType("application/x-www-form-urlencoded");
-        String params = "refresh_token=" + Constants.REFRESH_TOKEN + "&client_id=" + Constants.CLIENT_ID + "&client_secret=" + Constants.CLIENT_SECRET + "&grant_type=refresh_token";
-        httpRequest.setPayload(params.getBytes("UTF-8"));
+        FullAuthOauthService authService = FullAuthOauthService.builder()
+                .authDomain("staging-fullcreative")
+                .clientId(Constants.CLIENT_ID)
+                .clientSecret(Constants.CLIENT_SECRET)
+                .devServer(Constants.devServer)
+                .build();
 
-        HttpResponse httpResponse = UrlFetcher.makeRequest(httpRequest);
-        if (httpResponse.getStatusCode() == 200) {
+        try {
 
-            String tokens = httpResponse.getResponseContent();
-            logger.info(tokens);
+            OauthAccessToken token = authService.refreshAccessToken(Constants.REFRESH_TOKEN, OauthExpiryType.SHORT);
+            return token.getAccessToken();
 
-            ObjectMapper obj = new ObjectMapper();
-            TokenAccess pojo = obj.readValue(tokens, TokenAccess.class);
-            String accesstoken = pojo.getAccess_token();
-            return accesstoken;
+        } catch (TokenResponseException e) {
+
+            System.out.println("exception occured while getting access token "+e);
         }
-        System.out.println("Error occured " + httpResponse.getResponseContent());
         return null;
     }
 
@@ -83,41 +80,48 @@ public class ContactServices {
         if (lastModified != null)
             baseUrl = baseUrl + "&since=" + lastModified;
 
+        String url = baseUrl;
         do {
+
             if (cursor != null)
-                baseUrl = baseUrl + "&cursor=" + cursor;
-            HttpRequest httpRequest = new HttpRequest(baseUrl, HttpMethod.GET);
+                url = baseUrl + "&cursor=" + cursor;
+
+            HttpRequest httpRequest = new HttpRequest(url, HttpMethod.GET);
             httpRequest.setContentType("application/json");
             httpRequest.setConnectionTimeOut(60000);
-            httpRequest.addHeader("Authorization", "Bearer " + accesstoken);
+            httpRequest.addHeader("Authorization", "Bearer "+accesstoken);
 
-            HttpResponse httpResponse = UrlFetcher.makeGetRequest(baseUrl);
+            HttpResponse httpResponse = UrlFetcher.makeRequest(httpRequest);
             if (httpResponse.getStatusCode() == 200) {
 
                 String contacts = httpResponse.getResponseContent();
                 ObjectMapper obj = new ObjectMapper();
-                ContactJson contactJson = obj.readValue(contacts, ContactJson.class);
 
+                ContactJson contactJson = obj.readValue(contacts, ContactJson.class);
                 if (contactJson.isOk()) {
                     Map<String, Object> data = contactJson.getData();
                     cursor = (String) data.get("cursor");
-                    String usersDataAsString = (String) data.get("users");
-                    ArrayList<Contacts> userData = obj.readValue(usersDataAsString, new TypeReference<ArrayList<Contacts>>() {
+
+                    ArrayList<Contacts> userData = obj.readValue(obj.writeValueAsString(data.get("users")) , new TypeReference<ArrayList<Contacts>>() {
                     });
 
                     SaveContactsHelper saveContactsHelper = new SaveContactsHelper();
                     saveContactsHelper.saveContacts(userData);
                     count = count + userData.size();
                     logger.info("fetched users : " + userData.size());
-                    if (userData.size() < limit || userData.isEmpty())
+                    if (userData.size() < limit || userData == null)
                         return count;
-                } else
-                    continue;
+                } else{
+                    System.out.println("Error occured at server side :" + httpResponse.getResponseContent());
+                    logger.info("Error occured at the server side " + httpResponse.getResponseContent());
+                    throw new Exception(httpResponse.getResponseContent());
+                }
             } else {
-                System.out.println("Error occured " + httpResponse.getResponseContent());
+                System.out.println("Error occured" + httpResponse.getResponseContent());
+                logger.info("Error occured at the server side status code is not 200 " + httpResponse.getResponseContent());
                 throw new Exception(httpResponse.getResponseContent());
             }
-
+//break;
         } while (cursor != null);
 
         return count;
@@ -127,6 +131,8 @@ public class ContactServices {
     @Deprecated
     public boolean saveAllContacts(Long lastModified, String accesstoken, int limit, String cursorStr) throws IOException {
 
+        HTTPUrl listOfDatas = new HTTPUrl();
+        SaveContactsHelper saveContactsHelper = new SaveContactsHelper();
         ObjectMapper obj = new ObjectMapper();
 
         obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -146,7 +152,7 @@ public class ContactServices {
             }
             obj.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             logger.info("url : " + baseUrl);
-            //System.out.println("url : " + baseUrl);
+            System.out.println("url : " + baseUrl);
 
             String methodType = "GET";
             String contentType = "application/json";
