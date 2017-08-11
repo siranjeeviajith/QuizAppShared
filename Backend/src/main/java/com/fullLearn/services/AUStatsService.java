@@ -1,5 +1,6 @@
 package com.fullLearn.services;
 
+import com.fullLearn.beans.*;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.ErrorHandlers;
@@ -9,10 +10,6 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.common.collect.Lists;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.Frequency;
-import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.model.AUStatsChallangeInfo;
 import com.fullLearn.model.AUStatsChallanges;
@@ -24,15 +21,7 @@ import com.fullauth.api.http.HttpResponse;
 import com.fullauth.api.http.UrlFetcher;
 import com.googlecode.objectify.cmd.Query;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -234,6 +223,66 @@ public class AUStatsService {
         learningStats.setChallengesCompleted(auStatsChallanges.getChallengesCompleted());
 
         return learningStats;
+    }
+
+    public int calculateAllUserStatsAverage() {
+
+        int count = 0;
+        String cursor = null;
+
+        do {
+
+            Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(30);
+            if (cursor != null)
+                contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursor));
+
+            QueryResultIterator<Contacts> dsUserContacts = contactQuery.iterator();
+
+            List<Contacts> userContact = contactQuery.list();
+            if (userContact.size() < 1) {
+                return count;
+            }
+
+            count = count + userContact.size();
+            for(Contacts contact: userContact)
+                calculateUserWeekAverage(contact);
+
+            cursor = dsUserContacts.getCursor().toWebSafeString();
+        } while (cursor != null);
+
+        return count;
+    }
+
+    private void calculateUserWeekAverage(Contacts contact){
+
+        List<LearningStats> StateUser = ofy().load().type(LearningStats.class).filter("userId", contact.getId()).filter("frequency", Frequency.WEEK).order("-startTime").limit(12).list();
+
+        int fourWeekAverage = 0;
+        int twelfthWeekAverage = 0;
+
+        int weekCount = 1;
+        for(LearningStats learningStat : StateUser){
+
+            if (weekCount > 4)
+                twelfthWeekAverage = twelfthWeekAverage + learningStat.getMinutes();
+            else {
+
+                fourWeekAverage = fourWeekAverage + learningStat.getMinutes();
+                twelfthWeekAverage = twelfthWeekAverage + learningStat.getMinutes();
+            }
+
+            weekCount++;
+        }
+
+        fourWeekAverage = Math.round(fourWeekAverage / 4);
+        twelfthWeekAverage = Math.round(twelfthWeekAverage / 12);
+
+        LearningStatsAverage learningStatsAverage = new LearningStatsAverage();
+        learningStatsAverage.setUserId(contact.getId());
+        learningStatsAverage.setFourWeekAvg(fourWeekAverage);
+        learningStatsAverage.setTwelveWeekAvg(twelfthWeekAverage);
+        learningStatsAverage.setEmail(contact.getLogin());
+        ofy().save().entity(learningStatsAverage).now();
     }
 
 }

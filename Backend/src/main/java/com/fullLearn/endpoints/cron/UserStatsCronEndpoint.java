@@ -39,8 +39,8 @@ public class UserStatsCronEndpoint {
     @Produces("application/json")
     public Response learningStatsAverage() {
 
-        //boolean statusForAverage = fullLearnService.calculateAllUserStatsAverage();
-
+        int userCount = statsService.calculateAllUserStatsAverage();
+        log.info("Four/ Twelfth Week user learning average stats: {}", userCount);
         return Response.ok().build();
     }
 
