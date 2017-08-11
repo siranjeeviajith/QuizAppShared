@@ -3,12 +3,11 @@ package com.fullLearn.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.model.ContactJson;
 import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.TokenAccess;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.helpers.HTTPUrl;
 import com.fullLearn.helpers.SaveContactsHelper;
+import com.fullLearn.model.ContactJson;
 import com.fullauth.api.enums.OauthExpiryType;
 import com.fullauth.api.exception.TokenResponseException;
 import com.fullauth.api.http.HttpMethod;
@@ -21,6 +20,7 @@ import com.fullauth.api.service.FullAuthOauthService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -29,24 +29,20 @@ public class ContactServices {
 
     private final static Logger logger = Logger.getLogger(ContactServices.class.getName());
 
-
     public String getAccessToken() throws IOException {
 
-
         FullAuthOauthService authService = FullAuthOauthService.builder()
-                .authDomain("staging-fullcreative")
+                .authDomain(Constants.FULLAUTH_DOMAIN)
                 .clientId(Constants.CLIENT_ID)
                 .clientSecret(Constants.CLIENT_SECRET)
                 .devServer(Constants.devServer)
                 .build();
 
         try {
-
             OauthAccessToken token = authService.refreshAccessToken(Constants.REFRESH_TOKEN, OauthExpiryType.SHORT);
             return token.getAccessToken();
 
         } catch (TokenResponseException e) {
-
             System.out.println("exception occured while getting access token "+e);
         }
         return null;
@@ -63,7 +59,6 @@ public class ContactServices {
             logger.severe("Exception: " + e);
             return null;
         }
-
     }
 
     // syncContacts
@@ -74,7 +69,10 @@ public class ContactServices {
         String cursor = null;
 
         Long lastModified = getLastModifiedContacts();
-        String accesstoken = getAccessToken();
+
+        String accessToken = getAccessToken();
+        if (accessToken == null || accessToken.isEmpty())
+            throw new Exception("acesss token is null, please check the refresh token validity");
 
         String baseUrl = Constants.AW_API_URL + "/api/v1/account/SEN42/user?limit=" + limit;
         if (lastModified != null)
@@ -89,7 +87,7 @@ public class ContactServices {
             HttpRequest httpRequest = new HttpRequest(url, HttpMethod.GET);
             httpRequest.setContentType("application/json");
             httpRequest.setConnectionTimeOut(60000);
-            httpRequest.addHeader("Authorization", "Bearer "+accesstoken);
+            httpRequest.addHeader("Authorization", "Bearer "+accessToken);
 
             HttpResponse httpResponse = UrlFetcher.makeRequest(httpRequest);
             if (httpResponse.getStatusCode() == 200) {
@@ -109,19 +107,17 @@ public class ContactServices {
                     saveContactsHelper.saveContacts(userData);
                     count = count + userData.size();
                     logger.info("fetched users : " + userData.size());
-                    if (userData.size() < limit || userData == null)
+
+                    if (userData == null || userData.size() < limit)
                         return count;
                 } else{
-                    System.out.println("Error occured at server side :" + httpResponse.getResponseContent());
-                    logger.info("Error occured at the server side " + httpResponse.getResponseContent());
+                    logger.log(Level.SEVERE, "Error occured at the server side " + httpResponse.getResponseContent());
                     throw new Exception(httpResponse.getResponseContent());
                 }
             } else {
-                System.out.println("Error occured" + httpResponse.getResponseContent());
-                logger.info("Error occured at the server side status code is not 200 " + httpResponse.getResponseContent());
+                logger.log (Level.SEVERE, "Error occured at the server side status code is not 200 " + httpResponse.getResponseContent());
                 throw new Exception(httpResponse.getResponseContent());
             }
-//break;
         } while (cursor != null);
 
         return count;

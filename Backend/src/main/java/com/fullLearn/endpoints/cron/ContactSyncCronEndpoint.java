@@ -1,6 +1,5 @@
 package com.fullLearn.endpoints.cron;
 
-import com.fullLearn.helpers.Constants;
 import com.fullLearn.services.ContactServices;
 
 import javax.ws.rs.GET;
@@ -25,8 +24,9 @@ public class ContactSyncCronEndpoint {
     @Path("/contacts")
     public Response dailyContactSync() throws Exception {
 
-        log.info("synced contacts : {}", contactService.syncContacts());
+        int synced = contactService.syncContacts();
 
+        log.info("synced contacts : {}", synced);
         return Response.ok().build();
     }
 }

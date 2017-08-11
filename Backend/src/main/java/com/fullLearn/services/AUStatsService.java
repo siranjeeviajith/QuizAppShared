@@ -1,7 +1,18 @@
 package com.fullLearn.services;
 
+import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.QueryResultIterator;
+import com.google.appengine.api.memcache.ErrorHandlers;
+import com.google.appengine.api.memcache.Expiration;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.common.collect.Lists;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.beans.*;
+import com.fullLearn.beans.Contacts;
+import com.fullLearn.beans.Frequency;
+import com.fullLearn.beans.LearningStats;
+import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.model.AUStatsChallangeInfo;
 import com.fullLearn.model.AUStatsChallanges;
@@ -11,26 +22,26 @@ import com.fullauth.api.http.HttpMethod;
 import com.fullauth.api.http.HttpRequest;
 import com.fullauth.api.http.HttpResponse;
 import com.fullauth.api.http.UrlFetcher;
-import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.QueryResultIterator;
-import com.google.appengine.api.memcache.ErrorHandlers;
-import com.google.appengine.api.memcache.Expiration;
-import com.google.appengine.api.memcache.MemcacheService;
-import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.common.collect.Lists;
 import com.googlecode.objectify.cmd.Query;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class AUStatsService {
-    public Map<String, ChallengesInfo> challengesCountMap = new HashMap();
     final static MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
+    public Map<String, ChallengesInfo> challengesCountMap = new HashMap<>();
 
     public AUStatsService() {
-
         cache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
     }
 
@@ -54,7 +65,7 @@ public class AUStatsService {
                 break;
             }
 
-            for(Contacts contact: contactList)
+            for (Contacts contact : contactList)
                 fetchUserDailyStats(contact);
 
             cursorStr = iterator.getCursor().toWebSafeString();
@@ -89,7 +100,7 @@ public class AUStatsService {
         int rowCount = 1;
         for (Map.Entry<String, ChallengesInfo> challenge : challenges) {
 
-            if ( rowCount > 15 || challenge.getValue().getViews() < 2)
+            if (rowCount > 15 || challenge.getValue().getViews() < 2)
                 break;
 
             topTrends.put(challenge.getKey(), challenge.getValue());
@@ -136,7 +147,7 @@ public class AUStatsService {
         Date end = cal.getTime();
         long endTime = end.getTime();
 
-        AUStatsResponse auStatsResponse = fetchUserAUStats(contact.getLogin(),startTime,endTime);
+        AUStatsResponse auStatsResponse = fetchUserAUStats(contact.getLogin(), startTime, endTime);
 
         LearningStats dailyEntity = mapUserLearningStats(auStatsResponse, contact, startTime, endTime, Frequency.DAY);
         ofy().save().entity(dailyEntity).now();
@@ -149,7 +160,7 @@ public class AUStatsService {
             if (challenges == null || challenges.isEmpty())
                 return;
 
-            for (Map.Entry<String,AUStatsChallangeInfo> challengesDetailsSet : challenges.entrySet()) {
+            for (Map.Entry<String, AUStatsChallangeInfo> challengesDetailsSet : challenges.entrySet()) {
 
                 String challengeTitle = challengesDetailsSet.getKey();
 
@@ -169,12 +180,12 @@ public class AUStatsService {
             }
 
         } catch (Exception e) {
-            System.out.println("Error occured "+e.getMessage());
-            throw new Exception("Exception occured "+e.getMessage());
+            System.out.println("Error occured " + e.getMessage());
+            throw new Exception("Exception occured " + e.getMessage());
         }
     }
 
-    private AUStatsResponse fetchUserAUStats( String email, long startTime,long endTime ) throws Exception {
+    private AUStatsResponse fetchUserAUStats(String email, long startTime, long endTime) throws Exception {
 
         String url = Constants.AU_API_URL + "/v1/completedMinutes?apiKey=" + Constants.AU_APIKEY + "&email=" + email + "&startTime=" + startTime + "&endTime=" + endTime;
         HttpRequest httpRequest = new HttpRequest(url, HttpMethod.POST);
@@ -207,9 +218,9 @@ public class AUStatsService {
         learningStats.setEndTime(endTime);
         learningStats.setFrequency(frequency);
         learningStats.setEmail(email);
-        Map<String, AUStatsChallanges> userLearningStats =  response.getData();
+        Map<String, AUStatsChallanges> userLearningStats = response.getData();
 
-        if(userLearningStats.get(email) == null){
+        if (userLearningStats.get(email) == null) {
 
             learningStats.setMinutes(0);
             learningStats.setChallengesCompleted(0);

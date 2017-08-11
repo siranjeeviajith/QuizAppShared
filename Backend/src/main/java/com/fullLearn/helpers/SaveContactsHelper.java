@@ -25,7 +25,6 @@ public class SaveContactsHelper {
             Contacts contact = (Contacts) contactsIterator.next();
             if (contact.getStatus().equals("ACTIVE")) {
 
-
                 saveContactList.add(contact);
             } else {
                 deleteContactsList.add(contact.getId());

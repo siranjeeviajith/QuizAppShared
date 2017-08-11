@@ -1,46 +1,7 @@
 package com.fullLearn.services;
 
 
-import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.QueryResultIterator;
-import com.google.appengine.api.memcache.ErrorHandlers;
-import com.google.appengine.api.memcache.Expiration;
-import com.google.appengine.api.memcache.MemcacheService;
-import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.common.collect.Lists;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.Frequency;
-import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.LearningStatsAverage;
-import com.fullLearn.beans.TrendingChallenges;
-import com.fullLearn.helpers.Constants;
-import com.fullLearn.helpers.HTTP;
-import com.fullLearn.model.ChallengesInfo;
-import com.googlecode.objectify.cmd.Query;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.googlecode.objectify.ObjectifyService.ofy;
-
-
+@Deprecated
 public class FullLearnService {/*
     final static MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
     private final static Logger logger = Logger.getLogger(FullLearnService.class.getName());

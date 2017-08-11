@@ -11,7 +11,7 @@
     <cron>
         <url>/cron/sync/stats/daily</url>
         <target>backend</target>
-        <description>Daily User Data Fetching</description>
+        <description>Daily User Learning Stats Fetcher</description>
         <schedule>every day 00:15</schedule>
 
         <retry-parameters>
@@ -20,7 +20,6 @@
             <job-retry-limit>5</job-retry-limit>
             <job-age-limit>2d</job-age-limit>
         </retry-parameters>
-
     </cron>
 
     <cron>
