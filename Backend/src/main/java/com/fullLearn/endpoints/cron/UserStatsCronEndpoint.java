@@ -1,21 +1,15 @@
 package com.fullLearn.endpoints.cron;
 
-import com.fullLearn.services.AUStatsService;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fullLearn.services.FullLearnService;
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
+import com.fullLearn.services.AUStatsService;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -36,8 +30,7 @@ public class UserStatsCronEndpoint {
     public Response dailyUserStatsSync() throws Exception {
 
         int count = statsService.fetchAllUserDailyStats();
-
-        log.info("Learning Stats : {}", count);
+        log.info("Daily Stats fetched for users : {}", count);
         return Response.ok().build();
     }
 
@@ -46,7 +39,7 @@ public class UserStatsCronEndpoint {
     @Produces("application/json")
     public Response learningStatsAverage() {
 
-       // boolean statusForAverage = fullLearnService.calculateAllUserStatsAverage();
+        //boolean statusForAverage = fullLearnService.calculateAllUserStatsAverage();
 
         return Response.ok().build();
     }

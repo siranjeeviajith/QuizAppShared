@@ -12,6 +12,7 @@ public class Constants {
     public static final String SERVER_KEY = "AAAA-hY_3kw:APA91bEtwFaf3h4xKi6QT1UyfumYhpb2hAWQFh" +
             "fx2jfHWHiByYf_3yHhvTYIIwF9NV2ZHSiW-HlqydlTlDkURHWR7" +
             "ms1uWaicbq-6DSk3wxPr5UTMhRjWAiQvN0tZsjHIuYgd3ajzjkp";
+    public static final String FULLAUTH_DOMAIN;
     private final static Logger logger = Logger.getLogger(Constants.class.getName());
     public static String FULL_AUTH_URL;
     public static String CLIENT_ID;
@@ -39,6 +40,8 @@ public class Constants {
             AW_API_URL = "https://api.anywhereworks.com";
             AU_API_URL = "https://my.adaptiveu.io";
 
+            FULLAUTH_DOMAIN = "fullcreative";
+
             devServer = false;
         } else {
             System.out.println("Stagging");
@@ -50,6 +53,7 @@ public class Constants {
             AU_API_URL = "https://adaptivecourse.appspot.com";
             devServer = true;
 
+            FULLAUTH_DOMAIN = "staging-fullcreative";
         }
     }
 
