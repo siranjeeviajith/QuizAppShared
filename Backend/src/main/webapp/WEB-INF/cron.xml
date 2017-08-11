@@ -30,7 +30,7 @@
     </cron>
 
     <cron>
-        <url>/cron/sync/stats/average</url>
+        <url>/cron/sync/stats/overall/average</url>
         <target>backend</target>
         <description>Weekly Average Calculation</description>
         <schedule>every monday 00:45</schedule>
