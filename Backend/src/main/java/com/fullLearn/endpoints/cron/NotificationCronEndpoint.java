@@ -15,12 +15,13 @@ import javax.ws.rs.ext.Provider;
 @Path("cron/learn/average/user")
 @Provider
 public class NotificationCronEndpoint {
+
     FireBaseService fireBaseService = new FireBaseService();
 
     @GET
-    @Produces("application/json")
     @Path("/notify")
     public void sendNotification() throws IOException {
+
         System.out.println("notification endpoint");
         fireBaseService.sendNotificationToAllUsers();
     }

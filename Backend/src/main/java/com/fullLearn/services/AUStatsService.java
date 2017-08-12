@@ -250,7 +250,7 @@ public class AUStatsService {
     }
 
     /**
-     * Fetching user contacts from Contact, based on limit 50
+     * Calculating all user learning stats average for previous four and twelfth week
      */
     public void calculateAllUserOverallAverage() {
 
@@ -276,8 +276,7 @@ public class AUStatsService {
     }
 
     /**
-     * Fetching user Learning stats, based on the Contact id of a user, from the LearningStats for previous 12 week,
-     * and compute average of previous four and twelfth week,
+     * Compute individual user average learning stats for the previous four and twelfth week,
      * then save it into the LearningStatsAverage
      */
     private LearningStatsAverage calculateUserOverAllAverage(Contacts contact){
@@ -320,7 +319,7 @@ public class AUStatsService {
 
 
     /**
-     * Calculate Weekly Learning for All Users based on past 7 days learning
+     * Calculate Weekly Learning stats of all user
      */
     public void calculateAllUserWeeklyStats() {
 
@@ -349,7 +348,7 @@ public class AUStatsService {
     }
 
     /**
-     * Calculate Weekly Learning for a Single User based on past 7 days learning
+     * Computing Weekly Learning stats of a individual User
      */
     private LearningStats calculateUserWeekStats(Contacts contact){
 
