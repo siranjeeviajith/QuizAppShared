@@ -4,7 +4,9 @@ package com.fullLearn.endpoints.api;
 import com.fullLearn.beans.ApiResponse;
 import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.beans.TrendingChallenges;
+import com.fullLearn.model.LatestTrendsResponse;
 import com.fullLearn.services.FullLearnService;
+import com.fullLearn.services.LatestTrendsService;
 import com.fullLearn.services.LearningStatsService;
 
 import org.codehaus.jackson.map.JsonMappingException;
@@ -164,25 +166,20 @@ public class LearningStatsEndpoint {
 
     public Response getDailyTrends(@PathParam("date") long date) throws JsonMappingException {
 
-        FullLearnService fullLearnService = new FullLearnService();
-        /*TrendingChallenges latestTrends = fullLearnService.getLatestTrends(date);
-        if (latestTrends != null) {
-
-            Map<String, Object> latestTrendsResponse = new HashMap<>();
-            latestTrendsResponse.put("data", latestTrends);
-            latestTrendsResponse.put("error", null);
-            latestTrendsResponse.put("response", true);
-            return Response.status(Response.Status.OK).entity(latestTrendsResponse).build();
-
-        } else {
-
+        LatestTrendsService latestTrendsService = new LatestTrendsService();
+        TrendingChallenges trendingChallenges = latestTrendsService.getLatestTrends(date);
+        if(trendingChallenges == null) {
             ApiResponse apiResponse = new ApiResponse();
             apiResponse.setResponse(false);
             apiResponse.setError("Request Failed");
             apiResponse.setMsg("Trends not available");
             return Response.status(Response.Status.NOT_FOUND).entity(apiResponse).build();
+        }
+        LatestTrendsResponse latestTrendsResponse = new LatestTrendsResponse();
+        latestTrendsResponse.setData(trendingChallenges);
+        latestTrendsResponse.setError(null);
+        latestTrendsResponse.setResponse(true);
+        return Response.status(Response.Status.OK).entity(latestTrendsResponse).build();
 
-        }*/
-        return null;
     }
 }
