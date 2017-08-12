@@ -41,7 +41,6 @@ public class UserStatsCronEndpoint {
 
     @GET
     @Path("/overall/average")
-    @Produces("application/json")
     public Response weeklyStatsReport() {
 
         statsService.calculateAllUserOverallAverage();
