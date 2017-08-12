@@ -1,6 +1,5 @@
 package com.fullLearn.endpoints.cron;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fullLearn.services.AUStatsService;
 
 import javax.ws.rs.GET;
@@ -11,11 +10,9 @@ import javax.ws.rs.ext.Provider;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
  * Created by amandeep on 7/13/2017.
  */
-
 
 @Slf4j
 @Path("/cron/sync/stats")
@@ -26,17 +23,16 @@ public class UserStatsCronEndpoint {
 
     @GET
     @Path("/daily")
-    @Produces("application/json")
     public Response dailyUserStatsSync() throws Exception {
 
-        int count = statsService.fetchAllUserDailyStats();
-        log.info("Daily Stats fetched for users : {}", count);
+        statsService.fetchAllUserDailyStats();
+
+        log.info("Daily Stats fetch completed");
         return Response.ok().build();
     }
 
     @GET
     @Path("/weekly")
-    @Produces("application/json")
     public Response learningStatsAverage() {
 
         statsService.calculateAllUserWeeklyStats();

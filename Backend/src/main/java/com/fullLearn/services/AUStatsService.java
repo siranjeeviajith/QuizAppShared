@@ -1,15 +1,18 @@
 package com.fullLearn.services;
 
-import com.fullLearn.beans.*;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.common.collect.Lists;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fullLearn.beans.Contacts;
+import com.fullLearn.beans.Frequency;
+import com.fullLearn.beans.LearningStats;
+import com.fullLearn.beans.LearningStatsAverage;
+import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.model.AUStatsChallangeInfo;
 import com.fullLearn.model.AUStatsChallanges;
@@ -21,7 +24,15 @@ import com.fullauth.api.http.HttpResponse;
 import com.fullauth.api.http.UrlFetcher;
 import com.googlecode.objectify.cmd.Query;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -34,12 +45,10 @@ public class AUStatsService {
         cache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
     }
 
-
     /**
      * Fetching user contacts from the Contact Kind, with limit 50
      * */
-    public int fetchAllUserDailyStats() throws Exception {
-        int count = 0;
+    public void fetchAllUserDailyStats() throws Exception {
 
         String key = "dailyStatsCursor";
         String cursorStr = (String) cache.get(key);
@@ -51,15 +60,14 @@ public class AUStatsService {
 
             QueryResultIterator<Contacts> iterator = query.iterator();
 
-            List<Contacts> contactList = Lists.newArrayList(iterator);
-
-            if ( contactList == null || contactList.size() < 1) {
-                break;
+            //no more element
+            if (iterator == null || iterator.hasNext()) {
+                return;
             }
 
-            count = count + contactList.size();
-            for (Contacts contact : contactList)
-                fetchUserDailyStats(contact);
+            while (iterator.hasNext()){
+                fetchUserDailyStats(iterator.next());
+            }
 
             cursorStr = iterator.getCursor().toWebSafeString();
             cache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
@@ -70,8 +78,6 @@ public class AUStatsService {
 
         TrendingChallenges yesterdayTrends = getYesterdayTrends();
         ofy().save().entity(yesterdayTrends).now();
-
-        return count;
     }
 
     /**
@@ -133,8 +139,7 @@ public class AUStatsService {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
 
-        Date start = cal.getTime();
-        long startTime = start.getTime();
+        long startTime = cal.getTime().getTime();
 
         cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -143,8 +148,7 @@ public class AUStatsService {
         cal.set(Calendar.SECOND, 59);
         cal.set(Calendar.MILLISECOND, 0);
 
-        Date end = cal.getTime();
-        long endTime = end.getTime();
+        long endTime = cal.getTime().getTime();
 
         AUStatsResponse auStatsResponse = fetchUserAUStats(contact.getLogin(), startTime, endTime);
 
@@ -258,18 +262,18 @@ public class AUStatsService {
             if (cursor != null)
                 contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursor));
 
-            QueryResultIterator<Contacts> dsUserContacts = contactQuery.iterator();
+            QueryResultIterator<Contacts> iterator = contactQuery.iterator();
 
-            List<Contacts> userContact = contactQuery.list();
-            if (userContact == null || userContact.size() < 1)
+            // no more element
+            if (iterator == null || iterator.hasNext())
                 return;
 
-            for(Contacts contact: userContact)
-                calculateUserOverAllAverage(contact);
+            while (iterator.hasNext()){
+                calculateUserOverAllAverage(iterator.next());
+            }
 
-            cursor = dsUserContacts.getCursor().toWebSafeString();
+            cursor = iterator.getCursor().toWebSafeString();
         } while (cursor != null);
-
     }
 
     /**
@@ -277,7 +281,7 @@ public class AUStatsService {
      * and compute average of previous four and twelfth week,
      * then save it into the LearningStatsAverage
      */
-    private void calculateUserOverAllAverage(Contacts contact){
+    private LearningStatsAverage calculateUserOverAllAverage(Contacts contact){
 
         List<LearningStats> weeklyLearningStat = ofy().load().type(LearningStats.class)
                 .filter("userId", contact.getId())
@@ -285,7 +289,7 @@ public class AUStatsService {
                 .order("-startTime").limit(12).list();
 
         if(weeklyLearningStat == null)
-            return;
+            return null;
 
         int fourWeekAverage = 0;
         int twelfthWeekAverage = 0;
@@ -309,11 +313,15 @@ public class AUStatsService {
         learningStatsAverage.setFourWeekAvg(fourWeekAverage);
         learningStatsAverage.setTwelveWeekAvg(twelfthWeekAverage);
         learningStatsAverage.setEmail(contact.getLogin());
+
         ofy().save().entity(learningStatsAverage).now();
+
+        return learningStatsAverage;
     }
 
+
     /**
-     * Fetching users information from the Contact Kind, with the limit 50
+     * Calculate Weekly Learning for All Users based on past 7 days learning
      */
     public void calculateAllUserWeeklyStats() {
 
@@ -321,18 +329,19 @@ public class AUStatsService {
         do {
 
             Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(50);
-
             if (cursor != null)
                 contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursor));
 
             QueryResultIterator<Contacts> iterator = contactQuery.iterator();
-            List<Contacts> contactList = contactQuery.list();
 
-            if (contactList == null || contactList.size() < 1)
+            //no more elements available
+            if (!iterator.hasNext()){
                 return;
+            }
 
-            for(Contacts contact: contactList)
-                calculateUserWeekStats(contact);
+            while (iterator.hasNext()) {
+                calculateUserWeekStats(iterator.next());
+            }
 
             cursor = iterator.getCursor().toWebSafeString();
 
@@ -341,9 +350,7 @@ public class AUStatsService {
     }
 
     /**
-     * Fetching user Learning stats, based on the Contact id of a user, from the LearningStats for previous 7 days,
-     * and compute the total minute and challenges completed,
-     * then save it into the LearningStats with frequency type as WEEK
+     * Calculate Weekly Learning for a Single User based on past 7 days learning
      */
     private LearningStats calculateUserWeekStats(Contacts contact){
 
@@ -354,8 +361,7 @@ public class AUStatsService {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
 
-        Date start = cal.getTime();
-        long startDate = start.getTime();
+        long startDate = cal.getTime().getTime();
 
         cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -365,8 +371,7 @@ public class AUStatsService {
         cal.set(Calendar.SECOND, 59);
         cal.set(Calendar.MILLISECOND, 0);
 
-        Date end = cal.getTime();
-        long endDate = end.getTime();
+        long endDate = cal.getTime().getTime();
 
         List<LearningStats> userDailyLearning = ofy().load().type(LearningStats.class)
                 .filter("userId", contact.getId())
@@ -397,7 +402,6 @@ public class AUStatsService {
         weeklyLearningStats.setEndTime(endDate);
 
         ofy().save().entities(weeklyLearningStats).now();
-
         return weeklyLearningStats;
     }
 
