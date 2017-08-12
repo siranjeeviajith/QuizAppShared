@@ -1,5 +1,6 @@
 package com.fullLearn.services;
 
+import com.fullLearn.beans.*;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.ErrorHandlers;
@@ -9,10 +10,6 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.common.collect.Lists;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.Frequency;
-import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.helpers.Constants;
 import com.fullLearn.model.AUStatsChallangeInfo;
 import com.fullLearn.model.AUStatsChallanges;
@@ -24,15 +21,7 @@ import com.fullauth.api.http.HttpResponse;
 import com.fullauth.api.http.UrlFetcher;
 import com.googlecode.objectify.cmd.Query;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -45,6 +34,10 @@ public class AUStatsService {
         cache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
     }
 
+
+    /**
+     * Fetching user contacts from the Contact Kind, with limit 50
+     * */
     public int fetchAllUserDailyStats() throws Exception {
         int count = 0;
 
@@ -59,12 +52,12 @@ public class AUStatsService {
             QueryResultIterator<Contacts> iterator = query.iterator();
 
             List<Contacts> contactList = Lists.newArrayList(iterator);
-            count = count + contactList.size();
 
-            if (contactList.size() < 1) {
+            if ( contactList == null || contactList.size() < 1) {
                 break;
             }
 
+            count = count + contactList.size();
             for (Contacts contact : contactList)
                 fetchUserDailyStats(contact);
 
@@ -81,6 +74,9 @@ public class AUStatsService {
         return count;
     }
 
+    /**
+     * Sorting trends and store the top 15 trend challenges in TrendingChallenges
+     */
     private TrendingChallenges getYesterdayTrends() {
 
         List<Map.Entry<String, ChallengesInfo>> challenges = new ArrayList(challengesCountMap.entrySet());
@@ -125,6 +121,9 @@ public class AUStatsService {
         return yesterdayTrends;
     }
 
+    /**
+     * Storing previous day user learning stat in LearningStat, after getting the information from the Adaptive
+     */
     private void fetchUserDailyStats(Contacts contact) throws Exception {
 
         Calendar cal = Calendar.getInstance();
@@ -149,11 +148,17 @@ public class AUStatsService {
 
         AUStatsResponse auStatsResponse = fetchUserAUStats(contact.getLogin(), startTime, endTime);
 
-        LearningStats dailyEntity = mapUserLearningStats(auStatsResponse, contact, startTime, endTime, Frequency.DAY);
+        LearningStats dailyEntity = mapUserLearningStats(auStatsResponse, contact, startTime, endTime);
+        if( dailyEntity == null )
+            return;
+
         ofy().save().entity(dailyEntity).now();
         calculateLearningTrends(dailyEntity.getChallengesDetails());
     }
 
+    /**
+     * Getting the challenges information and store it into the Global Hashmap challengesCountMap
+     */
     private void calculateLearningTrends(Map<String, AUStatsChallangeInfo> challenges) throws Exception {
 
         try {
@@ -185,6 +190,9 @@ public class AUStatsService {
         }
     }
 
+    /**
+     * Fetching user Learning stats from the Adaptive using API, based on the start and end time
+     */
     private AUStatsResponse fetchUserAUStats(String email, long startTime, long endTime) throws Exception {
 
         String url = Constants.AU_API_URL + "/v1/completedMinutes?apiKey=" + Constants.AU_APIKEY + "&email=" + email + "&startTime=" + startTime + "&endTime=" + endTime;
@@ -202,8 +210,10 @@ public class AUStatsService {
         throw new Exception(httpResponse.getResponseContent());
     }
 
-
-    private LearningStats mapUserLearningStats(AUStatsResponse response, Contacts contact, long startTime, long endTime, Frequency frequency) {
+    /**
+     * Mapping the user Learning stat into LearningStats and return that entity.
+     */
+    private LearningStats mapUserLearningStats(AUStatsResponse response, Contacts contact, long startTime, long endTime) {
 
         if (!response.isResponse())
             return null;
@@ -216,7 +226,7 @@ public class AUStatsService {
         learningStats.setUserId(userId);
         learningStats.setStartTime(startTime);
         learningStats.setEndTime(endTime);
-        learningStats.setFrequency(frequency);
+        learningStats.setFrequency(Frequency.DAY);
         learningStats.setEmail(email);
         Map<String, AUStatsChallanges> userLearningStats = response.getData();
 
@@ -234,6 +244,161 @@ public class AUStatsService {
         learningStats.setChallengesCompleted(auStatsChallanges.getChallengesCompleted());
 
         return learningStats;
+    }
+
+    /**
+     * Fetching user contacts from Contact, based on limit 50
+     */
+    public void calculateAllUserOverallAverage() {
+
+        String cursor = null;
+        do {
+
+            Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(50);
+            if (cursor != null)
+                contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursor));
+
+            QueryResultIterator<Contacts> dsUserContacts = contactQuery.iterator();
+
+            List<Contacts> userContact = contactQuery.list();
+            if (userContact == null || userContact.size() < 1)
+                return;
+
+            for(Contacts contact: userContact)
+                calculateUserOverAllAverage(contact);
+
+            cursor = dsUserContacts.getCursor().toWebSafeString();
+        } while (cursor != null);
+
+    }
+
+    /**
+     * Fetching user Learning stats, based on the Contact id of a user, from the LearningStats for previous 12 week,
+     * and compute average of previous four and twelfth week,
+     * then save it into the LearningStatsAverage
+     */
+    private void calculateUserOverAllAverage(Contacts contact){
+
+        List<LearningStats> weeklyLearningStat = ofy().load().type(LearningStats.class)
+                .filter("userId", contact.getId())
+                .filter("frequency", Frequency.WEEK)
+                .order("-startTime").limit(12).list();
+
+        if(weeklyLearningStat == null)
+            return;
+
+        int fourWeekAverage = 0;
+        int twelfthWeekAverage = 0;
+
+        int weekCount = 1;
+        for(LearningStats learningStat : weeklyLearningStat){
+
+            twelfthWeekAverage = twelfthWeekAverage + learningStat.getMinutes();
+
+            if (weekCount <= 4)
+                fourWeekAverage = fourWeekAverage + learningStat.getMinutes();
+
+            weekCount++;
+        }
+
+        fourWeekAverage = Math.round(fourWeekAverage / 4);
+        twelfthWeekAverage = Math.round(twelfthWeekAverage / 12);
+
+        LearningStatsAverage learningStatsAverage = new LearningStatsAverage();
+        learningStatsAverage.setUserId(contact.getId());
+        learningStatsAverage.setFourWeekAvg(fourWeekAverage);
+        learningStatsAverage.setTwelveWeekAvg(twelfthWeekAverage);
+        learningStatsAverage.setEmail(contact.getLogin());
+        ofy().save().entity(learningStatsAverage).now();
+    }
+
+    /**
+     * Fetching users information from the Contact Kind, with the limit 50
+     */
+    public void calculateAllUserWeeklyStats() {
+
+        String cursor = null;
+        do {
+
+            Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(50);
+
+            if (cursor != null)
+                contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursor));
+
+            QueryResultIterator<Contacts> iterator = contactQuery.iterator();
+            List<Contacts> contactList = contactQuery.list();
+
+            if (contactList == null || contactList.size() < 1)
+                return;
+
+            for(Contacts contact: contactList)
+                calculateUserWeekStats(contact);
+
+            cursor = iterator.getCursor().toWebSafeString();
+
+        } while (cursor != null);
+
+    }
+
+    /**
+     * Fetching user Learning stats, based on the Contact id of a user, from the LearningStats for previous 7 days,
+     * and compute the total minute and challenges completed,
+     * then save it into the LearningStats with frequency type as WEEK
+     */
+    private LearningStats calculateUserWeekStats(Contacts contact){
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -7);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        Date start = cal.getTime();
+        long startDate = start.getTime();
+
+        cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        Date end = cal.getTime();
+        long endDate = end.getTime();
+
+        List<LearningStats> userDailyLearning = ofy().load().type(LearningStats.class)
+                .filter("userId", contact.getId())
+                .filter("frequency", Frequency.DAY)
+                .filter("startTime >=", startDate)
+                .filter("endTime <=", endDate)
+                .list();
+
+        if( userDailyLearning == null )
+            return null;
+
+        int totalMinutes = 0;
+        int totalChallenges = 0;
+        for(LearningStats dailyLearning : userDailyLearning){
+
+            totalMinutes = totalMinutes + dailyLearning.getMinutes();
+            totalChallenges = totalChallenges + dailyLearning.getChallengesCompleted();
+        }
+
+        LearningStats weeklyLearningStats = new LearningStats();
+        weeklyLearningStats.setId(contact.getId() + ":" + startDate + ":" + endDate);
+        weeklyLearningStats.setUserId(contact.getId());
+        weeklyLearningStats.setMinutes(totalMinutes);
+        weeklyLearningStats.setChallengesCompleted(totalChallenges);
+        weeklyLearningStats.setEmail(contact.getLogin());
+        weeklyLearningStats.setFrequency(Frequency.WEEK);
+        weeklyLearningStats.setStartTime(startDate);
+        weeklyLearningStats.setEndTime(endDate);
+
+        ofy().save().entities(weeklyLearningStats).now();
+
+        return weeklyLearningStats;
     }
 
 }

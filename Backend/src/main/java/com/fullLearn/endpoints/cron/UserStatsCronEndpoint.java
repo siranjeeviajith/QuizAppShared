@@ -39,22 +39,16 @@ public class UserStatsCronEndpoint {
     @Produces("application/json")
     public Response learningStatsAverage() {
 
-        //boolean statusForAverage = fullLearnService.calculateAllUserStatsAverage();
-
+        statsService.calculateAllUserWeeklyStats();
         return Response.ok().build();
     }
 
     @GET
-    @Path("/average")
+    @Path("/overall/average")
     @Produces("application/json")
-    public Response weeklyStatsReport() throws JsonProcessingException {
+    public Response weeklyStatsReport() {
 
-        /*boolean status = fullLearnService.generateWeeklyReport();
-        if (status) {
-            Queue queue = QueueFactory.getDefaultQueue();
-            queue.add(TaskOptions.Builder.withUrl("/task/learn/average/user/notify"));
-        }
-*/
+        statsService.calculateAllUserOverallAverage();
         return Response.ok().build();
     }
 }
