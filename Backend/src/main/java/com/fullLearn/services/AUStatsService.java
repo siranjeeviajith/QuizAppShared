@@ -61,7 +61,7 @@ public class AUStatsService {
             QueryResultIterator<Contacts> iterator = query.iterator();
 
             //no more element
-            if (iterator == null || iterator.hasNext()) {
+            if (iterator == null || !iterator.hasNext()) {
                 return;
             }
 
@@ -116,8 +116,7 @@ public class AUStatsService {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
 
-        Date start = cal.getTime();
-        long startTime = start.getTime();
+        long startTime = cal.getTime().getTime();
 
         TrendingChallenges yesterdayTrends = new TrendingChallenges();
         yesterdayTrends.setTrends(topTrends);
@@ -265,7 +264,7 @@ public class AUStatsService {
             QueryResultIterator<Contacts> iterator = contactQuery.iterator();
 
             // no more element
-            if (iterator == null || iterator.hasNext())
+            if (iterator == null || !iterator.hasNext())
                 return;
 
             while (iterator.hasNext()){
@@ -335,7 +334,7 @@ public class AUStatsService {
             QueryResultIterator<Contacts> iterator = contactQuery.iterator();
 
             //no more elements available
-            if (!iterator.hasNext()){
+            if (iterator == null || !iterator.hasNext()){
                 return;
             }
 
