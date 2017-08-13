@@ -1,4 +1,4 @@
-package com.fullLearn.helpers;
+package com.fullLearn.config;
 
 import com.fullLearn.beans.Contacts;
 import com.fullLearn.beans.LearningStats;
@@ -7,21 +7,20 @@ import com.fullLearn.beans.TrendingChallenges;
 import com.fullLearn.beans.UserDevice;
 import com.googlecode.objectify.ObjectifyService;
 
-import java.util.logging.Logger;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by amandeep on 6/28/2017.
  */
+@Slf4j
 public class ObjectifyRegistrationListener implements ServletContextListener {
 
-    private final static Logger logger = Logger.getLogger(ObjectifyRegistrationListener.class.getName());
+    public void contextInitialized(ServletContextEvent event) {
 
-    public void contextInitialized(ServletContextEvent arg0) {
-
-        logger.info("Registering Ofy Entities");
+        log.info("Registering Ofy Entities");
         ObjectifyService.register(Contacts.class);
         ObjectifyService.register(LearningStats.class);
         ObjectifyService.register(LearningStatsAverage.class);
@@ -29,9 +28,8 @@ public class ObjectifyRegistrationListener implements ServletContextListener {
         ObjectifyService.register(UserDevice.class);
     }
 
-    public void contextDestroyed(ServletContextEvent arg0) {
-        logger.info("ServletContextListener destroyed");
-        //System.out.println("ServletContextListener destroyed");
+    public void contextDestroyed(ServletContextEvent event) {
+        log.info("ServletContextListener destroyed");
     }
 
 }

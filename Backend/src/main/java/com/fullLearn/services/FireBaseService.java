@@ -1,17 +1,17 @@
 package com.fullLearn.services;
 
-import com.fullLearn.model.NotificationMessage;
-import com.fullLearn.model.PushNotification;
-import com.fullauth.api.http.HttpMethod;
-import com.fullauth.api.http.HttpRequest;
-import com.fullauth.api.http.HttpResponse;
-import com.fullauth.api.http.UrlFetcher;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 
 import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.beans.UserDevice;
 import com.fullLearn.helpers.Constants;
+import com.fullLearn.model.NotificationMessage;
+import com.fullLearn.model.PushNotification;
+import com.fullauth.api.http.HttpMethod;
+import com.fullauth.api.http.HttpRequest;
+import com.fullauth.api.http.HttpResponse;
+import com.fullauth.api.http.UrlFetcher;
 import com.googlecode.objectify.cmd.Query;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -34,7 +34,7 @@ public class FireBaseService {
         String cursor = null;
         do {
 
-            Query<UserDevice> query = ofy().load().type(UserDevice.class).limit(30);
+            Query<UserDevice> query = ofy().load().type(UserDevice.class).limit(50);
             if (cursor != null)
                 query = query.startAt(Cursor.fromWebSafeString(cursor));
 
@@ -99,6 +99,5 @@ public class FireBaseService {
             logger.log(Level.SEVERE, "Error occured to the user " +userId+", while sending message " + response);
             return;
         }
-        logger.info("notification sent to " + userId);
     }
 }

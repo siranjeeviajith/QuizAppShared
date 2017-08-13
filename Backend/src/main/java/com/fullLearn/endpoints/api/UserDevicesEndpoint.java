@@ -3,15 +3,12 @@ package com.fullLearn.endpoints.api;
 
 import com.fullLearn.beans.ApiResponse;
 import com.fullLearn.beans.UserDevice;
-import com.fullLearn.helpers.Secured;
-import com.fullLearn.helpers.Utils;
+import com.fullLearn.filter.Secured;
 import com.fullLearn.services.UserDevicesService;
 import com.fullauth.api.model.oauth.OauthAccessToken;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
-import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -30,59 +27,43 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class UserDevicesEndpoint {
 
-    private static Logger logger = Logger.getLogger(UserDevicesEndpoint.class.getName());
-    Utils utils = new Utils();
-    UserDevicesService userDevicesService = new UserDevicesService();
+    private final UserDevicesService userDevicesService = new UserDevicesService();
 
     @Secured
     @POST
-    @PermitAll
     @Produces("application/json")
     @Consumes("application/json")
     @Path("/device")
     public Response getUserDeviceDetails(@Context HttpServletRequest req, @Context OauthAccessToken token, UserDevice device) throws IOException {
 
         ApiResponse apiResponse = new ApiResponse();
-        device.setUserId(token.getUserId());
-        if (device.getId() == null) {
 
+        if (device.getId() == null) {
             apiResponse.setResponse(false);
             apiResponse.setError("Request failed");
             apiResponse.setMsg("id cannot be null");
             return Response.status(400).entity(apiResponse).build();
-
         }
 
-        apiResponse.addData("device",userDevicesService.saveUserDevice(device));
-        apiResponse.setResponse(true);
-        logger.info("response is ready");
-        return Response.status(200).entity(apiResponse).build();
+        device.setUserId(token.getUserId());
 
+        apiResponse.addData("device", userDevicesService.saveUserDevice(device));
+        apiResponse.setResponse(true);
+        return Response.status(200).entity(apiResponse).build();
     }
 
     @Secured
     @DELETE
-    @PermitAll
     @Produces("application/json")
     @Consumes("application/json")
     @Path("/device/{id}")
     public Response deleteUserDeviceDetails(@PathParam("id") String id, @Context OauthAccessToken token) {
 
-        ApiResponse apiResponse = new ApiResponse();
+        ApiResponse response = new ApiResponse();
 
-        UserDevice deletedDevice = userDevicesService.deleteUserDevice(id);
-        if (deletedDevice == null) {
+        userDevicesService.deleteUserDevice(id);
 
-            apiResponse.setMsg("Id not found");
-            apiResponse.setResponse(false);
-            apiResponse.setError("Request failed");
-            return Response.status(404).entity(apiResponse).build();
-
-        }
-
-        apiResponse.setResponse(true);
-        logger.info("response is ready");
-        return Response.status(200).entity(apiResponse).build();
-
+        response.setResponse(true);
+        return Response.status(200).entity(response).build();
     }
 }

@@ -1,4 +1,4 @@
-package com.fullLearn.helpers;
+package com.fullLearn.config;
 
 import com.fullLearn.endpoints.api.LearningStatsEndpoint;
 import com.fullLearn.endpoints.api.LearningStatsv1Endpoint;
@@ -18,10 +18,6 @@ import javax.ws.rs.core.Application;
  */
 public class ApiApplication extends Application {
 
-
-    AccessTokenFilter accessTokenFilter = new AccessTokenFilter();
-    private Set<Object> singletons = new HashSet<Object>();
-
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
@@ -36,9 +32,9 @@ public class ApiApplication extends Application {
 
     @Override
     public Set<Object> getSingletons() {
-        singletons.add(accessTokenFilter);
+        Set<Object> singletons = new HashSet<Object>();
+
+        singletons.add(new AccessTokenFilter());
         return singletons;
-
-
     }
 }

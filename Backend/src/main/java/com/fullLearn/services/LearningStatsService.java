@@ -21,15 +21,12 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class LearningStatsService {
 
     public LearningStatsAverage getStatsByUserId(String id) {
-        LearningStatsAverage userDatas = ofy().load().type(LearningStatsAverage.class).id(id).now();
-
-        return userDatas;
+        return ofy().load().type(LearningStatsAverage.class).id(id).now();
     }
 
-
     public Map<String, Object> getAllUserStats(int type, String order, int limit, String cursorStr, int minAvg, int maxAvg) {
-        String orderFilter = (type == 4) ? "fourWeekAvg" : "twelveWeekAvg";
 
+        String orderFilter = (type == 4) ? "fourWeekAvg" : "twelveWeekAvg";
 
         Query<LearningStatsAverage> userDataQuery = ofy().load().type(LearningStatsAverage.class).limit(limit);
 
@@ -67,7 +64,6 @@ public class LearningStatsService {
         response.put("cursor", cursorStr);
 
         return response;
-
     }
 
     public List<LearningStats> getStatsByTypeForUserId(String userId, Frequency type, int limit) {
