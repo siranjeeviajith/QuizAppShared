@@ -2,7 +2,6 @@ package com.fullLearn.filter;
 
 
 import com.fullLearn.helpers.Constants;
-import com.fullLearn.helpers.Secured;
 import com.fullauth.api.exception.TokenResponseException;
 import com.fullauth.api.model.oauth.OauthAccessToken;
 import com.fullauth.api.service.FullAuthOauthService;
@@ -30,15 +29,11 @@ import javax.ws.rs.ext.Provider;
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
-
 public class AccessTokenFilter implements ContainerRequestFilter {
     private static Logger logger = Logger.getLogger(AccessTokenFilter.class.getName());
 
     @Produces("application/json")
     public void filter(ContainerRequestContext requestContext) throws IOException {
-
-        logger.info("filter is running");
-
 
         Map<String, Object> response = new HashMap<String, Object>();
         response.put("msg", "Invalid access token");
@@ -65,8 +60,6 @@ public class AccessTokenFilter implements ContainerRequestFilter {
             return;
 
         }
-
-
     }
 
 

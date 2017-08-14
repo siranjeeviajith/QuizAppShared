@@ -4,7 +4,6 @@ import com.fullLearn.services.AUStatsService;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
@@ -36,6 +35,7 @@ public class UserStatsCronEndpoint {
     public Response learningStatsAverage() {
 
         statsService.calculateAllUserWeeklyStats();
+        log.info("Weekly Stats computed!");
         return Response.ok().build();
     }
 

@@ -35,7 +35,7 @@ appengine {
     }
 
     deploy {
-        version = 8
+        version = 9
         project = "full-learn"
         stopPreviousVersion = false
         promote = false
