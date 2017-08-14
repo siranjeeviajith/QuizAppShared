@@ -75,7 +75,7 @@ public class AUStatsService {
 
         log.info("fetching stats for range: {} - {}", startTime, endTime);
 
-        BatchContactFetcher.fetchAllContacts(cursorStr, 50, new BatchContactWork() {
+        BatchContactFetcher.fetchAllContacts(cursorStr, 100, new BatchContactWork() {
 
             List<LearningStats> saveEntities = new ArrayList<>();
 
@@ -179,6 +179,7 @@ public class AUStatsService {
         return yesterdayTrends;
     }
 
+    @Deprecated
     /**
      * Storing previous day user learning stat in LearningStat, after getting the information from the Adaptive
      */
