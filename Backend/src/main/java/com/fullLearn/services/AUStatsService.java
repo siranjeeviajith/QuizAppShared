@@ -28,15 +28,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import lombok.extern.slf4j.Slf4j;
+
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+@Slf4j
 public class AUStatsService {
     final static MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
     public Map<String, ChallengesInfo> challengesCountMap = new HashMap<>();
@@ -50,34 +52,85 @@ public class AUStatsService {
      * */
     public void fetchAllUserDailyStats() throws Exception {
 
-        String key = "dailyStatsCursor";
+        final String key = "dailyStatsCursor";
         String cursorStr = (String) cache.get(key);
-        do {
 
-            Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
-            if (cursorStr != null)
-                query = query.startAt(Cursor.fromWebSafeString(cursorStr));
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
 
-            QueryResultIterator<Contacts> iterator = query.iterator();
+        final long startTime = cal.getTime().getTime();
 
-            //no more element
-            if (iterator == null || !iterator.hasNext()) {
-                return;
+        cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        final long endTime = cal.getTime().getTime();
+
+        log.info("fetching stats for range: {} - {}", startTime, endTime);
+
+        BatchContactFetcher.fetchAllContacts(cursorStr, 50, new BatchContactWork() {
+
+            List<LearningStats> saveEntities = new ArrayList<>();
+
+            @Override
+            public void run(Contacts contact) throws Exception{
+
+                AUStatsResponse auStatsResponse = fetchUserAUStats(contact.getLogin(), startTime, endTime);
+
+                LearningStats dailyEntity = mapUserLearningStats(auStatsResponse, contact, startTime, endTime);
+                if( dailyEntity == null )
+                    return;
+
+                saveEntities.add(dailyEntity);
+
+                calculateLearningTrends(dailyEntity.getChallengesDetails());
             }
 
-            while (iterator.hasNext()){
-                fetchUserDailyStats(iterator.next());
+            @Override
+            public void nextCursor(String cursor) {
+
+                ofy().save().entities(saveEntities);
+
+                saveEntities = new ArrayList<>();
+                cache.put(key, cursor, Expiration.byDeltaSeconds(300));
             }
+        });
 
-            cursorStr = iterator.getCursor().toWebSafeString();
-            cache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
-
-        } while (cursorStr != null);
+//        do {
+//
+//            Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
+//            if (cursorStr != null)
+//                query = query.startAt(Cursor.fromWebSafeString(cursorStr));
+//
+//            QueryResultIterator<Contacts> iterator = query.iterator();
+//
+//            //no more element
+//            if (iterator == null || !iterator.hasNext()) {
+//                return;
+//            }
+//
+//            while (iterator.hasNext()){
+//                fetchUserDailyStats(iterator.next());
+//            }
+//
+//            cursorStr = iterator.getCursor().toWebSafeString();
+//            cache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
+//
+//        } while (cursorStr != null);
 
         cache.delete(key);
 
         TrendingChallenges yesterdayTrends = getYesterdayTrends();
         ofy().save().entity(yesterdayTrends).now();
+
+        log.info("trending challenges saved for : {}", yesterdayTrends.getTime());
     }
 
     /**
@@ -188,7 +241,7 @@ public class AUStatsService {
             }
 
         } catch (Exception e) {
-            System.out.println("Error occured " + e.getMessage());
+            log.warn(e.getMessage());
             throw new Exception("Exception occured " + e.getMessage());
         }
     }
@@ -367,7 +420,7 @@ public class AUStatsService {
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.MILLISECOND, 59);
 
         long endDate = cal.getTime().getTime();
 
@@ -375,7 +428,7 @@ public class AUStatsService {
                 .filter("userId", contact.getId())
                 .filter("frequency", Frequency.DAY)
                 .filter("startTime >=", startDate)
-                .filter("endTime <=", endDate)
+                .filter("startTime <=", endDate)
                 .list();
 
         if( userDailyLearning == null )

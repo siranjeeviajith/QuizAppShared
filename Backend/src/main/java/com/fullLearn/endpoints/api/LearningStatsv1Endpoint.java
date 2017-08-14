@@ -28,7 +28,7 @@ public class LearningStatsv1Endpoint {
                 type = Frequency.WEEK;
 
             if (limit <= 0) {
-                limit = 10;
+                limit = 12;
             } else if (limit > 20) {
                 limit = 20;
             }
