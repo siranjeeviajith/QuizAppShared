@@ -1,7 +1,7 @@
 package com.fullLearn.endpoints.api;
 
 
-import com.fullLearn.beans.ApiResponse;
+import com.fullLearn.model.ApiResponse;
 import com.fullLearn.beans.UserDevice;
 import com.fullLearn.filter.Secured;
 import com.fullLearn.services.UserDevicesService;
