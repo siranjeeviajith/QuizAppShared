@@ -1,5 +1,6 @@
 package com.fullLearn.model;
 
+import com.fullLearn.beans.Team;
 import lombok.Data;
 
 import java.util.List;
@@ -7,6 +8,6 @@ import java.util.List;
 @Data
 public class TeamsList {
 
-    private List<String> teamName;
+    private List<Team> teamName;
     private String cursor;
 }
