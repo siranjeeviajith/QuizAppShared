@@ -65,6 +65,7 @@ public class TeamEndpoint {
 
     @Path("stats/team/{teamId}/all")
     @GET
+    @Produces("application/json")
     public Response getLearningStats( @PathParam("teamId") int teamId){
 
         ApiResponse apiResponse = new ApiResponse();

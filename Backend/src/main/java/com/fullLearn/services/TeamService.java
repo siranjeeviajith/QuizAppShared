@@ -8,7 +8,9 @@ import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.common.collect.Lists;
 import com.googlecode.objectify.cmd.Query;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.googlecode.objectify.ObjectifyService.factory;
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -37,7 +39,7 @@ public class TeamService {
             return null;
 
         TeamsList teamsList = new TeamsList();
-        teamsList.setTeamName(Lists.newArrayList(iterator));
+        teamsList.setTeams(Lists.newArrayList(iterator));
         teamsList.setCursor(iterator.getCursor().toWebSafeString());
 
         return teamsList;
@@ -49,10 +51,9 @@ public class TeamService {
         if( team == null )
             return null;
 
-        List<LearningStatsAverage> learningStatsAverages = ofy().load().type(LearningStatsAverage.class)
-                                                                .filter("userId in",team.getMembers())
-                                                                .list();
+        Map<String,LearningStatsAverage> learningStatsAverages = ofy().load().type(LearningStatsAverage.class).ids(team.getMembers());
+        List<LearningStatsAverage> usersLearningAverages = new ArrayList<>(learningStatsAverages.values());
 
-        return learningStatsAverages;
+        return usersLearningAverages;
     }
 }

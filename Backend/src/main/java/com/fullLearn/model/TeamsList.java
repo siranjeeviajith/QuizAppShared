@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public class TeamsList {
 
-    private List<Team> teamName;
+    private List<Team> teams;
     private String cursor;
 }
