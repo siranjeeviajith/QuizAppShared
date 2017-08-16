@@ -3,9 +3,12 @@ package com.fullLearn.endpoints.api;
 import com.fullLearn.beans.Team;
 import com.fullLearn.filter.Secured;
 import com.fullLearn.model.ApiResponse;
+import com.fullLearn.model.TeamsList;
 import com.fullLearn.services.TeamService;
+import com.fullauth.api.model.oauth.OauthAccessToken;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 
@@ -29,9 +32,36 @@ public class TeamEndpoint {
         }
 
         TeamService teamService = new TeamService();
-        apiResponse.addData("teams", teamService.createTeam(team));
+        apiResponse.addData("team", teamService.createTeam(team));
         apiResponse.setResponse(true);
         return Response.status(Response.Status.OK).entity(apiResponse).build();
+    }
 
+    @Secured
+    @GET
+    @Path("/me")
+    @Produces("application/json")
+    public Response getActiveTeam( @QueryParam("limit") int limit, @QueryParam("cursor") String cursor, @Context OauthAccessToken token){
+
+        if(limit <= 0)
+            limit = 10;
+        else if(limit > 50)
+            limit = 50;
+
+        TeamService teamService = new TeamService();
+        TeamsList teamsList = teamService.getTeamsList(token.getUserId(), limit, cursor);
+
+        ApiResponse apiResponse = new ApiResponse();
+        if(teamsList == null)
+        {
+            apiResponse.setResponse(false);
+            apiResponse.setError("Request failed");
+            apiResponse.setMsg("Sorry, No Team Available");
+            return Response.status(400).entity(apiResponse).build();
+        }
+
+        apiResponse.addData("teams", teamsList);
+        apiResponse.setResponse(true);
+        return Response.status(Response.Status.OK).entity(apiResponse).build();
     }
 }
