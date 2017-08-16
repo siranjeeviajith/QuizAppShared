@@ -1,8 +1,7 @@
 package com.fullLearn.services;
 
 import com.fullLearn.beans.Team;
-
-import java.util.Calendar;
+import java.util.Random;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -10,13 +9,13 @@ public class TeamService {
 
     public Team createTeam(Team team){
 
-        Calendar cal = Calendar.getInstance();
-        long startTime = cal.getTime().getTime();
+        long id = new Random().nextLong();
+        if(id < 0)
+            id = -1 * id;
 
-        team.setModifiedAt(startTime);
+        team.setTeamId(id);
+        team.setModifiedAt(System.currentTimeMillis());
         ofy().save().entity(team).now();
-
-        System.out.println("saved successfully");
 
         return team;
     }

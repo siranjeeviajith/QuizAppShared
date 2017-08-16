@@ -8,6 +8,7 @@ import com.fullLearn.services.TeamService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
+
 @Path("/api/v1/team")
 public class TeamEndpoint {
 
@@ -15,11 +16,11 @@ public class TeamEndpoint {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response setTeamInfo(Team team){
+    public Response createNewTeam(Team team){
 
         ApiResponse apiResponse = new ApiResponse();
 
-        if( team.getTeamName() == null || team.equals("") || team.getMember() == null || team.getMember().isEmpty() ) {
+        if( team.getTeamName() == null || team.equals("") || team.getMembers() == null || team.getMembers().isEmpty() ) {
 
             apiResponse.setResponse(false);
             apiResponse.setError("Request failed");
@@ -28,7 +29,7 @@ public class TeamEndpoint {
         }
 
         TeamService teamService = new TeamService();
-        apiResponse.addData("stats", teamService.createTeam(team));
+        apiResponse.addData("teams", teamService.createTeam(team));
         apiResponse.setResponse(true);
         return Response.status(Response.Status.OK).entity(apiResponse).build();
 

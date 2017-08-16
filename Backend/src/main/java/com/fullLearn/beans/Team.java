@@ -5,7 +5,6 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import lombok.Data;
 
-import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -13,11 +12,10 @@ import java.util.Set;
 public class Team {
 
     @Id
-    @Index
-    private Long teamId;
+    private long teamId;
     private String teamName;
     @Index
-    private Set<String> member;
-    private Long modifiedAt;
+    private Set<String> members;
+    private long modifiedAt;
 
 }
