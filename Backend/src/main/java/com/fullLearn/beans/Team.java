@@ -15,9 +15,11 @@ public class Team {
 
     @Id
     private long teamId;
+    @Index
     private String teamName;
     @Index
     private Set<String> members;
+    @Index
     private long modifiedAt;
 
 }

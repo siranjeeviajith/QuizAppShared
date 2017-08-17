@@ -1,5 +1,6 @@
 package com.fullLearn.endpoints.api;
 
+import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.model.ApiResponse;
 import com.fullLearn.beans.Frequency;
 import com.fullLearn.services.LearningStatsService;
@@ -11,7 +12,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import com.fullLearn.services.TeamService;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Slf4j
 @Path("/api/v1/learn")
@@ -48,5 +52,30 @@ public class LearningStatsv1Endpoint {
             apiResponse.setError("Request Failed");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(apiResponse).build();
         }
+    }
+
+    @Path("stats/team/{teamId}/all")
+    @GET
+    @Produces("application/json")
+    public Response getLearningStats( @PathParam("teamId") int teamId){
+
+        ApiResponse apiResponse = new ApiResponse();
+
+        TeamService teamService = new TeamService();
+        List<LearningStatsAverage> membersLearningStats = teamService.getMembersLearningStats(teamId);
+
+        if( membersLearningStats == null )
+        {
+            apiResponse.setResponse(false);
+            apiResponse.setError("Request failed");
+            apiResponse.setMsg("Team not available");
+
+            return Response.status(400).entity(apiResponse).build();
+        }
+
+        apiResponse.setResponse(true);
+        apiResponse.addData("stats", membersLearningStats);
+
+        return Response.status(Response.Status.OK).entity(apiResponse).build();
     }
 }

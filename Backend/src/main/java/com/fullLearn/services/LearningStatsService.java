@@ -1,5 +1,6 @@
 package com.fullLearn.services;
 
+import com.fullLearn.beans.Team;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.common.collect.Lists;
@@ -9,6 +10,7 @@ import com.fullLearn.beans.LearningStats;
 import com.fullLearn.beans.LearningStatsAverage;
 import com.googlecode.objectify.cmd.Query;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,14 @@ public class LearningStatsService {
 
     public LearningStatsAverage getStatsByUserId(String id) {
         return ofy().load().type(LearningStatsAverage.class).id(id).now();
+    }
+
+    public List<LearningStatsAverage> getLearningStatsByUserIds(Team team) {
+
+        Map<String,LearningStatsAverage> learningStatsAverages = ofy().load().type(LearningStatsAverage.class).ids(team.getMembers());
+        List<LearningStatsAverage> usersLearningAverages = new ArrayList<>(learningStatsAverages.values());
+
+        return usersLearningAverages;
     }
 
     public Map<String, Object> getAllUserStats(int type, String order, int limit, String cursorStr, int minAvg, int maxAvg) {

@@ -1,6 +1,5 @@
 package com.fullLearn.endpoints.api;
 
-import com.fullLearn.beans.LearningStatsAverage;
 import com.fullLearn.beans.Team;
 import com.fullLearn.filter.Secured;
 import com.fullLearn.model.ApiResponse;
@@ -11,7 +10,6 @@ import com.fullauth.api.model.oauth.OauthAccessToken;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 
 @Path("/api/v1/team")
@@ -43,7 +41,10 @@ public class TeamEndpoint {
     @GET
     @Path("/me")
     @Produces("application/json")
-    public Response getActiveTeam( @QueryParam("limit") int limit, @QueryParam("cursor") String cursor, @Context OauthAccessToken token){
+    public Response getActiveTeam( @QueryParam("limit") int limit,
+                                   @QueryParam("cursor") String cursor,
+                                   @QueryParam("since") long since,
+                                   @Context OauthAccessToken token){
 
         if(limit <= 0)
             limit = 10;
@@ -51,7 +52,7 @@ public class TeamEndpoint {
             limit = 50;
 
         TeamService teamService = new TeamService();
-        TeamsList teamsList = teamService.getTeamsList(token.getUserId(), limit, cursor);
+        TeamsList teamsList = teamService.getTeamsList(token.getUserId(), limit, cursor, since);
 
         ApiResponse apiResponse = new ApiResponse();
 
@@ -63,28 +64,29 @@ public class TeamEndpoint {
         return Response.status(Response.Status.OK).entity(apiResponse).build();
     }
 
-    @Path("stats/team/{teamId}/all")
+    @Secured
     @GET
+    @Path("/all")
     @Produces("application/json")
-    public Response getLearningStats( @PathParam("teamId") int teamId){
+    public Response getAllTeams( @QueryParam("limit") int limit,
+                                   @QueryParam("cursor") String cursor,
+                                   @QueryParam("since") long since){
+
+        if(limit <= 0)
+            limit = 10;
+        else if(limit > 50)
+            limit = 50;
+
+        TeamService teamService = new TeamService();
+        TeamsList teamsList = teamService.getTeams(limit, cursor, since);
 
         ApiResponse apiResponse = new ApiResponse();
 
-        TeamService teamService = new TeamService();
-        List<LearningStatsAverage> membersLearningStats = teamService.getMembersLearningStats(teamId);
-
-        if( membersLearningStats == null )
-        {
-            apiResponse.setResponse(false);
-            apiResponse.setError("Request failed");
-            apiResponse.setMsg("Team not available");
-
-            return Response.status(400).entity(apiResponse).build();
-        }
+        if(teamsList == null)
+            apiResponse.setMsg("Sorry, No Team Available");
 
         apiResponse.setResponse(true);
-        apiResponse.addData("stats", membersLearningStats);
-
+        apiResponse.addData("teams", teamsList);
         return Response.status(Response.Status.OK).entity(apiResponse).build();
     }
 }
