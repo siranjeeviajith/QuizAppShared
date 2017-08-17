@@ -1,10 +1,6 @@
 package com.fullLearn.config;
 
-import com.fullLearn.beans.Contacts;
-import com.fullLearn.beans.LearningStats;
-import com.fullLearn.beans.LearningStatsAverage;
-import com.fullLearn.beans.TrendingChallenges;
-import com.fullLearn.beans.UserDevice;
+import com.fullLearn.beans.*;
 import com.googlecode.objectify.ObjectifyService;
 
 import javax.servlet.ServletContextEvent;
@@ -26,6 +22,7 @@ public class ObjectifyRegistrationListener implements ServletContextListener {
         ObjectifyService.register(LearningStatsAverage.class);
         ObjectifyService.register(TrendingChallenges.class);
         ObjectifyService.register(UserDevice.class);
+        ObjectifyService.register(Team.class);
     }
 
     public void contextDestroyed(ServletContextEvent event) {

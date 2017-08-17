@@ -1,6 +1,6 @@
 package com.fullLearn.endpoints.api;
 
-import com.fullLearn.beans.ApiResponse;
+import com.fullLearn.model.ApiResponse;
 import com.fullLearn.beans.Frequency;
 import com.fullLearn.services.LearningStatsService;
 

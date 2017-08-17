@@ -1,4 +1,4 @@
-package com.fullLearn.beans;
+package com.fullLearn.model;
 
 
 import lombok.Data;
