@@ -32,7 +32,7 @@ public class UserStatsCronEndpoint {
 
     @GET
     @Path("/weekly")
-    public Response learningStatsAverage() {
+    public Response learningStatsAverage() throws Exception{
 
         statsService.calculateAllUserWeeklyStats();
         log.info("Weekly Stats computed!");
@@ -41,7 +41,7 @@ public class UserStatsCronEndpoint {
 
     @GET
     @Path("/overall/average")
-    public Response weeklyStatsReport() {
+    public Response weeklyStatsReport() throws Exception{
 
         statsService.calculateAllUserOverallAverage();
         return Response.ok().build();
