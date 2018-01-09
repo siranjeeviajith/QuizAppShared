@@ -55,23 +55,8 @@ public class AUStatsService {
         final String key = "dailyStatsCursor";
         String cursorStr = (String) cache.get(key);
 
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        final long startTime = cal.getTime().getTime();
-
-        cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        final long endTime = cal.getTime().getTime();
+        final long startTime = getSpecifiedDate(-1,0,0,0,0);
+        final long endTime = getSpecifiedDate(-1,23,59,59,59);
 
         log.info("fetching stats for range: {} - {}", startTime, endTime);
 
@@ -103,28 +88,6 @@ public class AUStatsService {
             }
         });
 
-//        do {
-//
-//            Query<Contacts> query = ofy().load().type(Contacts.class).limit(50);
-//            if (cursorStr != null)
-//                query = query.startAt(Cursor.fromWebSafeString(cursorStr));
-//
-//            QueryResultIterator<Contacts> iterator = query.iterator();
-//
-//            //no more element
-//            if (iterator == null || !iterator.hasNext()) {
-//                return;
-//            }
-//
-//            while (iterator.hasNext()){
-//                fetchUserDailyStats(iterator.next());
-//            }
-//
-//            cursorStr = iterator.getCursor().toWebSafeString();
-//            cache.put(key, cursorStr, Expiration.byDeltaSeconds(300));
-//
-//        } while (cursorStr != null);
-
         cache.delete(key);
 
         TrendingChallenges yesterdayTrends = getYesterdayTrends();
@@ -152,6 +115,7 @@ public class AUStatsService {
         });
 
         LinkedHashMap<String, ChallengesInfo> topTrends = new LinkedHashMap<>();
+
         int rowCount = 1;
         for (Map.Entry<String, ChallengesInfo> challenge : challenges) {
 
@@ -162,14 +126,7 @@ public class AUStatsService {
             rowCount++;
         }
 
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        long startTime = cal.getTime().getTime();
+        long startTime = getSpecifiedDate(-1,0,0,0,0);
 
         TrendingChallenges yesterdayTrends = new TrendingChallenges();
         yesterdayTrends.setTrends(topTrends);
@@ -177,40 +134,6 @@ public class AUStatsService {
         yesterdayTrends.setTime(startTime);
 
         return yesterdayTrends;
-    }
-
-    @Deprecated
-    /**
-     * Storing previous day user learning stat in LearningStat, after getting the information from the Adaptive
-     */
-    private void fetchUserDailyStats(Contacts contact) throws Exception {
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        long startTime = cal.getTime().getTime();
-
-        cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        long endTime = cal.getTime().getTime();
-
-        AUStatsResponse auStatsResponse = fetchUserAUStats(contact.getLogin(), startTime, endTime);
-
-        LearningStats dailyEntity = mapUserLearningStats(auStatsResponse, contact, startTime, endTime);
-        if( dailyEntity == null )
-            return;
-
-        ofy().save().entity(dailyEntity).now();
-        calculateLearningTrends(dailyEntity.getChallengesDetails());
     }
 
     /**
@@ -306,27 +229,24 @@ public class AUStatsService {
     /**
      * Calculating all user learning stats average for previous four and twelfth week
      */
-    public void calculateAllUserOverallAverage() {
+    public void calculateAllUserOverallAverage() throws Exception{
 
-        String cursor = null;
-        do {
+        String cursorStr = null;
+        BatchContactFetcher.fetchAllContacts(cursorStr, 100, new BatchContactWork() {
 
-            Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(50);
-            if (cursor != null)
-                contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursor));
+            List<LearningStatsAverage> saveEntities = new ArrayList<>();
 
-            QueryResultIterator<Contacts> iterator = contactQuery.iterator();
-
-            // no more element
-            if (iterator == null || !iterator.hasNext())
-                return;
-
-            while (iterator.hasNext()){
-                calculateUserOverAllAverage(iterator.next());
+            @Override
+            public void run(Contacts contact) throws Exception {
+                saveEntities.add(calculateUserOverAllAverage(contact));
             }
 
-            cursor = iterator.getCursor().toWebSafeString();
-        } while (cursor != null);
+            @Override
+            public void nextCursor(String cursor) {
+                ofy().save().entities(saveEntities);
+                saveEntities = new ArrayList<>();
+            }
+        });
     }
 
     /**
@@ -366,39 +286,32 @@ public class AUStatsService {
         learningStatsAverage.setTwelveWeekAvg(twelfthWeekAverage);
         learningStatsAverage.setEmail(contact.getLogin());
 
-        ofy().save().entity(learningStatsAverage).now();
-
         return learningStatsAverage;
     }
-
 
     /**
      * Calculate Weekly Learning stats of all user
      */
-    public void calculateAllUserWeeklyStats() {
+    public void calculateAllUserWeeklyStats() throws Exception{
 
-        String cursor = null;
-        do {
+        String cursorStr = null;
+        BatchContactFetcher.fetchAllContacts(cursorStr, 100, new BatchContactWork() {
 
-            Query<Contacts> contactQuery = ofy().load().type(Contacts.class).limit(50);
-            if (cursor != null)
-                contactQuery = contactQuery.startAt(Cursor.fromWebSafeString(cursor));
+            List<LearningStats> saveEntities = new ArrayList<>();
 
-            QueryResultIterator<Contacts> iterator = contactQuery.iterator();
+            @Override
+            public void run(Contacts contact) throws Exception{
 
-            //no more elements available
-            if (iterator == null || !iterator.hasNext()){
-                return;
+                saveEntities.add(calculateUserWeekStats(contact));
             }
 
-            while (iterator.hasNext()) {
-                calculateUserWeekStats(iterator.next());
+            @Override
+            public void nextCursor(String cursor) {
+
+                ofy().save().entities(saveEntities);
+                saveEntities = new ArrayList<>();
             }
-
-            cursor = iterator.getCursor().toWebSafeString();
-
-        } while (cursor != null);
-
+        });
     }
 
     /**
@@ -406,30 +319,14 @@ public class AUStatsService {
      */
     private LearningStats calculateUserWeekStats(Contacts contact){
 
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -7);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        long startDate = cal.getTime().getTime();
-
-        cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 59);
-
-        long endDate = cal.getTime().getTime();
+        long startDate = getSpecifiedDate(-7,0,0,0,0);
+        long endDate = getSpecifiedDate(-1,23,59,59,59);
 
         List<LearningStats> userDailyLearning = ofy().load().type(LearningStats.class)
                 .filter("userId", contact.getId())
                 .filter("frequency", Frequency.DAY)
                 .filter("startTime >=", startDate)
-                .filter("startTime <=", endDate)
+                .filter("startTime <", endDate)
                 .list();
 
         if( userDailyLearning == null )
@@ -453,8 +350,18 @@ public class AUStatsService {
         weeklyLearningStats.setStartTime(startDate);
         weeklyLearningStats.setEndTime(endDate);
 
-        ofy().save().entities(weeklyLearningStats).now();
         return weeklyLearningStats;
     }
 
+    private long getSpecifiedDate(int day, int hour, int minute, int second, int milliSecond){
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, day);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.SECOND, second);
+        cal.set(Calendar.MILLISECOND, milliSecond);
+
+        return cal.getTime().getTime();
+    }
 }
