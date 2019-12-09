@@ -4,7 +4,7 @@ apply from: 'gradle/dependencies.gradle'
 
 /** project configurations **/
 allprojects {
-    group 'com.fulllearn'
+    group 'com.myProject'
     version '1.0'
 
 

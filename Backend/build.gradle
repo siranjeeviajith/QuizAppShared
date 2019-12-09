@@ -2,7 +2,7 @@
 
 apply plugin: 'war'
 apply plugin: 'com.google.cloud.tools.appengine' /// this will include all the task by the appengine like appengineRun, appenigenDeploy
-group 'com.fulllearn.backend'
+group 'com.shareboard.backend'
 version '1.0'
 
 buildscript {
@@ -22,21 +22,18 @@ dependencies {
     compile libs.gae
     compile libs.resteasy
     compile libs.resteasy_jackson_provider
-    compile files("$projectDir/../SharedLibs/fullauth-api-java-client-1.2.6.jar")
 }
 
 appengine {
     run {
         port = config.gae.port.backend // defined in dependencies.gre
-        storagePath = file("$projectDir/appengine-generated/")
-// datastorePath = file("$projectDir/appengine-generated/")
         jvmFlags = config.gae.defaultJvmFlags
         //  serverVersion = '2-alpha'
     }
 
     deploy {
         version = 9
-        project = "full-learn"
+        projectId = "my-project"
         stopPreviousVersion = false
         promote = false
     }

@@ -1,4 +1,4 @@
-rootProject.name = 'FullLearn'
+rootProject.name = 'MyProject'
 
 include 'Backend'
 

@@ -20,7 +20,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <!-- Context Listener -->
     <listener>
         <listener-class>
-            com.fullLearn.config.ObjectifyRegistrationListener
+            com.config.ObjectifyListener
         </listener-class>
     </listener>
     <!-- Context Listener End -->
@@ -36,12 +36,12 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         </servlet-class>
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
-            <param-value>com.fullLearn.config.ApiApplication</param-value>
+            <param-value>com.config.AppConfig</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>RESTEasyService</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
     <!-- restEasy configuration end -->
@@ -69,5 +69,4 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         </user-data-constraint>
     </security-constraint>
     <!-- End Configurations -->
-
 </web-app>
