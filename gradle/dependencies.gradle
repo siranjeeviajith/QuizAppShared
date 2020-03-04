@@ -1,47 +1,116 @@
 ext {
-    //used libraries versions
-    libVersions =
-            [
-                    servletApi  : '2.5',
-                    junit       : '4.12',
-                    jackson     : '2.9.0.pr4',
-                    objectify   : '5.1.20',
-                    slf4jLog4j12: '1.7.25',
-                    lombok      : '1.16.18',
-                    resteasy    : '3.0.10.Final',
-                    gae         : '+'
+    libsVersion = [
+            gcloudGradle     : '+',
+            servletApi       : '3.1.0',
+            junit            : '4.12',
+            jackson          : '2.9.3',
+            objectify        : '5.1.21',
+            slf4jLog4j12     : '1.7.25',
+            lombok           : '1.18.6',
+            resteasy         : '3.1.4.Final',
+            gae              : '1.9.60',
+            cloudKMS         : 'v1-rev71-1.25.0',
+            gaeApiClient     : '1.27.0',
 
-            ]
+//            gaeJdo           : "3.1.3",
+//            gaeDatanucleus   : "2.1.2",
+//            gaeJdo           : "3.1.3",
 
-    //used libraries
+            gaeGradle        : '+',
+            googleTruth      : '0.39',
+            mockito          : '2.19.0',
+            powerMockito     : '2.0.0-beta.5',
+            gaeTestUtil      : '0.1.1',
+            fullHooksClient : '1.0.3',
+            fullauthClient   : '1.3.9',
+            fullhistoryClient: '2.0.9',
+            fullStorageClient: '0.6.4',
+            fullauthManageClient: '1.4.3',
+            fullMetrics  :          '0.3.5',
+            fullMetricsHelper : '0.2.1',
+            anywhereHours    : '0.1',
+            jdoUtil          : '0.0.2',
+            jsoup            : '1.10.3',
+            appengineCounter : '2.0.1',
+            jose4j           : '0.6.0',
+            commonsFileUpload: "1.3.1",
+            velocity         : "1.7",
+            sendgrid         : "4.1.2"
+    ]
+
     libs = [
-            servletApi  : "javax.servlet:servlet-api:$libVersions.servletApi",
-            junit       : "junit:junit:$libVersions.junit",
-            jackson     : ["com.fasterxml.jackson.core:jackson-annotations:$libVersions.jackson",
-                           "com.fasterxml.jackson.core:jackson-databind:$libVersions.jackson"
+
+            gcloudGradle        : "com.google.cloud.tools:appengine-gradle-plugin:${libsVersion.gcloudGradle}",
+            servletApi          : "javax.servlet:javax.servlet-api:$libsVersion.servletApi",
+            resteasy            : [
+                    "org.jboss.resteasy:resteasy-jaxrs:${libsVersion.resteasy}",
+                    "org.jboss.resteasy:resteasy-jackson2-provider:${libsVersion.resteasy}"
             ],
-            objectify   : "com.googlecode.objectify:objectify:$libVersions.objectify",
-            slf4jLog4j12: "org.slf4j:slf4j-log4j12:$libVersions.slf4jLog4j12",
-            resteasy    : "org.jboss.resteasy:resteasy-jaxrs:$libVersions.resteasy",
-            resteasy_jackson_provider: "org.jboss.resteasy:resteasy-jackson-provider:$libVersions.resteasy",
-            lombok      : "org.projectlombok:lombok:$libVersions.lombok",
-            gae         : [
-                    'com.google.appengine:appengine-api-1.0-sdk:+'
-            ]
+            junit               : "junit:junit:$libsVersion.junit",
+            jackson             : ["com.fasterxml.jackson.core:jackson-annotations:$libsVersion.jackson",
+                                   "com.fasterxml.jackson.core:jackson-databind:$libsVersion.jackson"
+            ],
+            objectify           : "com.googlecode.objectify:objectify:$libsVersion.objectify",
+            slf4jLog4j12        : "org.slf4j:slf4j-log4j12:$libsVersion.slf4jLog4j12",
+            lombok              : "org.projectlombok:lombok:${libsVersion.lombok}",
+            gae                 : [
+                    "com.google.appengine:appengine-api-1.0-sdk:${libsVersion.gae}"
+            ],
+            gaeTest             : [
+                    "com.google.appengine:appengine-testing:${libsVersion.gae}",
+                    "com.google.appengine:appengine-api-stubs:${libsVersion.gae}"
+            ],
+            gaeLabs             : "com.google.appengine:appengine-api-labs:${libsVersion.gae}",
+            gaeCloudStorage     : "com.google.appengine.tools:appengine-gcs-client:0.4",
+            commonsFileUpload   : "commons-fileupload:commons-fileupload:${libsVersion.commonsFileUpload}",
+            cloudKMS            : "com.google.apis:google-api-services-cloudkms:${libsVersion.cloudKMS}",
+            gaeApiClient        : "com.google.api-client:google-api-client-appengine:${libsVersion.gaeApiClient}",
+            powerMockApi        : "org.powermock:powermock-api-mockito2:$libsVersion.powerMockito",
+            jsoup               : "org.jsoup:jsoup:${libsVersion.jsoup}",
+            gradleVersionPlugin : "com.github.ben-manes:gradle-versions-plugin:0.15.0",
+            gaeCounter          : "com.theupswell.appengine.counter:appengine-counter:${libsVersion.appengineCounter}",
+            jose4j              : "org.bitbucket.b_c:jose4j:${libsVersion.jose4j}",
+            velocity            : "org.apache.velocity:velocity:${libsVersion.velocity}",
+            sendgrid            : "com.sendgrid:sendgrid-java:${libsVersion.sendgrid}",
+
+
+            // dependencies from sharedLibs
+            gaeTestUtil         : files("$projectDir/SharedLibs/gae-test-util-${libsVersion.gaeTestUtil}.jar"),
+            fullMetricsClient   : files("$projectDir/SharedLibs/fullmetrics-api-java-client-0.3.3.jar"),
+            fullMetricsHelper   : files("$projectDir/SharedLibs/fullmetrics-java-push-helper-0.2.jar"),
+            fullhistoryClient   : files("$projectDir/SharedLibs/fullhistory-api-java-client-${libsVersion.fullhistoryClient}.jar"),
+            anywhereHours       : files("$projectDir/SharedLibs/awhours-java-api-client-${libsVersion.anywhereHours}.jar"),
+            jdoUtil             : files("$projectDir/SharedLibs/JdoUtil-${libsVersion.jdoUtil}.jar"),
+            tests               : [
+                    "junit:junit:$libsVersion.junit",
+                    "com.google.truth:truth:$libsVersion.googleTruth",
+
+                    files("$projectDir/SharedLibs/resteasy-test-util-0.1.jar"),
+//                    "org.mockito:mockito-core:$libsVersion.mockito",
+                    "org.powermock:powermock-module-junit4:$libsVersion.powerMockito",
+                    files("$projectDir/SharedLibs/gae-test-util-${libsVersion.gaeTestUtil}.jar")
+            ],
+
     ]
 
     //configs
-
     config = [
             gae: [
-                    port: [
-                            default: 8880,
-                            backend: 8881
+
+                    port              : [
+                            backend    : 8080,
+
                     ],
-                    defaultJvmFlags: [
-                            '-Dappengine.fullscan.seconds=3',
+                    serverVersion     : "1",
+                    storagePath       : file("$projectDir/appengine-generated/"),
+                    datastorePath     : file("$projectDir/appengine-generated/"),
+                    gaeGeneratedFolder: "$projectDir/appengine-generated",
+                    defaultJvmFlags   : [
+                            //'-Xdebug',
+                            //'-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8181',
+                            "-Dappengine.fullscan.seconds=2".toString(),
                             "-Ddatastore.backing_store=$projectDir/appengine-generated/local_db.bin".toString(),
-                            "-Ddatastore.generated_dir=$projectDir/appengine-generated/".toString()
+                            "-Ddatastore.generated_dir=$projectDir/appengine-generated".toString()
                     ]
             ]
     ]

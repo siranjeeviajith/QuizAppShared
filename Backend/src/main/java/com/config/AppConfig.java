@@ -1,9 +1,11 @@
 package com.config;
-import com.endpoint.Test;
+import com.endpoint.ContactEndpoint;
+import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 public class AppConfig extends Application {
@@ -12,9 +14,18 @@ public class AppConfig extends Application {
     public Set<Class<?>> getClasses() {
 
         Set<Class<?>> classes = new HashSet<>();
-        classes.add(Test.class);
+
+        classes.add(JacksonObjectResolver.class);
+        classes.add(ObjectifyJacksonModule.class);
+
+        registerApis(classes);
 
         return classes;
+    }
+
+    private void registerApis(Set<Class<?>> classes) {
+        classes.add(ContactEndpoint.class);
+
     }
 
     @Override

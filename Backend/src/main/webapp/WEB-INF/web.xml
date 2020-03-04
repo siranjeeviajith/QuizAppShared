@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://java.sun.com/xml/ns/javaee"
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-
-
-    <!-- Objectify Filter -->
+    <!-- Objectify Filter (needs to be added first)-->
     <filter>
         <filter-name>ObjectifyFilter</filter-name>
         <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
@@ -15,58 +12,84 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <filter-name>ObjectifyFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <!-- Objectify Filter End -->
 
-    <!-- Context Listener -->
-    <listener>
-        <listener-class>
-            com.config.ObjectifyListener
-        </listener-class>
-    </listener>
-    <!-- Context Listener End -->
+    <!-- AppStats Filter -->
+    <!--<filter>-->
+    <!--<filter-name>appstats</filter-name>-->
+    <!--<filter-class>com.google.appengine.tools.appstats.AppstatsFilter</filter-class>-->
+    <!--</filter>-->
 
-    <!-- restEasy configurations -->
-    <context-param>
-        <param-name>resteasy.servlet.mapping.prefix</param-name>
-        <param-value>/*</param-value>
-    </context-param>
-    <servlet>
-        <servlet-name>RESTEasyService</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher
-        </servlet-class>
+    <!--<filter-mapping>-->
+    <!--<filter-name>appstats</filter-name>-->
+    <!--<url-pattern>/api/*</url-pattern>-->
+    <!--</filter-mapping>-->
+
+
+    <!-- RestEasy Filter (Main Routing Handler) -->
+    <filter>
+        <filter-name>Resteasy</filter-name>
+        <filter-class>
+            org.jboss.resteasy.plugins.server.servlet.FilterDispatcher
+        </filter-class>
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
             <param-value>com.config.AppConfig</param-value>
         </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>RESTEasyService</servlet-name>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>Resteasy</filter-name>
         <url-pattern>/api/*</url-pattern>
-    </servlet-mapping>
+    </filter-mapping>
 
-    <!-- restEasy configuration end -->
+    <!-- requires when mapping url is not /* -->
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/api</param-value>
+    </context-param>
 
-    <!-- Configurations -->
+    <!-- Appstarts Web Portal -->
+    <!--<servlet>-->
+    <!--<servlet-name>appstats</servlet-name>-->
+    <!--<servlet-class>com.google.appengine.tools.appstats.AppstatsServlet</servlet-class>-->
+    <!--</servlet>-->
+
+    <!--<servlet-mapping>-->
+    <!--<servlet-name>appstats</servlet-name>-->
+    <!--<url-pattern>/api/appstats/*</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+    <!--<security-constraint>-->
+    <!--<web-resource-collection>-->
+    <!--<web-resource-name>appstats</web-resource-name>-->
+    <!--<url-pattern>/api/appstats/*</url-pattern>-->
+    <!--</web-resource-collection>-->
+    <!--<auth-constraint>-->
+    <!--<role-name>admin</role-name>-->
+    <!--</auth-constraint>-->
+    <!--</security-constraint>-->
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>AdminOps</web-resource-name>
-            <url-pattern>/admin/*</url-pattern>
-            <url-pattern>/cron/*</url-pattern>
+            <url-pattern>/api/admin/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>admin</role-name>
         </auth-constraint>
     </security-constraint>
 
+    <!-- all urls are secured with https -->
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>SecureAccess</web-resource-name>
-
+            <web-resource-name>Secure Access</web-resource-name>
+            <url-pattern>*.</url-pattern>
+            <url-pattern>/</url-pattern>
             <url-pattern>/*</url-pattern>
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
-    <!-- End Configurations -->
+
 </web-app>
