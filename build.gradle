@@ -45,13 +45,7 @@ subprojects {
             jcenter()
 
             // like this
-            maven {
-                url "${artifactory_url}/gradle-release"
-                credentials {
-                    username "${artifactory_user}"
-                    password "${artifactory_password}"
-                }
-            }
+
         }
 
         mavenLocal()
