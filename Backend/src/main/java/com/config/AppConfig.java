@@ -4,6 +4,7 @@ import com.endpoint.LoginEndpoint;
 
 import com.endpoint.QuestionEndpoint;
 import com.endpoint.UserEndpoint;
+import com.entities.AbstractBaseEntity;
 import com.entities.Question;
 import com.entities.User;
 import com.googlecode.objectify.ObjectifyService;
@@ -24,6 +25,7 @@ public class AppConfig extends Application {
     }
 
     private void registerEntities() {
+        ObjectifyService.register(AbstractBaseEntity.class);
         ObjectifyService.register(User.class);
         ObjectifyService.register(Question.class);
 

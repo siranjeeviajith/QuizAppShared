@@ -12,9 +12,8 @@ import java.security.NoSuchAlgorithmException;
 
 @Entity
 @Data
-public class User {
-    @Id
-    private String id;
+public class User extends AbstractBaseEntity {
+
     private String firstName;
     private String lastName;
     @Index
