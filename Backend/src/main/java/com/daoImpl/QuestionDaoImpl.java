@@ -35,17 +35,12 @@ public class QuestionDaoImpl implements QuestionDao {
     public ApiResponse addAllQuestion(List<Question> questionList) {
         ApiResponse response = new ApiResponse();
         for(Question question:questionList){
-            Question existQuestion = ObjectifyService.ofy().load().type(Question.class).filter("description",question.getDescription()).first().now();
-            if(existQuestion!=null) {
-                response.addData(question.getDescription(),"question already exist");
-            }
-            else {
+
                 String uniqueID = UUID.randomUUID().toString();
                 question.setId(uniqueID);
                 ObjectifyService.ofy().save().entity(question).now();
                 response.addData(question.getDescription(),"question added");
             }
-        }
             response.setOk(true);
             return response;
         }
@@ -53,8 +48,8 @@ public class QuestionDaoImpl implements QuestionDao {
 
 
     @Override
-    public ApiResponse getAllQuestion(Question question) {
-        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).filter("company",question.getCompany()).list();
+    public ApiResponse getAllQuestion() {
+        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).list();
         ApiResponse response = new ApiResponse();
         response.setOk(true);
         response.addData("questions",allQuestions);
@@ -62,8 +57,8 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     @Override
-    public ApiResponse getQuestionByTag(Question question) {
-        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).filter("company",question.getCompany()).filter("tag",question.getTag()).list();
+    public ApiResponse getQuestionByTag(String tag) {
+        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).filter("tag",tag).list();
         ApiResponse response = new ApiResponse();
         response.setOk(true);
         response.addData("questions",allQuestions);

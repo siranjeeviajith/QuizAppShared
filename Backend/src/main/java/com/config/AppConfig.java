@@ -1,7 +1,10 @@
 package com.config;
 import com.endpoint.AppEndpoint;
 import com.endpoint.LoginEndpoint;
+
+import com.endpoint.QuestionEndpoint;
 import com.endpoint.UserEndpoint;
+import com.entities.Question;
 import com.entities.User;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
@@ -14,12 +17,15 @@ import javax.ws.rs.core.Application;
 public class AppConfig extends Application {
 
 
+
+
     public AppConfig(){
         registerEntities();
     }
 
     private void registerEntities() {
         ObjectifyService.register(User.class);
+        ObjectifyService.register(Question.class);
 
     }
 
@@ -40,6 +46,7 @@ public class AppConfig extends Application {
     private void registerApis(Set<Class<?>> classes) {
         classes.add(LoginEndpoint.class);
         classes.add(AppEndpoint.class);
+        classes.add(QuestionEndpoint.class);
         classes.add(UserEndpoint.class);
 
     }
