@@ -3,5 +3,6 @@
     <application>_your_app_id_</application><!-- unused for Cloud SDK based tooling -->
     <version>alpha-001</version><!-- unused for Cloud SDK based tooling -->
     <threadsafe>true</threadsafe>
+    <sessions-enabled>true</sessions-enabled>
     <runtime>java8</runtime>
 </appengine-web-app>
