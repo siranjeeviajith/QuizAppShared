@@ -10,7 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-
+import java.security.NoSuchAlgorithmException;
 
 
 @Path("/api/user")
@@ -21,13 +21,13 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
     }
     @POST
     @Path("/login")
-    public Response doLogin(User user){
+    public Response doLogin(User user) throws NoSuchAlgorithmException {
         ApiResponse response = new ApiResponse();
 
         HttpSession session= servletRequest.getSession(false);
         if(session!=null){
             response.setError("Session already exists");
-            return Response.status(409).entity(response).build();
+            return Response.status(302).entity(response).build();
         }
         else {
             if (userOption.authenticate(user)) {
@@ -35,6 +35,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
                 user= ObjectifyService.ofy().load().type(User.class).filter("email",user.getEmail()).first().now();
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("firstName", user.getFirstName());
+                session.setAttribute("company",user.getCompany());
                 response.setOk(true);
                 response.addData("data","Account login successfull");
                 return Response.status(200).entity(response).build();
@@ -47,10 +48,14 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
 
     @POST
     @Path("/signup")
-    public Response userSignup(User user){
+    public Response userSignup(User user) throws NoSuchAlgorithmException {
         ApiResponse response = new ApiResponse();
         if(servletRequest.getSession(false)!=null){
             response.setError("Session already exist");
+            return Response.status(302).entity(response).build();
+        }
+        if(user.getPassword()=="" || user.getCompany()=="" || user.getEmail()=="" || user.getFirstName()=="" || user.getLastName()==""){
+            response.setError("Empty input fields");
             return Response.status(400).entity(response).build();
         }
         if(userOption.createUserAccount(user)) {

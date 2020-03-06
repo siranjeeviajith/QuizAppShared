@@ -8,7 +8,7 @@ import java.util.List;
 public interface QuestionDao {
     public ApiResponse addAQuestion(Question question);
     public ApiResponse addAllQuestion(List<Question> questionList);
-    public ApiResponse getAllQuestion(Question question);
-    public ApiResponse getQuestionByTag(Question question);
+    public ApiResponse getAllQuestion();
+    public ApiResponse getQuestionByTag(String tag);
 
 }
