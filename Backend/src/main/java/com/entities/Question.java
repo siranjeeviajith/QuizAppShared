@@ -13,7 +13,7 @@ public class Question {
     private String id;
     @Index
     private String tag;
-    private String status;
+    private boolean statusActive;
     @Index
     private String description;
     @Serialize
@@ -38,12 +38,12 @@ public class Question {
         this.tag = tag;
     }
 
-    public String getStatus() {
-        return status;
+    public boolean getStatusActive() {
+        return statusActive;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatusActive(boolean statusActive) {
+        this.statusActive = statusActive;
     }
 
     public String getDescription() {
