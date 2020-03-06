@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Entity
 @Data
-public class Question extends AbstractBaseEntity {
+public class Question  {
 
     @Index
     private String tag;
