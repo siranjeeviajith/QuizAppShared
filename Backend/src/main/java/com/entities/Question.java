@@ -1,7 +1,9 @@
 package com.entities;
 
+import com.enums.Option;
 import com.enums.QuestionStatus;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Serialize;
 import lombok.Data;
@@ -21,7 +23,7 @@ public class Question extends AbstractBaseEntity {
     private String description;
     @Serialize
     private Map<String,String> option;
-    private String correctAns;
+    private Option correctAns;
 
 
 }

@@ -13,12 +13,7 @@ public class QuestionDaoImpl implements QuestionDao {
     @Override
     public ApiResponse addAQuestion(Question question) {
         ApiResponse response = new ApiResponse();
-        Question existQuestion = ObjectifyService.ofy().load().type(Question.class).filter("description",question.getDescription()).first().now();
-        if(existQuestion!=null){
-             response.setOk(false);
-             response.setError("question already exists");
-             return response;
-        }else{
+
             String uniqueID = UUID.randomUUID().toString();
             question.setId(uniqueID);
             ObjectifyService.ofy().save().entity(question).now();
@@ -26,7 +21,7 @@ public class QuestionDaoImpl implements QuestionDao {
             response.addData("result","question added");
             return response;
 
-        }
+
 
 
     }
