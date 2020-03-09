@@ -3,6 +3,7 @@ import com.endpoint.*;
 
 import com.entities.AbstractBaseEntity;
 import com.entities.Question;
+import com.entities.Test;
 import com.entities.User;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
@@ -25,6 +26,7 @@ public class AppConfig extends Application {
         ObjectifyService.register(AbstractBaseEntity.class);
         ObjectifyService.register(User.class);
         ObjectifyService.register(Question.class);
+        ObjectifyService.register(Test.class);
 
     }
 

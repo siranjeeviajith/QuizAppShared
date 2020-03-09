@@ -22,7 +22,7 @@ public class Question extends AbstractBaseEntity {
     @Index
     private String description;
     @Serialize
-    private Map<String,String> option;
+    private Map<Option,String> option;
     private Option correctAns;
 
 

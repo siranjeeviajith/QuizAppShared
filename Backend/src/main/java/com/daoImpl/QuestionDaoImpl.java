@@ -18,7 +18,7 @@ public class QuestionDaoImpl implements QuestionDao {
             question.setId(uniqueID);
             ObjectifyService.ofy().save().entity(question).now();
             response.setOk(true);
-            response.addData("result","question added");
+            response.addData("question",question);
             return response;
 
 

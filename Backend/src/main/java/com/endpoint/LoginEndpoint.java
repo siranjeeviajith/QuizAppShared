@@ -20,8 +20,8 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
         userOption=new UserDaoImpl();
     }
     @POST
-    @Path("/login")
-    public Response doLogin(User user) throws NoSuchAlgorithmException {
+    @Path("/adminLogin")
+    public Response doAdminLogin(User user) throws NoSuchAlgorithmException {
         ApiResponse response = new ApiResponse();
 
         HttpSession session= servletRequest.getSession(false);
@@ -44,6 +44,33 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
                 return Response.status(400).entity(response).build();
             }
         }
+        }
+
+        @POST
+        @Path("/clientLogin")
+        public Response doClientLogin(User user) throws NoSuchAlgorithmException {
+            ApiResponse response = new ApiResponse();
+
+            HttpSession session = servletRequest.getSession(false);
+            if (session != null) {
+                response.setError("Session already exists");
+                return Response.status(302).entity(response).build();
+            } else {
+                if (userOption.authenticate(user)) {
+                    session = servletRequest.getSession(true);
+                    user = ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
+                    session.setAttribute("userId", user.getId());
+                    session.setAttribute("firstName", user.getFirstName());
+                    session.setAttribute("company", user.getCompany());
+                    response.setOk(true);
+                    response.addData("data", "Account login successfull");
+                    return Response.status(200).entity(response).build();
+                } else {
+                    response.setError("Invalid credentials");
+                    return Response.status(400).entity(response).build();
+
+                }
+            }
         }
 
     @POST
