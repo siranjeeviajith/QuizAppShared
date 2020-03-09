@@ -1,9 +1,6 @@
 package com.config;
-import com.endpoint.AppEndpoint;
-import com.endpoint.LoginEndpoint;
+import com.endpoint.*;
 
-import com.endpoint.QuestionEndpoint;
-import com.endpoint.UserEndpoint;
 import com.entities.AbstractBaseEntity;
 import com.entities.Question;
 import com.entities.User;
@@ -50,6 +47,7 @@ public class AppConfig extends Application {
         classes.add(AppEndpoint.class);
         classes.add(QuestionEndpoint.class);
         classes.add(UserEndpoint.class);
+        classes.add(AbstractBaseApiEndpoint.class);
 
     }
 
