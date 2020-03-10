@@ -2,12 +2,10 @@ package com.entities;
 
 import com.enums.Option;
 import com.enums.QuestionStatus;
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.annotation.Serialize;
+import com.googlecode.objectify.annotation.*;
 import lombok.Data;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +22,15 @@ public class Question extends AbstractBaseEntity {
     @Serialize
     private Map<Option,String> option;
     private Option correctAns;
+
+    @OnSave
+    public void encryptDescription(){
+        this.description= Base64.getEncoder().encodeToString(this.description.getBytes());
+    }
+    @OnLoad
+    public void decryptDescription(){
+        this.description= new String( Base64.getDecoder().decode(this.description));
+    }
 
 
 }

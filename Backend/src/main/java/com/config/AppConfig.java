@@ -48,6 +48,7 @@ public class AppConfig extends Application {
         classes.add(LoginEndpoint.class);
         classes.add(AppEndpoint.class);
         classes.add(QuestionEndpoint.class);
+        classes.add(TestEndpoint.class);
         classes.add(UserEndpoint.class);
         classes.add(AbstractBaseApiEndpoint.class);
 

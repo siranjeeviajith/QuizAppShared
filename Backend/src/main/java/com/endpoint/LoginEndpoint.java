@@ -21,7 +21,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
     }
     @POST
     @Path("/adminLogin")
-    public Response doAdminLogin(User user) throws NoSuchAlgorithmException {
+    public Response adminLogin(User user) throws NoSuchAlgorithmException {
         ApiResponse response = new ApiResponse();
 
         HttpSession session= servletRequest.getSession(false);
@@ -74,11 +74,33 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
         }
 
     @POST
-    @Path("/signup")
-    public Response userSignup(User user) throws NoSuchAlgorithmException {
+    @Path("/adminSignup")
+    public Response adminSignup(User user) throws NoSuchAlgorithmException {
         ApiResponse response = new ApiResponse();
         if(servletRequest.getSession(false)!=null){
             response.setError("Session already exist");
+            return Response.status(302).entity(response).build();
+        }
+        if(user.getPassword()=="" || user.getCompany()=="" || user.getEmail()=="" || user.getFirstName()=="" || user.getLastName()==""){
+            response.setError("Empty input fields");
+            return Response.status(400).entity(response).build();
+        }
+        if(userOption.createAdminAccount(user)) {
+            response.setOk(true);
+            response.addData("data","Account Created");
+            return Response.status(200).entity(response).build();
+        }else{
+            response.setError("EmailId is already exist!");
+            return Response.status(409).entity(response).build();
+        }
+
+    }
+    @POST
+    @Path("/clientSignup")
+    public Response clientSignup(User user) throws NoSuchAlgorithmException {
+        ApiResponse response = new ApiResponse();
+        if(servletRequest.getSession(false)==null){
+            response.setError(" no session already exist");
             return Response.status(302).entity(response).build();
         }
         if(user.getPassword()=="" || user.getCompany()=="" || user.getEmail()=="" || user.getFirstName()=="" || user.getLastName()==""){

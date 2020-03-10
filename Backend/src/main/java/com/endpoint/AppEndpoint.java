@@ -17,4 +17,5 @@ public class AppEndpoint extends AbstractBaseApiEndpoint{
             return Response.status(401).entity("login first").build();
         }
     }
+
 }

@@ -17,9 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-@Path("/user")
+
 public class UserEndpoint extends AbstractBaseApiEndpoint {
-
-
 
 }

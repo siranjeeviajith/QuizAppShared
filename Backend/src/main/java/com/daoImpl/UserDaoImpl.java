@@ -50,7 +50,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean createUserAccount(User user) throws NoSuchAlgorithmException {
+    public boolean createAdminAccount(User user) throws NoSuchAlgorithmException {
 
         User existUser = (User) ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
         String uniqueID = UUID.randomUUID().toString();
@@ -63,6 +63,20 @@ public class UserDaoImpl implements UserDao {
             return false;
         }
 
+    }
+    public boolean createUserAccount(User user) throws NoSuchAlgorithmException{
+        User existUser = (User) ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
+
+        String uniqueID = UUID.randomUUID().toString();
+        user.setId(uniqueID);
+        user.setPassword(getEncryptedPassword(user.getPassword()));
+        user.setCompany("client");
+        if (existUser == null) {
+            ObjectifyService.ofy().save().entity(user).now();
+            return true;
+        } else{
+            return false;
+        }
     }
 
 }

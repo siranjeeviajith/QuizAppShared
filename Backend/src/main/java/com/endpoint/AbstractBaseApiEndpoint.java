@@ -2,6 +2,7 @@ package com.endpoint;
 
 import org.jboss.resteasy.annotations.cache.Cache;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -22,5 +23,8 @@ public abstract class AbstractBaseApiEndpoint {
 
     @Context
     Request request;
+
+    @Context
+    ServletContext servletContext;
 
 }

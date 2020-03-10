@@ -2,6 +2,7 @@ package com.daoImpl;
 
 import com.dao.QuestionDao;
 import com.entities.Question;
+import com.enums.QuestionStatus;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
 import com.response.ApiResponse;
@@ -12,10 +13,10 @@ import java.util.UUID;
 public class QuestionDaoImpl implements QuestionDao {
     @Override
     public ApiResponse addAQuestion(Question question) {
-        ApiResponse response = new ApiResponse();
-
+            ApiResponse response = new ApiResponse();
             String uniqueID = UUID.randomUUID().toString();
             question.setId(uniqueID);
+            question.setStatus(QuestionStatus.ACTIVE);
             ObjectifyService.ofy().save().entity(question).now();
             response.setOk(true);
             response.addData("question",question);
@@ -31,8 +32,9 @@ public class QuestionDaoImpl implements QuestionDao {
         ApiResponse response = new ApiResponse();
         for(Question question:questionList){
 
-                String uniqueID = UUID.randomUUID().toString();
-                question.setId(uniqueID);
+            String uniqueID = UUID.randomUUID().toString();
+            question.setId(uniqueID);
+            question.setStatus(QuestionStatus.ACTIVE);
                 ObjectifyService.ofy().save().entity(question).now();
                 response.addData(question.getDescription(),"question added");
             }
