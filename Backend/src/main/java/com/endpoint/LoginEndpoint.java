@@ -8,10 +8,7 @@ import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.security.NoSuchAlgorithmException;
 
@@ -133,7 +130,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
             }
 
     }
-    @GET
+    @HEAD
     @Path("/user/checkEmail")
     @ApiKeyCheck
     public Response getUserEmail(@QueryParam("email") String email){
@@ -142,11 +139,11 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
         if(servletRequest.getSession(false)!=null){
             if(session.getAttribute("accountType")!=null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
                 if(userOption.checkUserEmail(email)) {
-                    response.setOk(true);
-                    response.addData("email",email);
+//                    response.setOk(true);
+//                    response.addData("email",email);
                     return Response.status(200).entity(response).build();
                 }else{
-                    response.setError("email not found");
+                    //response.setError("email not found");
                     return  Response.status(404).entity(response).build();
                 }
 
