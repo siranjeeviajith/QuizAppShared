@@ -1,17 +1,18 @@
 package com.config;
 import com.endpoint.*;
 
-import com.entities.AbstractBaseEntity;
-import com.entities.Question;
-import com.entities.Test;
-import com.entities.User;
+import com.entities.*;
+import com.filters.ApiFilter;
+import com.filters.ApiKeyCheck;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
+import com.services.TemplateService;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.core.Application;
+
 
 public class AppConfig extends Application {
 
@@ -27,6 +28,7 @@ public class AppConfig extends Application {
         ObjectifyService.register(User.class);
         ObjectifyService.register(Question.class);
         ObjectifyService.register(Test.class);
+
 
     }
 
@@ -49,8 +51,10 @@ public class AppConfig extends Application {
         classes.add(AppEndpoint.class);
         classes.add(QuestionEndpoint.class);
         classes.add(TestEndpoint.class);
-        classes.add(UserEndpoint.class);
+
         classes.add(AbstractBaseApiEndpoint.class);
+        classes.add(ApiFilter.class);
+        classes.add(TemplateService.class);
 
     }
 

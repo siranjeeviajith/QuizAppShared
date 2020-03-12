@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+<script> let userConfig = JSON.parse(decodeURIComponent(escape(window.atob('@@config@@'))));
+</script>
+<script src="/QuizHubApplication/js/QuizHubAPI.js"></script>
+<h1>Welcome To Quizz Test</h1>
+<h1>Please login to continue</h1>
+<table>
+    <tr>
+        <td>
+            <form name="LoginForm" onsubmit="loginUserFromForm()">
+                Email: <label id="email">@@config@@</label><br> <br> Password: <input type="password" id="password" required><br><br>
+                <input type="submit" name="submit" value="login">
+                <!-- <button type="button" onClick="loginUserFromForm()">Log in</button> -->
+
+            </form>
+
+    </tr>
+</table>
+</body>
+</html>

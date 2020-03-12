@@ -16,7 +16,7 @@ import javax.ws.rs.core.*;
 public abstract class AbstractBaseApiEndpoint {
 
     @Context
-    protected HttpServletRequest servletRequest;
+    static protected HttpServletRequest servletRequest;
 
     @Context
     HttpServletResponse servletResponse;

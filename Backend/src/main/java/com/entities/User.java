@@ -1,5 +1,6 @@
 package com.entities;
 
+import com.enums.AccountType;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -20,6 +21,7 @@ public class User extends AbstractBaseEntity {
     private String email;
     private String password;
     private String company;
+    private AccountType accountType;
 
 
 }

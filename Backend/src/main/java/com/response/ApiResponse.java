@@ -1,5 +1,6 @@
 package com.response;
 
+import com.enums.ApiErrorCode;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ public class ApiResponse {
     private boolean ok;
     private Map<String, Object> data;
     private String error;
+    private ApiErrorCode code;
 
     public void addData(String key, Object value){
 

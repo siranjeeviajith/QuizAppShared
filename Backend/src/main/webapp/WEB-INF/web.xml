@@ -12,7 +12,14 @@
         <filter-name>ObjectifyFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
+    <context-param>
+        <param-name>resteasy.scan.providers</param-name>
+        <param-value>true</param-value>
+    </context-param>
+<!--    <context-param>-->
+<!--        <param-name>resteasy.providers</param-name>-->
+<!--        <param-value>com.filters.ApiFilter</param-value>-->
+<!--    </context-param>-->
     <!-- AppStats Filter -->
     <!--<filter>-->
     <!--<filter-name>appstats</filter-name>-->

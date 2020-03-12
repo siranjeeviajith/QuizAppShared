@@ -35,18 +35,18 @@ function addUser() {
 function loginUserFromForm() {
 
     var details, statusCode;
-    var url = "http://localhost:8080/api/user/login";
+    var url = "http://localhost:8080/api/user/userLogin";
 
     var response = makeAjaxRequest(url, {
         method: 'POST',
         request: {
-            email: document.getElementById('email').value,
+            email: document.getElementById('email').textContent,
             password: document.getElementById('password').value
         },
         async: true
     }, function(details, statusCode) {
         if (statusCode === 200) {
-            location.replace("http://localhost:8080/api/app/dashboard");
+            location.replace(window.location.href+"/doTest");
         }
     });
 
@@ -98,10 +98,12 @@ function makeAjaxRequest(url, payload, callback) {
 
     if (method == "GET") {
         http.open(method, url, payload.async);
+        http.setRequestHeader("API-KEY","QUIZ_APP_KEY_78194260");
         http.send();
     } else {
         http.open("POST", url, payload.async);
         http.setRequestHeader("Content-Type", "application/json");
+         http.setRequestHeader("API-KEY","QUIZ_APP_KEY_78194260");
         http.send(JSON.stringify(payload.request));
     }
     http.onreadystatechange = function() { // Call a function when the

@@ -2,9 +2,9 @@ package com.daoImpl;
 
 import com.dao.QuestionDao;
 import com.entities.Question;
+import com.enums.Option;
 import com.enums.QuestionStatus;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
 import com.response.ApiResponse;
 
 import java.util.List;
@@ -59,6 +59,23 @@ public class QuestionDaoImpl implements QuestionDao {
         ApiResponse response = new ApiResponse();
         response.setOk(true);
         response.addData("questions",allQuestions);
+        return response;
+    }
+
+    @Override
+    public Question getQuestionById(String id) {
+        return ObjectifyService.ofy().load().type(Question.class).id(id).now();
+
+    }
+
+    @Override
+    public ApiResponse getQuestionsByIds(List<String> questionIds){
+        ApiResponse response=new ApiResponse();
+        for(String id:questionIds){
+            Question question = getQuestionById(id);
+            question.setCorrectAns(Option.NULL);
+            response.addData(id,question);
+        }
         return response;
     }
 }

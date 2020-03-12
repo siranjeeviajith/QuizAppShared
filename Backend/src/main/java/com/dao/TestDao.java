@@ -1,7 +1,9 @@
 package com.dao;
 
+import com.entities.Test;
+
 import java.util.Map;
 
 public interface TestDao {
-   public boolean createTest(Map testDetails);
+   public boolean createTest(Test test);
 }

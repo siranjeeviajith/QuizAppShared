@@ -2,17 +2,18 @@ package com.endpoint;
 
 import com.daoImpl.TestDaoImpl;
 import com.entities.Test;
+import com.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.filters.ApiKeyCheck;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
+import com.services.TemplateService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
-import java.util.Base64;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Path("/api/test")
 public class TestEndpoint extends AbstractBaseApiEndpoint
@@ -20,14 +21,16 @@ public class TestEndpoint extends AbstractBaseApiEndpoint
     static TestDaoImpl testOption;
     @POST
     @Path("/generateTestLink")
-    public Response generateTestLink(Map testDetails){
+    @ApiKeyCheck
+    public Response generateTestLink(Test test){
+
         testOption=new TestDaoImpl();
         ApiResponse response = new ApiResponse();
-        String testUrl="http://localhost:8080/api/test/"+ UUID.randomUUID().toString();
-        testDetails.put("testURL",testUrl);
-        if(testOption.createTest(testDetails)) {
+        String testUrl=UUID.randomUUID().toString();
+        test.setTestURL(testUrl);
+        if(testOption.createTest(test)) {
             response.setOk(true);
-            response.addData("testURL", testUrl);
+            response.addData("testURL", "http://localhost:8080/api/test/"+testUrl);
             return  Response.status(200).entity(response).build();
         }else {
             response.setError("Error while creating test");
@@ -39,27 +42,34 @@ public class TestEndpoint extends AbstractBaseApiEndpoint
     }
     @GET
     @Path("/{testURL}")
+    @Produces(MediaType.TEXT_HTML)
     public  Response getTest(@PathParam("testURL") String testURL) throws IOException {
-        ApiResponse response=new ApiResponse();
-        Test test=ObjectifyService.ofy().load().type(Test.class).filter("testURL",servletRequest.getRequestURL().toString().replace("/doTest","")).first().now();
+        String response="";
+        Test test=ObjectifyService.ofy().load().type(Test.class).filter("testURL",testURL).first().now();
         if(test==null){
-            response.setError("no URL exist!");
+               response="<h1>no test exist</h1>";
             return Response.status(400).entity(response).build();
         }
-        if(servletRequest.getSession(false)==null){
-            response.setError("pleaseLogin");
-            //servletResponse.sendRedirect("/");
-            return Response.status(401).entity(response).build();
-        }
-        else if(!(servletRequest.getSession(false).getAttribute("userId").toString().equals(test.getUserId()))) {
-            response.setError("Wrong User!");
-            //servletResponse.sendRedirect("/");
-            return Response.status(302).entity(response).build();
+        if(servletRequest.getSession(false)!=null ){
+            if( servletRequest.getSession(false).getAttribute("userId")!=null &&servletRequest.getSession(false).getAttribute("userId").toString().equals(test.getUserId())) {
+                servletResponse.sendRedirect(servletRequest.getRequestURL() + "/doTest");
+                return Response.status(302).entity("<h1>session exist</h1>").build();
+            }else{
+                return Response.status(400).entity("<h1>This test is not for you</h1>").build();
+            }
         }
         else{
-            response.setOk(true);
-            servletResponse.sendRedirect("/api/test/"+testURL+"/doTest");
-            return Response.status(200).entity(response).build();
+            User user=ObjectifyService.ofy().load().type(User.class).id(test.getUserId()).now();
+            test.setUserEmail(user.getEmail());
+            List<String> data=new ArrayList<>();
+            Map<String,String> testDetails = new HashMap<>();
+            testDetails.put("testId",test.getId());
+            testDetails.put("userId",test.getUserId());
+            data.add(Base64.getEncoder().encodeToString( new ObjectMapper().writeValueAsString(testDetails).getBytes()));
+            data.add(test.getUserEmail());
+            String content = TemplateService.modify(servletContext,data,"/resources/testLoginTemplate.html");
+            return Response.status(200).entity(content).build();
+
         }
 
     }
@@ -69,20 +79,11 @@ public class TestEndpoint extends AbstractBaseApiEndpoint
     @Produces(MediaType.TEXT_HTML)
     public Response doTest(@PathParam("testURL") String testURL) throws IOException {
 
-        Test test = ObjectifyService.ofy().load().type(Test.class).filter("testURL",servletRequest.getRequestURL().toString().replace("/doTest","")).first().now();
-        String content="";
-        InputStream st=servletContext.getResourceAsStream("/resource/testTemplate.html");
-        BufferedReader buffReader = new BufferedReader(new InputStreamReader(st));
+        Test test = ObjectifyService.ofy().load().type(Test.class).filter("testURL",testURL).first().now();
 
-        String string = new String();
-        while( (string = buffReader.readLine() ) != null){
-            content=content+string;
-        }
-
-        buffReader.close();
-       content = content.replaceAll("@@config@@", Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(test).getBytes()));
-
-
+        List<String> data=new ArrayList<>();
+        data.add(Base64.getEncoder().encodeToString( new ObjectMapper().writeValueAsString(test).getBytes()));
+        String content = TemplateService.modify(servletContext,data,"/resources/testTemplate.html");
         return Response.status(200).entity(content).build();
     }
 }

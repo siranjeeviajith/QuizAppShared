@@ -2,6 +2,7 @@ package com.daoImpl;
 
 import com.dao.UserDao;
 import com.entities.User;
+import com.enums.AccountType;
 import com.googlecode.objectify.ObjectifyService;
 
 import java.math.BigInteger;
@@ -12,18 +13,32 @@ import java.util.UUID;
 public class UserDaoImpl implements UserDao {
 
     @Override
-    public boolean authenticate(User user) throws NoSuchAlgorithmException {
+    public boolean clientAuthenticate(User user) throws NoSuchAlgorithmException {
         User existUser=  ObjectifyService.ofy().load().type(User.class).filter("email",user.getEmail()).first().now();
         if(existUser==null){
             return false;
         }
-        if(existUser.getPassword().equals(getEncryptedPassword(user.getPassword()))) {
+        if( existUser.getAccountType().equals(AccountType.ADMIN) && existUser.getPassword().equals(getEncryptedPassword(user.getPassword()))) {
            return true;
         }else {
 
             return false;
         }
 
+    }
+    @Override
+    public boolean userAuthenticate(User user) throws NoSuchAlgorithmException {
+        User existUser = ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
+
+        if (existUser == null) {
+            return false;
+        }
+        if (existUser.getAccountType().equals(AccountType.USER) && existUser.getPassword().equals(getEncryptedPassword(user.getPassword()))) {
+            return true;
+        } else {
+
+            return false;
+        }
     }
 
     @Override
@@ -45,16 +60,29 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public boolean checkUserEmail(String email) {
+        if(email ==null || email==""){
+            return false;
+        }
+        User user=ObjectifyService.ofy().load().type(User.class).filter("email",email).first().now();
+        if(user==null){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public void getUserDetails() {
 
     }
 
     @Override
-    public boolean createAdminAccount(User user) throws NoSuchAlgorithmException {
+    public boolean createClientAccount(User user) throws NoSuchAlgorithmException {
 
         User existUser = (User) ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
         String uniqueID = UUID.randomUUID().toString();
         user.setId(uniqueID);
+        user.setAccountType(AccountType.ADMIN);
         user.setPassword(getEncryptedPassword(user.getPassword()));
         if (existUser == null) {
             ObjectifyService.ofy().save().entity(user).now();
@@ -70,7 +98,7 @@ public class UserDaoImpl implements UserDao {
         String uniqueID = UUID.randomUUID().toString();
         user.setId(uniqueID);
         user.setPassword(getEncryptedPassword(user.getPassword()));
-        user.setCompany("client");
+        user.setAccountType(AccountType.USER);
         if (existUser == null) {
             ObjectifyService.ofy().save().entity(user).now();
             return true;
