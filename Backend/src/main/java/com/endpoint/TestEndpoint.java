@@ -227,11 +227,38 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
 
     @POST
     @Path("/{testURL}/submitTest")
-    @Produces(MediaType.TEXT_HTML)
-    public Response validateTest(Map testValues){
+    //@Produces(MediaType.TEXT_HTML)
+    public Response validateTest(@PathParam("testURL") String testURL,Map testValues) {
+//        String response;
+//        testOption = new TestDaoImpl();
+//        List<String> data = new ArrayList<>();
+//        HttpSession session = servletRequest.getSession(false);
+//        Test test = ObjectifyService.ofy().load().type(Test.class).filter("testURL", testURL).first().now();
+//        if (test == null) {
+//            response = "no test exist";
+//            data.add(response);
+//            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+//            return Response.status(400).entity(content).build();
+//
+//        }
+//        if(test.getStatus().equals(TestStatus.CANCELED) || test.getStatus().equals(TestStatus.NOTSTARTED) ){
+//            response="test is "+test.getStatus();
+//            data.add(response);
+//            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+//            return Response.status(403).entity(content).build();
+//        }
+//        if (session != null) {
+//            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
+//                if(test.getStatus().equals(TestStatus.ONGOING)){
+//                    test.setStatus(TestStatus.COMPLETED);
+//
+//                    response = testOption.validateTest(test,testValues);
+//                    data.add(response);
+//                    String content = TemplateService.modify(servletContext, data, "/resources/resultPageTemplate.html");
+//                    return Response.status(403).entity(content).build();
+//                }
 
-
-        return  null;
+        return null;
     }
 
 }

@@ -55,7 +55,8 @@ public class TestDaoImpl implements TestDao {
     }
 
     @Override
-    public boolean validateTest(Test test) {
-        return false;
+    public String validateTest(Test test, Map testValues) {
+      //  if(test.getId().equals())
+        return "";
     }
 }

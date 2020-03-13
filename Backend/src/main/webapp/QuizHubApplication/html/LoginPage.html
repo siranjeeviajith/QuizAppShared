@@ -11,15 +11,16 @@
 
 <body>
     <h1 style="color: rgb(255, 0, 157);">Please enter the Username and Password</h1>
-    <script src="/QuizHubApplication/js/QuizHubAPI.js"></script>
+    <script src="/QuizHubApplication/js/ClientAuthentication.js"></script>
+    <script src="/QuizHubApplication/js/AjaxCall.js"></script>
 
 
     <table>
         <tr>
             <td>
-                <form name="LoginForm" onclick="loginUser()">
+                <form name="LoginForm" onsubmit="loginClient()">
                     Email: <input type="text" id="email" required><br> <br> Password: <input type="password" id="password" required><br><br>
-                    <input type="submit" name="submit" value="Log in">
+                    <button type="button" onclick="loginClient()">Log in</button>
                     <!-- <button type="button" onClick="loginUserFromForm()">Log in</button> -->
 
                 </form>

@@ -145,7 +145,8 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
                     response.addData("email",email);
                     return Response.status(409).entity(response).build();
                 }else{
-                    response.setError("email not found");
+                    response.setOk(true);
+                    response.addData("email",email);
                     return  Response.status(200).entity(response).build();
                 }
 
