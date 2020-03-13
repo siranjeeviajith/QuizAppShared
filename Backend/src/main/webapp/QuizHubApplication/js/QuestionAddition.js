@@ -1,5 +1,9 @@
 function checkEmpty(buttonId) {
+<<<<<<< HEAD
     if ( document.getElementById('A').value == "" || document.getElementById('B').value == "" || document.getElementById('C').value == "" || document.getElementById('D').value == "" ||
+=======
+    if (!document.querySelector('input[name=tag]:checked').length || document.getElementById('A').value == "" || document.getElementById('B').value == "" || document.getElementById('C').value == "" || document.getElementById('D').value == "" ||
+>>>>>>> 89741f16863c1b32e5667b0d44757889e4f7e1a8
         document.getElementById('description').value == "" || document.querySelector('input[name=correctAnswer]:checked').length <= 0) {
         var errorMsg = "Please fill out the fields";
         document.getElementById("error").innerHTML = errorMsg;
