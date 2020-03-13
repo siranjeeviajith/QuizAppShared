@@ -5,9 +5,6 @@ function openSignUpPage() {
 function openLoginPage() {
     window.location = "/QuizHubApplication/html/LoginPage.html";
 }
-function startTest(){
-   var path = window.location.pathname.split('/');
-}
 
 function addUser() {
 
@@ -35,25 +32,25 @@ function addUser() {
 
 }
 
-function loginUserFromForm() {
+/* function loginUserFromForm() {
 
     var details, statusCode;
-    var url = "http://localhost:8080/api/user/userLogin";
+    var url = "http://localhost:8080/api/user/login";
 
     var response = makeAjaxRequest(url, {
         method: 'POST',
         request: {
-            email: document.getElementById('email').textContent,
+            email: document.getElementById('email').value,
             password: document.getElementById('password').value
         },
         async: true
     }, function(details, statusCode) {
         if (statusCode === 200) {
-            location.replace(window.location.href+"/testStart");
+            location.replace("http://localhost:8080/api/app/dashboard");
         }
     });
 
-}
+} */
 
 
 function loginUser(emailNew, passwordNew) {
@@ -101,12 +98,10 @@ function makeAjaxRequest(url, payload, callback) {
 
     if (method == "GET") {
         http.open(method, url, payload.async);
-        http.setRequestHeader("API-KEY","QUIZ_APP_KEY_78194260");
         http.send();
     } else {
         http.open("POST", url, payload.async);
         http.setRequestHeader("Content-Type", "application/json");
-         http.setRequestHeader("API-KEY","QUIZ_APP_KEY_78194260");
         http.send(JSON.stringify(payload.request));
     }
     http.onreadystatechange = function() { // Call a function when the
@@ -121,5 +116,4 @@ function makeAjaxRequest(url, payload, callback) {
 
 
     }
-
 }
