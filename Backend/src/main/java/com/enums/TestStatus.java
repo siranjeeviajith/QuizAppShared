@@ -1,5 +1,5 @@
 package com.enums;
 
 public enum TestStatus {
-    COMPLETE, PENDING, NOTSTARTED, ONGOING, CANCELED;
+    COMPLETED, PENDING, NOTSTARTED, ONGOING, CANCELED;
 }

@@ -5,6 +5,7 @@ import com.entities.Question;
 import com.enums.AccountType;
 import com.filters.ApiKeyCheck;
 import com.response.ApiResponse;
+import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
@@ -14,7 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-
+@NoCache
 @Path("/api/question")
 @ApiKeyCheck
 public class QuestionEndpoint extends AbstractBaseApiEndpoint {

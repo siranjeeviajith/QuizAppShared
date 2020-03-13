@@ -73,7 +73,7 @@ public class QuestionDaoImpl implements QuestionDao {
         ApiResponse response=new ApiResponse();
         for(String id:questionIds){
             Question question = getQuestionById(id);
-            question.setCorrectAns(Option.NULL);
+            question.setCorrectAns(null);
             response.addData(id,question);
         }
         return response;

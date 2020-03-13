@@ -5,6 +5,9 @@ function openSignUpPage() {
 function openLoginPage() {
     window.location = "/QuizHubApplication/html/LoginPage.html";
 }
+function startTest(){
+   var path = window.location.pathname.split('/');
+}
 
 function addUser() {
 
@@ -46,7 +49,7 @@ function loginUserFromForm() {
         async: true
     }, function(details, statusCode) {
         if (statusCode === 200) {
-            location.replace(window.location.href+"/doTest");
+            location.replace(window.location.href+"/testStart");
         }
     });
 
@@ -118,4 +121,5 @@ function makeAjaxRequest(url, payload, callback) {
 
 
     }
+
 }

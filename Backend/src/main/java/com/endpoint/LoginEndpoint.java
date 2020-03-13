@@ -6,13 +6,14 @@ import com.enums.AccountType;
 import com.filters.ApiKeyCheck;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
+import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.security.NoSuchAlgorithmException;
 
-
+@NoCache
 @Path("/api/")
 public class LoginEndpoint extends AbstractBaseApiEndpoint {
     static UserDaoImpl userOption;
@@ -66,6 +67,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
                     session.setAttribute("firstName", user.getFirstName());
                     session.setAttribute("accountType",user.getAccountType());
                     session.setAttribute("company", user.getCompany());
+                    session.setMaxInactiveInterval(11*60);
                     response.setOk(true);
                     response.addData("data", "Account login successfull");
                     return Response.status(200).entity(response).build();
@@ -130,7 +132,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
             }
 
     }
-    @HEAD
+    @GET
     @Path("/user/checkEmail")
     @ApiKeyCheck
     public Response getUserEmail(@QueryParam("email") String email){
@@ -139,12 +141,12 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
         if(servletRequest.getSession(false)!=null){
             if(session.getAttribute("accountType")!=null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
                 if(userOption.checkUserEmail(email)) {
-//                    response.setOk(true);
-//                    response.addData("email",email);
-                    return Response.status(200).entity(response).build();
+                    response.setOk(true);
+                    response.addData("email",email);
+                    return Response.status(409).entity(response).build();
                 }else{
-                    //response.setError("email not found");
-                    return  Response.status(404).entity(response).build();
+                    response.setError("email not found");
+                    return  Response.status(200).entity(response).build();
                 }
 
 

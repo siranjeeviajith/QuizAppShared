@@ -15,12 +15,18 @@ public class Question extends AbstractBaseEntity {
 
     @Index
     private String tag;
+
     private QuestionStatus status;
+
+    @IgnoreSave
+    private Option choosedOption;
 
     @Index
     private String description;
+
     @Serialize
     private Map<Option,String> option;
+
     private Option correctAns;
 
     @OnSave

@@ -11,6 +11,7 @@ import com.google.appengine.repackaged.com.google.protobuf.Api;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 import com.services.TemplateService;
+import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
@@ -18,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
 import java.util.*;
-
+@NoCache
 @Path("/api/test")
 public class TestEndpoint extends AbstractBaseApiEndpoint {
     static TestDaoImpl testOption;
@@ -27,12 +28,12 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
     @Path("/generateTestLink")
     @ApiKeyCheck
     public Response generateTestLink(Test test) {
-
+        //System.out.println(test.getQuesionIds());
         testOption = new TestDaoImpl();
         ApiResponse response = new ApiResponse();
         String testUrl = UUID.randomUUID().toString();
         HttpSession session = servletRequest.getSession(false);
-        if (servletRequest.getSession(false) != null) {
+        if (session != null) {
             if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
 
                 test.setTestURL(testUrl);
@@ -62,21 +63,32 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
     @Produces(MediaType.TEXT_HTML)
     public Response getTest(@PathParam("testURL") String testURL) throws IOException {
         String response = "";
+        testOption = new TestDaoImpl();
         List<String> data = new ArrayList<>();
+        HttpSession session = servletRequest.getSession(false);
         Test test = ObjectifyService.ofy().load().type(Test.class).filter("testURL", testURL).first().now();
         if (test == null) {
             response = "no test exist";
             return Response.status(400).entity(response).build();
         }
-        if(!test.getStatus().equals(TestStatus.NOTSTARTED)){
+        if(test.getStatus().equals(TestStatus.CANCELED) || test.getStatus().equals(TestStatus.COMPLETED)){
             response="test is "+test.getStatus();
             data.add(response);
             String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
             return Response.status(403).entity(content).build();
         }
-        if (servletRequest.getSession(false) != null) {
-            if (servletRequest.getSession(false).getAttribute("userId") != null && servletRequest.getSession(false).getAttribute("userId").toString().equals(test.getUserId())) {
-                servletResponse.sendRedirect(servletRequest.getRequestURL() + "/doTest");
+        if (session != null) {
+            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
+                if(test.getStatus().equals(TestStatus.ONGOING)){
+                    test.setStatus(TestStatus.CANCELED);
+                    testOption.saveTest(test);
+                    response = "test canceled due to reload";
+                    data.add(response);
+                    String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+                    return Response.status(403).entity(content).build();
+                }
+
+                servletResponse.sendRedirect(servletRequest.getRequestURL() + "/testStart");
                 return Response.status(302).entity("<h1>session exist</h1>").build();
             } else {
                 return Response.status(400).entity("<h1>This test is not for you</h1>").build();
@@ -93,17 +105,19 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             data.add(test.getUserEmail());
             String content = TemplateService.modify(servletContext, data, "/resources/testLoginTemplate.html");
             return Response.status(200).entity(content).build();
-
         }
 
     }
 
+
     @GET
-    @Path("/{testURL}/doTest")
+    @Path("/{testURL}/testStart")
     @Produces(MediaType.TEXT_HTML)
-    public Response doTest(@PathParam("testURL") String testURL) throws IOException {
+    public Response testStart (@PathParam("testURL") String testURL) throws IOException {
         String response;
+        testOption = new TestDaoImpl();
         List<String> data = new ArrayList<>();
+        HttpSession session = servletRequest.getSession(false);
         Test test = ObjectifyService.ofy().load().type(Test.class).filter("testURL", testURL).first().now();
         if (test == null) {
             response = "no test exist";
@@ -112,10 +126,85 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             return Response.status(400).entity(content).build();
 
         }
-        if (servletRequest.getSession(false) != null) {
-            if (servletRequest.getSession(false).getAttribute("userId") != null && servletRequest.getSession(false).getAttribute("userId").toString().equals(test.getUserId())) {
+        if(test.getStatus().equals(TestStatus.CANCELED) || test.getStatus().equals(TestStatus.COMPLETED)){
+            response="test is "+test.getStatus();
+            data.add(response);
+            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+            return Response.status(403).entity(content).build();
+        }
+        if (session != null) {
+            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
 
 
+                if(test.getStatus().equals(TestStatus.ONGOING)){
+                    test.setStatus(TestStatus.CANCELED);
+                    testOption.saveTest(test);
+                    response = "test canceled due to reload";
+                    data.add(response);
+                    String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+                    return Response.status(403).entity(content).build();
+                }
+                data.add(session.getAttribute("firstName").toString());
+                data.add(Long.toString(test.getExpireTime()/60000) + "min");
+                data.add(test.getTestURL());
+                String content = TemplateService.modify(servletContext, data, "/resources/startTestTemplate.html");
+                return Response.status(200).entity(content).build();
+
+            }
+            else{
+                response ="This test not for you";
+                data.add(response);
+                String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+                return Response.status(403).entity(content).build();
+
+            }
+        }else{
+            response ="Please login for the test";
+            data.add(response);
+            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+            return Response.status(403).entity(content).build();
+        }
+    }
+
+
+
+    @GET
+    @Path("/{testURL}/doTest")
+    @Produces(MediaType.TEXT_HTML)
+    public Response doTest(@PathParam("testURL") String testURL) throws IOException {
+        String response;
+        testOption = new TestDaoImpl();
+        List<String> data = new ArrayList<>();
+        HttpSession session = servletRequest.getSession(false);
+        Test test = ObjectifyService.ofy().load().type(Test.class).filter("testURL", testURL).first().now();
+        if (test == null) {
+            response = "no test exist";
+            data.add(response);
+            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+            return Response.status(400).entity(content).build();
+
+        }
+        if(test.getStatus().equals(TestStatus.CANCELED) || test.getStatus().equals(TestStatus.COMPLETED)){
+            response="test is "+test.getStatus();
+            data.add(response);
+            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+            return Response.status(403).entity(content).build();
+        }
+        if (session != null) {
+            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
+
+                if(test.getStatus().equals(TestStatus.NOTSTARTED)){
+                    test.setStatus(TestStatus.ONGOING);
+                    testOption.saveTest(test);
+                }
+                else if(test.getStatus().equals(TestStatus.ONGOING)){
+                    test.setStatus(TestStatus.CANCELED);
+                    testOption.saveTest(test);
+                    response = "test canceled due to reload";
+                    data.add(response);
+                    String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+                    return Response.status(403).entity(content).build();
+                }
                 data.add(Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(test).getBytes()));
                 String content = TemplateService.modify(servletContext, data, "/resources/testTemplate.html");
                 return Response.status(200).entity(content).build();
@@ -128,8 +217,21 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
 
             }
         }else{
-            return null;
+            response ="Please login for the test";
+            data.add(response);
+            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+            return Response.status(403).entity(content).build();
         }
+    }
+
+
+    @POST
+    @Path("/{testURL}/submitTest")
+    @Produces(MediaType.TEXT_HTML)
+    public Response validateTest(Map testValues){
+
+
+        return  null;
     }
 
 }

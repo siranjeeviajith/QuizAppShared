@@ -35,6 +35,7 @@ public class TestDaoImpl implements TestDao {
             long expiryTime=60*60000;
             test.setStatus(TestStatus.NOTSTARTED);
             test.setExpireTime(expiryTime);
+          //  System.out.println(test.getQuesionIds());
             test.setUserId(userId);
             String uniqueID = UUID.randomUUID().toString();
             test.setId(uniqueID);
@@ -42,5 +43,19 @@ public class TestDaoImpl implements TestDao {
             return true;
 
         }
+    }
+
+    @Override
+    public boolean saveTest(Test test) {
+        if(test==null){
+            return  false;
+        }
+        ObjectifyService.ofy().save().entity(test).now();
+        return true;
+    }
+
+    @Override
+    public boolean validateTest(Test test) {
+        return false;
     }
 }

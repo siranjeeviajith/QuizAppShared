@@ -7,13 +7,14 @@ import com.filters.ApiKeyCheck;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
 import com.services.TemplateService;
+import org.jboss.resteasy.annotations.cache.NoCache;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.core.Application;
 
-
+@NoCache
 public class AppConfig extends Application {
 
 
@@ -48,7 +49,7 @@ public class AppConfig extends Application {
 
     private void registerApis(Set<Class<?>> classes) {
         classes.add(LoginEndpoint.class);
-        classes.add(AppEndpoint.class);
+
         classes.add(QuestionEndpoint.class);
         classes.add(TestEndpoint.class);
 

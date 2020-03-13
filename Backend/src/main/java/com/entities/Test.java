@@ -23,9 +23,9 @@ public class Test extends AbstractBaseEntity {
     private String userEmail;
     private TestStatus status;
     @Serialize
-    private List<String> quesionIds;
+    private List<String> questionIds;
 
-
+    private String result;
 
 
 }

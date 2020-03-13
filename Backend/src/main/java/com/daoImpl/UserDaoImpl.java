@@ -33,7 +33,7 @@ public class UserDaoImpl implements UserDao {
         if (existUser == null) {
             return false;
         }
-        if (existUser.getAccountType().equals(AccountType.USER) && existUser.getPassword().equals(getEncryptedPassword(user.getPassword()))) {
+        if ( existUser.getPassword().equals(getEncryptedPassword(user.getPassword()))) {
             return true;
         } else {
 
