@@ -99,8 +99,6 @@
         </user-data-constraint>
     </security-constraint>
     
-    <welcome-file-list>
-        <welcome-file>QuizHubApplication/html/index.html</welcome-file>
-    </welcome-file-list>
+
 
 </web-app>

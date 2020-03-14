@@ -24,9 +24,11 @@ public class TemplateService {
 
         buffReader.close();
         st.close();
-        for(String content:data){
-            modifiedHtml = modifiedHtml.replaceFirst("@@config@@", content);
-        }
+
+            for (String content : data) {
+                modifiedHtml = modifiedHtml.replaceFirst("@@config@@", content);
+            }
+
 
         return modifiedHtml;
     }

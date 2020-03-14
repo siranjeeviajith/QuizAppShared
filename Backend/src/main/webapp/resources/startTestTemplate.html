@@ -9,14 +9,14 @@
     <title>Welcome to Test</title>
 </head>
 <body>
-<script src="/QuizHubApplication/js/QuizHubAPI.js"></script>
+<script src="/QuizHubApplication/js/testing.js"></script>
 <h2>Welcome @@config@@</h2>
 <p>Note: Dont reload the page or the test will be canceled</p>
 Test total time: @@config@@<br>
-<form name="startTest" action="/api/test/@@config@@/doTest" method="GET">
+<form name="startTest" method="GET" onsubmit="startTest()">
 
 
-    <button type="submit">Start Test</button>
+    <input type="submit" value="start test">
     <!-- <button type="button" onClick="loginUserFromForm()">Log in</button> -->
 
 </form>

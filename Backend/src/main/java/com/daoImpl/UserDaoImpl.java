@@ -11,6 +11,25 @@ import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 public class UserDaoImpl implements UserDao {
+    @Override
+    public boolean checkValidDetails(User user) {
+        if(user.getFirstName()==null || user.getLastName()==null || user.getEmail()==null || user.getPassword()==null){
+
+            return false;
+        }
+        if(user.getFirstName().equals("") || user.getLastName().equals("") || user.getEmail().equals("") || user.getPassword().equals("")){
+
+            return false;
+        }
+        if(user.getFirstName().length()>40 || user.getLastName().length()>40 || user.getEmail().length()>40 || user.getPassword().length()>40){
+
+            return false;
+        }
+        if(!(user.getEmail().matches(".+\\@.+\\..+"))){
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public boolean clientAuthenticate(User user) throws NoSuchAlgorithmException {

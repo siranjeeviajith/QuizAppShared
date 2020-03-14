@@ -51,18 +51,16 @@
 
         <div id="popupFormvalidateEmail">
             Create Test Form
-            <form action="#" id="formValidateEmail" name="formValidateEmail">
+            <form  id="formValidateEmail" name="formValidateEmail" onsubmit="checkEmail()">
 
                 <h2> Enter the email id you want to create the test for </h2>
                 <hr>
                 <input type="email" id="userEmail" placeholder="Enter the email"> <br> <br>
+                <input type="submit" value="NEXT">
+                <button onclick="cancelTestForm()" id="Ccancel">Cancel</button>
 
-                <button onclick="cancelTestForm()" id="cancel">Cancel</button>
-<<<<<<< HEAD
-                <button type="submit" onClick="checkEmail()" id="check" name="check" value="check">Next</button>
-=======
-                <button type="submit" on="checkEmail()" id="check" name="check" value="check">Next</button>
->>>>>>> 89741f16863c1b32e5667b0d44757889e4f7e1a8
+<!--                <button type="submit" onclick="checkEmail()" id="check" name="check" value="check">Next</button>-->
+<!--                <button type="submit" on="checkEmail()" id="check" name="check" value="check">Next</button>-->
             </form>
         </div>
         <!-- Popup Div Ends Here -->

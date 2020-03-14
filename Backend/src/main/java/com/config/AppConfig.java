@@ -52,7 +52,7 @@ public class AppConfig extends Application {
 
         classes.add(QuestionEndpoint.class);
         classes.add(TestEndpoint.class);
-
+        classes.add(AppEndpoint.class);
         classes.add(AbstractBaseApiEndpoint.class);
         classes.add(ApiFilter.class);
         classes.add(TemplateService.class);

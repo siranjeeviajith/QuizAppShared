@@ -7,6 +7,7 @@ import com.enums.QuestionStatus;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ public class QuestionDaoImpl implements QuestionDao {
     @Override
     public ApiResponse addAQuestion(Question question) {
             ApiResponse response = new ApiResponse();
+
             String uniqueID = UUID.randomUUID().toString();
             question.setId(uniqueID);
             question.setStatus(QuestionStatus.ACTIVE);
@@ -22,44 +24,28 @@ public class QuestionDaoImpl implements QuestionDao {
             response.addData("question",question);
             return response;
 
-
-
-
     }
 
     @Override
-    public ApiResponse addAllQuestion(List<Question> questionList) {
-        ApiResponse response = new ApiResponse();
-        for(Question question:questionList){
-
-            String uniqueID = UUID.randomUUID().toString();
-            question.setId(uniqueID);
-            question.setStatus(QuestionStatus.ACTIVE);
-                ObjectifyService.ofy().save().entity(question).now();
-                response.addData(question.getDescription(),"question added");
-            }
-            response.setOk(true);
-            return response;
+    public boolean checkQuestionValid(Question question) {
+        if(question.getCorrectAns()==null || question.getDescription()==null){
+            return false;
+        }
+        if(question.getDescription().length()>300  || question.getTag()==null || question.getTag().equals("")){
+            return false;
         }
 
-
-
-    @Override
-    public ApiResponse getAllQuestion() {
-        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).list();
-        ApiResponse response = new ApiResponse();
-        response.setOk(true);
-        response.addData("questions",allQuestions);
-        return response;
+        if( question.getOption().get(Option.A).equals("")|| question.getOption().get(Option.B).equals("")|| question.getOption().get(Option.C).equals("")|| question.getOption().get(Option.D).equals("")){
+            return  false;
+        }
+        return true;
     }
 
     @Override
-    public ApiResponse getQuestionByTag(String tag) {
+    public List<Question> getQuestionByTag(String tag) {
         List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).filter("tag",tag).list();
-        ApiResponse response = new ApiResponse();
-        response.setOk(true);
-        response.addData("questions",allQuestions);
-        return response;
+
+        return allQuestions;
     }
 
     @Override
@@ -68,14 +54,5 @@ public class QuestionDaoImpl implements QuestionDao {
 
     }
 
-    @Override
-    public ApiResponse getQuestionsByIds(List<String> questionIds){
-        ApiResponse response=new ApiResponse();
-        for(String id:questionIds){
-            Question question = getQuestionById(id);
-            question.setCorrectAns(null);
-            response.addData(id,question);
-        }
-        return response;
-    }
+
 }

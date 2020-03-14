@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 public interface UserDao {
+    public boolean checkValidDetails(User user);
     public  boolean userAuthenticate(User user) throws NoSuchAlgorithmException;
     public  boolean clientAuthenticate(User user) throws NoSuchAlgorithmException;
     public String getEncryptedPassword(String password) throws NoSuchAlgorithmException;

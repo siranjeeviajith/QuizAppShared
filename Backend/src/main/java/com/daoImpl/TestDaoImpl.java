@@ -1,5 +1,6 @@
 package com.daoImpl;
 
+import com.Constants.Constant;
 import com.dao.TestDao;
 import com.entities.Question;
 import com.entities.Test;
@@ -32,9 +33,9 @@ public class TestDaoImpl implements TestDao {
 //                }
 //            }
             String userId=user.getId();
-            long expiryTime=60*60000;
+
             test.setStatus(TestStatus.NOTSTARTED);
-            test.setExpireTime(expiryTime);
+            test.setExpireTime(Constant.EXPIRY_TIME);
           //  System.out.println(test.getQuesionIds());
             test.setUserId(userId);
             String uniqueID = UUID.randomUUID().toString();
@@ -56,7 +57,43 @@ public class TestDaoImpl implements TestDao {
 
     @Override
     public String validateTest(Test test, Map testValues) {
-      //  if(test.getId().equals())
-        return "";
+        int  correctAns = 0;
+        int unansweredQuestion=0;
+        int totalQuestions = test.getQuestionIds().size();
+        if(test.getId().equals(testValues.get("id"))){
+            List<String> testQuestionIds=test.getQuestionIds();
+                List<Map> attendedQuestions =  (List<Map>)testValues.get("questions");
+               // System.out.println(attendedQuestions);
+            for(Map questionAttended:attendedQuestions){
+                if(testQuestionIds.contains(questionAttended.get("id"))){
+                    Question correctQuestion = ObjectifyService.ofy().load().type(Question.class).id(questionAttended.get("id").toString()).now();
+
+                    if(correctQuestion.getCorrectAns().toString().equals(questionAttended.get("choosedOption"))){
+                            correctAns++;
+                    }
+                    if(questionAttended.get("choosedOption").toString().trim().equals("")){
+                        unansweredQuestion++;
+                    }
+                }
+            }
+            return correctAns+"/"+totalQuestions  + "\n AnsweredQuestion:"+(totalQuestions-unansweredQuestion)+"\t UnAnsweredQuestion:"+unansweredQuestion;
+        }
+        return "invalid test submitted";
+    }
+
+    @Override
+    public boolean checkTestValid(List<String> questionIds) {
+
+        if(questionIds.isEmpty()){
+            return false;
+        }
+        for(String questionId:questionIds){
+            Question question=ObjectifyService.ofy().load().type(Question.class).id(questionId).now();
+            if(question==null){
+                return  false;
+            }
+        }
+
+        return true;
     }
 }
