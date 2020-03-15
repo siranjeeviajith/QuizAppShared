@@ -1,15 +1,13 @@
 function checkEmpty(buttonId) {
     if (document.getElementById('A').value == "" || document.getElementById('B').value == "" || document.getElementById('C').value == "" || document.getElementById('D').value == "" ||
-        document.getElementById('description').value == "" ) {
+        document.getElementById('description').value == "" || document.querySelector('input[name=correctAnswer]:checked').length <= 0) {
         var errorMsg = "Please fill out the fields";
         document.getElementById("error").innerHTML = errorMsg;
         return false;
     } else {
         let butId = buttonId;
         createQuestionObject(butId);
-        //   return true;
-        //  document.getElementById('form').submit();
-        // alert("Form Submitted Successfully...");
+
     }
 }
 //Function To Display Popup
@@ -18,6 +16,7 @@ function openAddQuestionForm() {
 }
 //Function to Hide Popup
 function cancelAddQuestionForm() {
+    localStorage.clear();
     document.getElementById('question').style.display = "none";
 }
 
@@ -56,7 +55,6 @@ function storeQuestion(questionObj, buttonId) {
                         console.log(localStorage.clickcount - 1);
                         console.log("Question added");
                         document.getElementById("form").reset();
-
                         document.getElementById("questionNum").innerHTML = questionNum + 1;
 
                     } else {
@@ -76,21 +74,23 @@ function storeQuestion(questionObj, buttonId) {
                 break;
             case "save":
                 console.log("inside save");
-                   if (localStorage.clickcount) {
-                                       localStorage.clickcount = Number(localStorage.clickcount) + 1;
-                                   } else {
-                                       localStorage.clickcount = 1;
-                                   }
-                    console.log(localStorage.clickcount);
-                    localStorage.setItem(Number(localStorage.clickcount) - 1, questionObj);
-                    var myQue = localStorage.getItem(Number(localStorage.clickcount - 1));
-                    console.log(myQue);
+                if (localStorage.clickcount) {
+                    localStorage.clickcount = Number(localStorage.clickcount) + 1;
+                } else {
+                    localStorage.clickcount = 1;
+                }
+
+                console.log(localStorage.clickcount);
+                localStorage.setItem(Number(localStorage.clickcount) - 1, questionObj);
+                var myQue = localStorage.getItem(Number(localStorage.clickcount - 1));
+                console.log(myQue);
 
 
                 for (let itr = 0; itr < Number(localStorage.clickcount); itr++) {
                     var que = localStorage.getItem(itr);
                     questionList.push(que);
                 }
+                localStorage.clear();
                 localStorage.clickcount = 0;
                 addQuestion(questionList);
                 break;

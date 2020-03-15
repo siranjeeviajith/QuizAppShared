@@ -20,17 +20,27 @@ function checkValidEmail() {
 
 function checkEmailExists(userEmail) {
     var url = "http://localhost:8080/api/user/checkEmail";
+
     makeAjaxCall(url, {
         method: 'GET',
         request: "?email=" + userEmail,
         async: true
     }).then((checkEmailResponse) => {
-                 localStorage.setItem("userEmail", document.getElementById("userEmail").value);
-                         window.location.replace("/QuizHubApplication/html/CreateTest.html");
-                     }).catch(error => {
-                         document.getElementById("userEmailID").innerHTML = document.getElementById("userEmail").value;
-                         openUserSignUpForm();
-                     });
+        localStorage.setItem("userEmail", document.getElementById("userEmail").value);
+        window.location.replace("/QuizHubApplication/html/CreateTest.html");
+    }).catch(error => {
+        if (error == 404) {
+            document.getElementById("userEmailID").innerHTML = document.getElementById("userEmail").value;
+            openUserSignUpForm();
+        } else if (error == 403) {
+            document.getElementById("demo").style.color = "red";
+            document.getElementById("demo").innerHTML = "You cannot create a test for your own mailID";
+
+        } else {
+            document.getElementById("demo").style.color = "red";
+            document.getElementById("demo").innerHTML = "Please try again";
+        }
+    });
 }
 
 function getQuestionsFromTag() {
@@ -78,7 +88,7 @@ function displayQuestions(questions) {
     //         quest = [],
 
     //         que = document.getElementById('questionsList');
-     document.getElementById("quesListForm").innerHTML = "";
+    document.getElementById("quesListForm").innerHTML = "";
     for (var i = 0; i < questions.length; i++) {
         var para = document.createElement("table");
         para.innerHTML = `${i+1}. <input type="checkbox" name="selectedQuestions" id=${questions[i].id} value=${questions[i].id}> ${questions[i].description}
@@ -114,9 +124,14 @@ function displayQuestions(questions) {
 function sendSelectedQuestions() {
     let items = document.getElementsByName('selectedQuestions');
     let selectedQuestions = [];
+    var j = 0;
     for (var i = 0; i < items.length; i++) {
         if (items[i].type == 'checkbox' && items[i].checked == true)
-            selectedQuestions[i] = items[i].value;
+            selectedQuestions[j++] = items[i].value;
+    }
+    if (selectedQuestions.length < 1) {
+        alert("Select atleast one question");
+        return false;
     }
     return selectedQuestions;
 }
@@ -124,7 +139,7 @@ function sendSelectedQuestions() {
 function createTest() {
 
     let selectedQuestions = sendSelectedQuestions();
-    if (selectedQuestions.length <= 1) {
+    if (selectedQuestions.length < 1) {
         alert("Select atleast one question");
         return false;
     } else {
@@ -139,6 +154,7 @@ function createTest() {
             async: true
         }).then((createTestResponse) => {
             alert("Test Created");
+            console.log(createTestResponse);
             window.location.replace("/QuizHubApplication/html/Dashboard.html");
 
         }).catch(error => {

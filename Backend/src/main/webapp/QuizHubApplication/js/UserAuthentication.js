@@ -37,12 +37,43 @@ function addUser()
         async: true
     }).then((signUpResponse) => {
         console.log("sign up successful", signUpResponse);
-                   let emailUser=document.getElementById("userEmailID").textContent;
-//                document.getElementById("userEmailCreateTest").srcdoc= emailUser;
-        // document.getElementById("userEmailCreateTest").innerHTML = emailUser;
         window.location.replace("/QuizHubApplication/html/CreateTest.html");
     }).catch(error => { console.log("error", error); });
 
 
+
+}
+
+function loginUser() {
+
+    if (document.getElementById('password').value == "") {
+        var errorMsg = "Please enter the password";
+        document.getElementById("errorMsg").innerHTML = errorMsg;
+        return false;
+
+    }
+    var url = "http://localhost:8080/api/user/userLogin";
+
+    makeAjaxCall(url, {
+        method: 'POST',
+        request: {
+            email: document.getElementById('email').textContent,
+            password: document.getElementById('password').value
+        },
+        async: true
+
+    }).then((userLoginResponse) => {
+        //making ajax call if user login promise is resolved
+        var currentURL = window.location.href + "/testStart";
+        makeAjaxCall(currentURL, {
+            method: 'GET',
+            async: true
+        }).then((startTestResponse) => {
+
+            console.log("test start" + startTestResponse);
+        }).catch(error => { console.log("error", error); });
+
+
+    }).catch(error => { console.log("error", error); });
 
 }
