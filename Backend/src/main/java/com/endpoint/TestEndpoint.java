@@ -86,8 +86,8 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             return Response.status(400).entity(response).build();
         }
 
-        if (session != null) {
-            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
+//        if (session != null) {
+//            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.CANCELED)) {
                     response="test is "+test.getStatus();
                     data.add(response);
@@ -107,13 +107,13 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     return Response.status(302).entity("<h1>test completed</h1>").build();
                 }
 
-                servletResponse.sendRedirect(servletRequest.getRequestURL() + "/testStart");
-                return Response.status(302).entity("<h1>session exist</h1>").build();
-            } else {
-                return Response.status(400).entity("<h1>This test is not for you</h1>").build();
-            }
-        }
-        else {
+//                servletResponse.sendRedirect(servletRequest.getRequestURL() + "/testStart");
+//                return Response.status(302).entity("<h1>session exist</h1>").build();
+//            } else {
+//                return Response.status(400).entity("<h1>This test is not for you</h1>").build();
+//            }
+//        }
+//        else {
             User user = ObjectifyService.ofy().load().type(User.class).id(test.getUserId()).now();
             test.setUserEmail(user.getEmail());
 
@@ -124,7 +124,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             data.add(test.getUserEmail());
             String content = TemplateService.modify(servletContext, data, "/resources/testLoginTemplate.html");
             return Response.status(200).entity(content).build();
-        }
+//        }
 
     }
 
