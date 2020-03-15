@@ -13,30 +13,60 @@
 </head>
 
 
-<body>
+<body onload="fetchUserEmail()">
+>
 
-    <div id="testcreationForm">
+<div id="testcreationForm">
 
-        <form>
-            <hr>
+    <form>
+        <hr> Email: <label id="userEmailCreateTest"></label> <br>
+        <label for="tag">Category/Tag:</label>
+        <select id="tag">
+            <!-- <option id="general" value="general">General</option> -->
+            <option id="java" value="java">java</option>
+            <option id="javascript" value="javascript">javascript</option>
+            <option id="html" value="html">html</option>
+            <option id="css" value="css">css</option>
+            <option id="http" value="http">http</option>
+        </select>
 
-            <label for="tag">Category/Tag:</label>
-            <select id="tag">
-                  <option id="general" value="general">General</option>
-                  <option id="java" value="java">java</option>
-                  <option id="javascript" value="javascript">javascript</option>
-                 <option id="html" value="html">html</option>
-                 <option id="css" value="css">css</option>
-                 <option id="http" value="http">http</option>
-           </select>
+        <button onclick="getQuestionsFromTag()" type="button">Select</button>
+    </form>
+
+</div>
+
+<div id="questionsList">
+    <h1>Questions</h1>
+    <form id="quesListForm">
+        <hr>
+
+        <!-- <label for="questions">questions</label>
+        <input type="checkbox" id="select"> -->
+        <!-- <p id="description" id="description"></p>
+        <p id="optionA">optionA</p>
+        <p id="optionB">optionB</p>
+        <p id="optionC">optionC</p>
+        <p id="optionD">optionD</p> -->
 
 
-        </form>
+    </form>
+    <button onclick="createTest()" type="button">Select</button>
+</div>
 
 
 
 
+<!-- <div>
+        <div id='pp'>
 
-    </div>
+        </div>
+    </div> -->
+</div>
+<script>
+        function fetchUserEmail() {
+            document.getElementById("userEmailCreateTest").innerHTML = localStorage.getItem("userEmail");
+
+        }
+    </script>
 
 </body>

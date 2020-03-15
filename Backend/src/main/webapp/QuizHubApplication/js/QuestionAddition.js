@@ -1,10 +1,6 @@
 function checkEmpty(buttonId) {
-<<<<<<< HEAD
-    if ( document.getElementById('A').value == "" || document.getElementById('B').value == "" || document.getElementById('C').value == "" || document.getElementById('D').value == "" ||
-=======
-    if (!document.querySelector('input[name=tag]:checked').length || document.getElementById('A').value == "" || document.getElementById('B').value == "" || document.getElementById('C').value == "" || document.getElementById('D').value == "" ||
->>>>>>> 89741f16863c1b32e5667b0d44757889e4f7e1a8
-        document.getElementById('description').value == "" || document.querySelector('input[name=correctAnswer]:checked').length <= 0) {
+    if (document.getElementById('A').value == "" || document.getElementById('B').value == "" || document.getElementById('C').value == "" || document.getElementById('D').value == "" ||
+        document.getElementById('description').value == "" ) {
         var errorMsg = "Please fill out the fields";
         document.getElementById("error").innerHTML = errorMsg;
         return false;
@@ -80,16 +76,16 @@ function storeQuestion(questionObj, buttonId) {
                 break;
             case "save":
                 console.log("inside save");
-                if (!localStorage.clickcount) {
-                    localStorage.clickcount = 1;
-                }
-                if (Number(localStorage.clickcount) < 4) {
-                    localStorage.clickcount = Number(localStorage.clickcount) + 1;
+                   if (localStorage.clickcount) {
+                                       localStorage.clickcount = Number(localStorage.clickcount) + 1;
+                                   } else {
+                                       localStorage.clickcount = 1;
+                                   }
                     console.log(localStorage.clickcount);
                     localStorage.setItem(Number(localStorage.clickcount) - 1, questionObj);
                     var myQue = localStorage.getItem(Number(localStorage.clickcount - 1));
                     console.log(myQue);
-                }
+
 
                 for (let itr = 0; itr < Number(localStorage.clickcount); itr++) {
                     var que = localStorage.getItem(itr);

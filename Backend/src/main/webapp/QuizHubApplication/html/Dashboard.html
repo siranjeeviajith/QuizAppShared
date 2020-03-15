@@ -15,6 +15,7 @@
 <!-- Body Starts Here -->
 
 <body id="body" style="overflow:hidden;">
+<!--<iframe id="userEmailCreateTest" src="/QuizHubApplication/html/CreateTest.html"></iframe>-->
     <div id="question">
 
         <div id="popupForm">
@@ -51,16 +52,15 @@
 
         <div id="popupFormvalidateEmail">
             Create Test Form
-            <form  id="formValidateEmail" name="formValidateEmail" onsubmit="checkEmail()">
+            <form id="formValidateEmail" name="formValidateEmail" >
 
                 <h2> Enter the email id you want to create the test for </h2>
                 <hr>
-                <input type="email" id="userEmail" placeholder="Enter the email"> <br> <br>
-                <input type="submit" value="NEXT">
-                <button onclick="cancelTestForm()" id="Ccancel">Cancel</button>
+                <input type="email" id="userEmail" placeholder="Enter the email"> <p id="demo"></p><br> <br>
 
-<!--                <button type="submit" onclick="checkEmail()" id="check" name="check" value="check">Next</button>-->
-<!--                <button type="submit" on="checkEmail()" id="check" name="check" value="check">Next</button>-->
+                <button onclick="cancelTestForm()" id="cancel">Cancel</button>
+<!--                <input type="submit" name="submit" value="Next" onsubmit="checkEmail()" >-->
+                <button type="button" onclick="checkValidEmail()" id="check" >Next</button>
             </form>
         </div>
         <!-- Popup Div Ends Here -->
@@ -71,12 +71,12 @@
 
         <div id="popupFormUserSignUp">
             Create Test Form
-            <form action="#" id="formUserSignUp" name="formUserSignUp">
+            <form action="#" id="formUserSignUp" method="post" name="formUserSignUp">
 
                 <h2> User details </h2>
-                <hr> Email:
-                <input type="email" id="userEmailID" disabled> Password:
-                <input type="password" id="userPassword" required> First Name: <input type="text" id="firstNameUser" required><br> <br> Last Name: <input type="text" id="lastNameUser" required>
+                <hr> Email: <label id="userEmailID"></label> <br> <br>
+                <!-- <input type="email" id="userEmailID" disabled> -->Password:
+                <input type="password" id="userPassword" required> <br> <br>First Name: <input type="text" id="firstNameUser" required><br> <br> Last Name: <input type="text" id="lastNameUser" required> <br> <br>
                 <button onclick="checkEmptyUserSignUpForm()" id="checkEmptyUserDetails">Next</button>
                 <button onclick="cancelAddQuestionForm()" id="cancel">Cancel</button>
             </form>
