@@ -1,6 +1,8 @@
 package com.endpoint;
 
+import com.daoImpl.QuestionDaoImpl;
 import com.daoImpl.TestDaoImpl;
+import com.entities.Question;
 import com.entities.Test;
 import com.entities.User;
 import com.enums.AccountType;
@@ -231,6 +233,9 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
                     return Response.status(403).entity(content).build();
                 }
+                List<Question> questionsList = new QuestionDaoImpl().getQuestionByIds(test.getQuestionIds());
+                test.setQuestionList(questionsList);
+                test.setQuestionIds(null);
                 data.add(Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(test).getBytes()));
                 String content = TemplateService.modify(servletContext, data, "/resources/testTemplate.html");
                 return Response.status(200).entity(content).build();
@@ -286,6 +291,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     response = "Total score is "+result;
                     data.add(session.getAttribute("firstName").toString());
                     data.add(response);
+                    session.invalidate();
                     String content = TemplateService.modify(servletContext, data, "/resources/resultPageTemplate.html");
                     return Response.status(200).entity(content).build();
                 }

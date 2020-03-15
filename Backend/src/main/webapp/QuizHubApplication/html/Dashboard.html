@@ -51,16 +51,15 @@
 
         <div id="popupFormvalidateEmail">
             Create Test Form
-            <form  id="formValidateEmail" name="formValidateEmail" onsubmit="checkEmail()">
+            <form id="formValidateEmail" name="formValidateEmail">
 
                 <h2> Enter the email id you want to create the test for </h2>
                 <hr>
-                <input type="email" id="userEmail" placeholder="Enter the email"> <br> <br>
-                <input type="submit" value="NEXT">
-                <button onclick="cancelTestForm()" id="Ccancel">Cancel</button>
+                <input type="email" id="userEmail" placeholder="Enter the email">
+                <p id="demo"></p><br> <br>
 
-<!--                <button type="submit" onclick="checkEmail()" id="check" name="check" value="check">Next</button>-->
-<!--                <button type="submit" on="checkEmail()" id="check" name="check" value="check">Next</button>-->
+                <button onclick="cancelTestForm()" id="cancel">Cancel</button>
+                <button type="button" onclick="checkValidEmail()" id="check">Next</button>
             </form>
         </div>
         <!-- Popup Div Ends Here -->
@@ -71,12 +70,12 @@
 
         <div id="popupFormUserSignUp">
             Create Test Form
-            <form action="#" id="formUserSignUp" name="formUserSignUp">
+            <form action="#" id="formUserSignUp" method="post" name="formUserSignUp">
 
                 <h2> User details </h2>
-                <hr> Email:
-                <input type="email" id="userEmailID" disabled> Password:
-                <input type="password" id="userPassword" required> First Name: <input type="text" id="firstNameUser" required><br> <br> Last Name: <input type="text" id="lastNameUser" required>
+                <hr> Email: <label id="userEmailID"></label> <br> <br>
+                <!-- <input type="email" id="userEmailID" disabled> -->Password:
+                <input type="password" id="userPassword" required> <br> <br>First Name: <input type="text" id="firstNameUser" required><br> <br> Last Name: <input type="text" id="lastNameUser" required> <br> <br>
                 <button onclick="checkEmptyUserSignUpForm()" id="checkEmptyUserDetails">Next</button>
                 <button onclick="cancelAddQuestionForm()" id="cancel">Cancel</button>
             </form>
@@ -127,6 +126,7 @@
     <h1>Welcome to the Question Hub. You can add questions , create tests .</h1>
     <button id="popup" onclick="openAddQuestionForm()">Add Question</button>
     <button type="button" id="createTest" onclick="openCreateTestForm()">Create Test</button>
+    <!-- <button type="button" id="logout" >Log out</button> -->
     <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> -->
     <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->

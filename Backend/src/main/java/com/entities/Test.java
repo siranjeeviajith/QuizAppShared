@@ -20,6 +20,8 @@ public class Test extends AbstractBaseEntity {
     private String testURL;
     private long expireTime;
     @IgnoreSave
+    private List<Question> questionList;
+    @IgnoreSave
     private String userEmail;
     private TestStatus status;
     @Serialize

@@ -71,7 +71,7 @@ public class TestDaoImpl implements TestDao {
                     if(correctQuestion.getCorrectAns().toString().equals(questionAttended.get("choosedOption"))){
                             correctAns++;
                     }
-                    if(questionAttended.get("choosedOption").toString().trim().equals("")){
+                    if(questionAttended.get("choosedOption")==null||questionAttended.get("choosedOption").toString().trim().equals("") ){
                         unansweredQuestion++;
                     }
                 }

@@ -7,6 +7,7 @@ import com.enums.QuestionStatus;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,5 +55,19 @@ public class QuestionDaoImpl implements QuestionDao {
 
     }
 
+    @Override
+    public List<Question> getQuestionByIds(List<String> questionIds) {
+        List<Question> questionList=new ArrayList<>();
+        for(String questionId:questionIds){
+            Question question = getQuestionById(questionId);
+            if(question!=null) {
+                question.setCorrectAns(null);
+               
+                questionList.add(question);
+            }
 
+
+        }
+        return  questionList;
+    }
 }

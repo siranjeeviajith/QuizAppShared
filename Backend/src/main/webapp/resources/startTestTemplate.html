@@ -9,16 +9,20 @@
     <title>Welcome to Test</title>
 </head>
 <body>
-<script src="/QuizHubApplication/js/testing.js"></script>
+<link href="/QuizHubApplication/css/Dashboard.css" rel="stylesheet">
+<script src="/QuizHubApplication/js/AjaxCall.js"></script>
+<script src="/QuizHubApplication/js/TestCreation.js"></script>
+<script src="/QuizHubApplication/js/UserAuthentication.js"></script>
+<script src="/QuizHubApplication/js/Test.js"></script>
 <h2>Welcome @@config@@</h2>
 <p>Note: Dont reload the page or the test will be canceled</p>
 Test total time: @@config@@<br>
-<form name="startTest" method="GET" onsubmit="startTest()">
+<div>
 
 
-    <input type="submit" value="start test">
-    <!-- <button type="button" onClick="loginUserFromForm()">Log in</button> -->
+<!--    <input type="submit" value="start test">-->
+     <button type="button" onClick="startTest()" id="beginTest">Log in</button>
 
-</form>
+</div>
 </body>
 </html>
