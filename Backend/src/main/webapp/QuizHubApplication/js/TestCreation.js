@@ -25,17 +25,12 @@ function checkEmailExists(userEmail) {
         request: "?email=" + userEmail,
         async: true
     }).then((checkEmailResponse) => {
-
-        document.getElementById("userEmailID").innerHTML = document.getElementById("userEmail").value;
-        openUserSignUpForm();
-    }).catch(error => {
-
-        if (error == 409) {
-            window.location.replace("/QuizHubApplication/html/CreateTest.html");
-        } else {
-            console.log("error", error);
-        }
-    });
+                 localStorage.setItem("userEmail", document.getElementById("userEmail").value);
+                         window.location.replace("/QuizHubApplication/html/CreateTest.html");
+                     }).catch(error => {
+                         document.getElementById("userEmailID").innerHTML = document.getElementById("userEmail").value;
+                         openUserSignUpForm();
+                     });
 }
 
 function getQuestionsFromTag() {
