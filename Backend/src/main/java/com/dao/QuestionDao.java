@@ -12,5 +12,5 @@ public interface QuestionDao {
     public boolean checkQuestionValid(Question question);
     public List<Question> getQuestionByTag(String tag);
     public Question getQuestionById(String id);
-
+    public List<Question> getQuestionByIds(List<String> questionIds);
 }
