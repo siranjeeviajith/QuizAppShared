@@ -57,28 +57,33 @@ public class TestDaoImpl implements TestDao {
 
     @Override
     public String validateTest(Test test, Map testValues) {
-        int  correctAns = 0;
-        int unansweredQuestion=0;
+        int correctAns = 0;
+        int unansweredQuestion = 0;
         int totalQuestions = test.getQuestionIds().size();
-        if(test.getId().equals(testValues.get("id"))){
-            List<String> testQuestionIds=test.getQuestionIds();
-                List<Map> attendedQuestions =  (List<Map>)testValues.get("questions");
-               // System.out.println(attendedQuestions);
-            for(Map questionAttended:attendedQuestions){
-                if(testQuestionIds.contains(questionAttended.get("id"))){
+
+        List<String> testQuestionIds = test.getQuestionIds();
+        List<Map> attendedQuestions = (List<Map>) testValues.get("queList");
+        // System.out.println(attendedQuestions);
+        if (attendedQuestions.size() < totalQuestions) {
+            unansweredQuestion += totalQuestions - attendedQuestions.size();
+        }
+        if (!attendedQuestions.isEmpty()) {
+            for (Map questionAttended : attendedQuestions) {
+                if (testQuestionIds.contains(questionAttended.get("id"))) {
                     Question correctQuestion = ObjectifyService.ofy().load().type(Question.class).id(questionAttended.get("id").toString()).now();
 
-                    if(correctQuestion.getCorrectAns().toString().equals(questionAttended.get("choosedOption"))){
-                            correctAns++;
+                    if (correctQuestion.getCorrectAns().toString().equals(questionAttended.get("selectedOption"))) {
+                        correctAns++;
                     }
-                    if(questionAttended.get("choosedOption")==null||questionAttended.get("choosedOption").toString().trim().equals("") ){
+                    if (questionAttended.get("selectedOption") == null || questionAttended.get("selectedOption").toString().trim().equals("")) {
                         unansweredQuestion++;
                     }
                 }
             }
-            return correctAns+"/"+totalQuestions  + "\n AnsweredQuestion:"+(totalQuestions-unansweredQuestion)+"\t UnAnsweredQuestion:"+unansweredQuestion;
         }
-        return "invalid test submitted";
+            return "Total Question:"+totalQuestions+"\n"+"Total Score:"+totalQuestions+"\n"+"Your Score:"+correctAns +"\n UnAnsweredQuestion:" + unansweredQuestion;
+
+
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.response.ApiResponse;
 import com.services.TemplateService;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -75,7 +76,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
     @GET
     @Path("/{testURL}")
     @Produces(MediaType.TEXT_HTML)
-    public Response getTest(@PathParam("testURL") String testURL) throws IOException {
+    public Response getTest(@PathParam("testURL") String testURL) throws IOException, ServletException {
         String response = "";
         testOption = new TestDaoImpl();
         List<String> data = new ArrayList<>();
@@ -86,8 +87,8 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             return Response.status(400).entity(response).build();
         }
 
-//        if (session != null) {
-//            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
+        if (session != null) {
+            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.CANCELED)) {
                     response="test is "+test.getStatus();
                     data.add(response);
@@ -103,17 +104,17 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     return Response.status(403).entity(content).build();
                 }
                 if(test.getStatus().equals(TestStatus.COMPLETED)){
-                    servletResponse.sendRedirect(servletRequest.getRequestURL() + "/result");
+                    servletRequest.getRequestDispatcher(servletRequest.getRequestURL() + "/result").forward(servletRequest,servletResponse);
                     return Response.status(302).entity("<h1>test completed</h1>").build();
                 }
 
-//                servletResponse.sendRedirect(servletRequest.getRequestURL() + "/testStart");
-//                return Response.status(302).entity("<h1>session exist</h1>").build();
-//            } else {
-//                return Response.status(400).entity("<h1>This test is not for you</h1>").build();
-//            }
-//        }
-//        else {
+                servletRequest.getRequestDispatcher(servletRequest.getRequestURL() + "/testStart").forward(servletRequest,servletResponse);
+                return Response.status(302).entity("<h1>session exist</h1>").build();
+            } else {
+                return Response.status(400).entity("<h1>This test is not for you</h1>").build();
+            }
+        }
+        else {
             User user = ObjectifyService.ofy().load().type(User.class).id(test.getUserId()).now();
             test.setUserEmail(user.getEmail());
 
@@ -124,7 +125,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             data.add(test.getUserEmail());
             String content = TemplateService.modify(servletContext, data, "/resources/testLoginTemplate.html");
             return Response.status(200).entity(content).build();
-//        }
+        }
 
     }
 
@@ -132,7 +133,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
     @GET
     @Path("/{testURL}/testStart")
     @Produces(MediaType.TEXT_HTML)
-    public Response testStart (@PathParam("testURL") String testURL) throws IOException {
+    public Response testStart (@PathParam("testURL") String testURL) throws IOException, ServletException {
         String response;
         testOption = new TestDaoImpl();
         List<String> data = new ArrayList<>();
@@ -146,10 +147,10 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
 
         }
 
-//        if (session != null) {
-//            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
+        if (session != null) {
+            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.COMPLETED)){
-                    servletResponse.sendRedirect(servletRequest.getRequestURL().toString().replace("testStart","result"));
+                    servletRequest.getRequestDispatcher(servletRequest.getRequestURL().toString().replace("testStart","result")).forward(servletRequest,servletResponse);
                     return Response.status(302).entity("<h1>test completed</h1>").build();
                 }
                 if(test.getStatus().equals(TestStatus.CANCELED) ){
@@ -173,20 +174,20 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                 String content = TemplateService.modify(servletContext, data, "/resources/startTestTemplate.html");
                 return Response.status(200).entity(content).build();
 
-//            }
-//            else{
-//                response ="This test not for you";
-//                data.add(response);
-//                String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
-//                return Response.status(403).entity(content).build();
-//
-//            }
-//        }else{
-//            response ="Please login for the test";
-//            data.add(response);
-//            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
-//            return Response.status(403).entity(content).build();
-//        }
+            }
+            else{
+                response ="This test not for you";
+                data.add(response);
+                String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+                return Response.status(403).entity(content).build();
+
+            }
+        }else{
+            response ="Please login for the test";
+            data.add(response);
+            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+            return Response.status(403).entity(content).build();
+        }
     }
 
 
@@ -195,7 +196,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
     @GET
     @Path("/{testURL}/doTest")
     @Produces(MediaType.TEXT_HTML)
-    public Response doTest(@PathParam("testURL") String testURL) throws IOException {
+    public Response doTest(@PathParam("testURL") String testURL) throws IOException, ServletException {
         String response;
         testOption = new TestDaoImpl();
         List<String> data = new ArrayList<>();
@@ -209,10 +210,10 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
 
         }
 
-//        if (session != null) {
-//            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
+        if (session != null) {
+            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.COMPLETED)){
-                    servletResponse.sendRedirect(servletRequest.getRequestURL().toString().replace("doTest","result"));
+                    servletRequest.getRequestDispatcher(servletRequest.getRequestURL().toString().replace("doTest","result")).forward(servletRequest,servletResponse);
                     return Response.status(302).entity("<h1>test completed</h1>").build();
                 }
                 if(test.getStatus().equals(TestStatus.CANCELED) ){
@@ -234,25 +235,25 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     return Response.status(403).entity(content).build();
                 }
                 List<Question> questionsList = new QuestionDaoImpl().getQuestionByIds(test.getQuestionIds());
-                test.setQuestionList(questionsList);
+                test.setQueList(questionsList);
                 test.setQuestionIds(null);
                 data.add(Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(test).getBytes()));
                 String content = TemplateService.modify(servletContext, data, "/resources/testTemplate.html");
                 return Response.status(200).entity(content).build();
-//            }
-//            else{
-//                response ="This test not for you";
-//                data.add(response);
-//                String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
-//                return Response.status(403).entity(content).build();
-//
-//            }
-//        }else{
-//            response ="Please login for the test";
-//            data.add(response);
-//            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
-//            return Response.status(403).entity(content).build();
-//        }
+            }
+            else{
+                response ="This test not for you";
+                data.add(response);
+                String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+                return Response.status(403).entity(content).build();
+
+            }
+        }else{
+            response ="Please login for the test";
+            data.add(response);
+            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+            return Response.status(403).entity(content).build();
+        }
     }
 
 
@@ -274,8 +275,8 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
 
         }
 
-//        if (session != null) {
-//            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
+        if (session != null) {
+            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.CANCELED) || test.getStatus().equals(TestStatus.NOTSTARTED) ){
                     response="test is "+test.getStatus();
                     data.add(response);
@@ -296,8 +297,8 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     return Response.status(200).entity(content).build();
                 }
                 else  if(test.getStatus().equals(TestStatus.COMPLETED)){
-                    servletResponse.sendRedirect(servletRequest.getRequestURL().toString().replace("submitTest","result"));
-                    return Response.status(302).entity("<h1>test completed</h1>").build();
+
+                    return Response.status(200).entity("<h1>test completed</h1>").build();
                 }
                 else{
                     response="test is "+test.getStatus();
@@ -305,20 +306,20 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
                     return Response.status(403).entity(content).build();
                 }
-//            }
-//            else{
-//                response ="This test not for you";
-//                data.add(response);
-//                String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
-//                return Response.status(403).entity(content).build();
-//
-//            }
-//        }else{
-//            response ="Please login for the test";
-//            data.add(response);
-//            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
-//            return Response.status(403).entity(content).build();
-//        }
+            }
+            else{
+                response ="This test not for you";
+                data.add(response);
+                String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+                return Response.status(403).entity(content).build();
+
+            }
+        }else{
+            response ="Please login for the test";
+            data.add(response);
+            String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
+            return Response.status(403).entity(content).build();
+        }
     }
 
     @GET
@@ -337,7 +338,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             return Response.status(400).entity(content).build();
 
         }
-
+//
 //        if (session != null) {
 //            if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
 
@@ -358,8 +359,9 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                 }
 
                     String result=test.getResult();
-                    response = "Total score is "+result;
-                    data.add(session.getAttribute("firstName").toString());
+                    response = result;
+                    User user = ObjectifyService.ofy().load().type(User.class).id(test.getUserId()).now();
+                    data.add(user.getFirstName());
                     data.add(response);
                     String content = TemplateService.modify(servletContext, data, "/resources/resultPageTemplate.html");
                     return Response.status(200).entity(content).build();

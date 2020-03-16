@@ -39,7 +39,8 @@ function loginClient(emailNew, passwordNew) {
         email = document.getElementById('email').value;
         password = document.getElementById('password').value;
     }
-    var url = "http://localhost:8080/api/client/clientLogin";
+   // var url = "http://localhost:8080/api/client/clientLogin";
+   var url= "/api/client/clientLogin";
     makeAjaxCall(url, {
         method: 'POST',
         request: {
