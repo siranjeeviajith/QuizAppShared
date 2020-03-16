@@ -33,8 +33,13 @@ function makeAjaxCall(url, payload) {
                 if (http.status === 200) {
                     console.log("XHR call done successfully");
                     var resp = http.responseText;
-                    var respJson = JSON.parse(resp);
-                    resolve(respJson);
+                    var isJsonCheck = isJsonString(resp);
+                    if (isJsonCheck == true) {
+                        var respJson = JSON.parse(resp);
+                        resolve(respJson);
+                    } else {
+                        resolve(resp);
+                    }
                 } else {
                     reject(http.status);
                     console.log("XHR failed");
@@ -45,4 +50,14 @@ function makeAjaxCall(url, payload) {
         }
     });
 
+}
+
+function isJsonString(str) {
+    try {
+        var obj = JSON.parse(str);
+
+    } catch (e) {
+        return false;
+    }
+    return true;
 }

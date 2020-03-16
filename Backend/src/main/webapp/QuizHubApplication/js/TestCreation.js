@@ -55,6 +55,7 @@ function getQuestionsFromTag() {
         displayQuestions(questions);
         console.log(getQuestionsResponse);
     }).catch(error => {
+        document.getElementById("quesListForm").innerHTML = "";
         console.log("error", error);
     });
 

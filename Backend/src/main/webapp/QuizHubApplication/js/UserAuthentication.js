@@ -69,7 +69,7 @@ function loginUser() {
             method: 'GET',
             async: true
         }).then((startTestResponse) => {
-
+            location.replace(window.location.href + "/testStart");
             console.log("test start" + startTestResponse);
         }).catch(error => { console.log("error", error); });
 

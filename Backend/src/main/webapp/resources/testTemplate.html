@@ -20,7 +20,26 @@
 </head>
 
 <body>
-<p id="result"></p>
+<div id="questions">
+
+
+</div>
+<button type="button" id="end" onclick="submitTest()">Submit</button>
+<script>
+        let userConfig = JSON.parse(decodeURIComponent(escape(window.atob('@@config@@'))));
+        window.onload = test;
+        function test() {
+            start();
+            setTimeout(endTest, 9000);
+        }
+        function start() {
+            displayQuestionsForTest(userConfig.questionList);
+        }
+        function endTest() {
+            document.getElementById('end').click();
+        }
+</script>
+
 </body>
 
 </html>
