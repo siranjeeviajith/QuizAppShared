@@ -19,7 +19,7 @@
 
         <div id="popupForm">
             Add Question Form
-            <form action="#" id="form" method="post" name="form">
+            <form id="form" name="form">
                 <!-- <form id="form" name="form"> -->
                 <h2 id="questionNum"> 1 </h2>
                 <p id="error"></p>
@@ -27,7 +27,7 @@
                 <input type="radio" id="javascript" name="tag" value="javascript">JAVASCRIPT
                 <input type="radio" id="html" name="tag" value="html">HTML
                 <input type="radio" id="css" name="tag" value="css">CSS
-                <input type="radio" id="http" name="tag" value="http">HTTP<br><br> Description: <textarea id="description" name="description" placeholder="Add your Question here"></textarea> Options: <input type="text" id="A" name="option" placeholder="Option A">
+                <input type="radio" id="http" name="tag" value="http">HTTP<br><br> Description: <textarea id="description" name="description" placeholder="Add your Question here"></textarea> <br>Options: <input type="text" id="A" name="option" placeholder="Option A">
                 <input type="text" id="B" name="option" placeholder="Option B">
                 <input type="text" id="C" name="option" placeholder="Option C">
                 <input type="text" id="D" name="option" placeholder="Option D"> <br><br> Correct Answer:<input type="radio" id="optionA" name="correctAnswer" value="A">A
@@ -70,7 +70,7 @@
 
         <div id="popupFormUserSignUp">
             Create Test Form
-            <form action="#" id="formUserSignUp" method="post" name="formUserSignUp">
+            <form id="formUserSignUp" name="formUserSignUp">
 
                 <h2> User details </h2>
                 <hr> Email: <label id="userEmailID"></label> <br> <br>
@@ -127,6 +127,14 @@
     <button id="popup" onclick="openAddQuestionForm()">Add Question</button>
     <button type="button" id="createTest" onclick="openCreateTestForm()">Create Test</button> <br><br>
     <button type="button" id="logout" onclick="logOutClient()">LogOut</button>
+    <p id="testLink"></p>
+    <script>
+        window.onload = function() {
+            document.getElementById('testLink').innerHTML = localStorage.getElementById("testURL");
+            localStorage.removeItem("testURL");
+
+        }
+    </script>
     <!-- <button type="button" id="logout" >Log out</button> -->
     <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> -->

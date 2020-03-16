@@ -155,6 +155,7 @@ function createTest() {
             async: true
         }).then((createTestResponse) => {
             alert("Test Created");
+            localStorage.setItem("testURL", createTestResponse.data.testURL);
             console.log(createTestResponse);
             window.location.replace("/QuizHubApplication/html/Dashboard.html");
 

@@ -51,6 +51,7 @@ function openAddQuestionForm() {
 }
 //Function to Hide Popup
 function cancelAddQuestionForm() {
+    localStorage.clickcount = 0;
     localStorage.clear();
     document.getElementById('question').style.display = "none";
 }
@@ -149,7 +150,7 @@ function addQuestion(questionList) {
 
     Promise.all(promises).then((addQuestionResponse) => {
         console.log("Questions sent to db", addQuestionResponse);
-        location.replace("/QuizHubApplication/html/Dashboard.html");
+        //  location.replace("/QuizHubApplication/html/Dashboard.html");
     }).catch(error => { console.log("error", error); });
 
 }

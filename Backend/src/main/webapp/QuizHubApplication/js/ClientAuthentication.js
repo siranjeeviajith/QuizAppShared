@@ -6,9 +6,52 @@ function openLoginPage() {
     window.location = "/QuizHubApplication/html/LoginPage.html";
 }
 
+function checkEmptyLogIn() {
+    if (document.getElementById('email').value == "" || document.getElementById('password').value == "") {
+        document.getElementById('error').innerHTML = "Please fill in all the fields";
+        document.getElementById('error').style.color = "red";
+        return false;
+    }
+    var emailValid = checkValidEmail();
+    if (emailValid == false) {
+        document.getElementById('error').innerHTML = "Please enter a valid email id";
+        document.getElementById('error').style.color = "red";
+        return false;
+    }
+    document.getElementById('error').innerHTML = "";
+    return true;
+}
+
+function checkEmptySignUp() {
+    if (document.getElementById('firstName').value == "" || document.getElementById('lastName').value == "" || document.getElementById('email').value == "" || document.getElementById('password').value == "" || document.getElementById('company').value == "") {
+        document.getElementById('error').innerHTML = "Please fill in all the fields";
+        document.getElementById('error').style.color = "red";
+        return false;
+    }
+    var emailValid = checkValidEmail();
+    if (emailValid == false) {
+        document.getElementById('error').innerHTML = "Please enter a valid email id";
+        document.getElementById('error').style.color = "red";
+        return false;
+    }
+    document.getElementById('error').innerHTML = "";
+    return true;
+}
+
+function checkValidEmail() {
+    var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+    var userEmail = document.getElementById("email").value;
+    if (reg.test(userEmail) == false) {
+        return false;
+    }
+    return true;
+}
 
 function addClient() {
-
+    var validDetails = checkEmptySignUp();
+    if (validDetails == false) {
+        return false;
+    }
 
     var url = "/api/client/clientSignup";
     makeAjaxCall(url, {
@@ -30,7 +73,10 @@ function addClient() {
 
 
 function loginClient(emailNew, passwordNew) {
-
+    var validDetails = checkEmptyLogIn();
+    if (validDetails == false) {
+        return false;
+    }
     var password, email;
     if (arguments.length == 2) {
         email = emailNew;
