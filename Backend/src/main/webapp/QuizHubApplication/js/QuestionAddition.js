@@ -51,6 +51,7 @@ function openAddQuestionForm() {
 }
 //Function to Hide Popup
 function cancelAddQuestionForm() {
+    document.getElementById("form").reset();
     localStorage.clickcount = 0;
     localStorage.clear();
     document.getElementById('question').style.display = "none";

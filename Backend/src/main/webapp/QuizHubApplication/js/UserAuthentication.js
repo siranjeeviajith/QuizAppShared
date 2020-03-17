@@ -3,7 +3,7 @@ function openUserSignUpForm() {
     document.getElementById('userSignUpForm').style.display = "block";
 }
 
-function cancelAddQuestionForm() {
+function cancelUserSignUpForm() {
     document.getElementById('userSignUpForm').style.display = "none";
 }
 

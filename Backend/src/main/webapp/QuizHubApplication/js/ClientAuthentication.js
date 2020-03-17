@@ -107,7 +107,7 @@ function logOutClient() {
         async: true
     }).then((LogOutResponse) => {
         console.log("Logged out successful", LogOutResponse);
-        window.location.replace("/");
+        location.replace("/");
     }).catch(error => { console.log("error", error); });
 
 

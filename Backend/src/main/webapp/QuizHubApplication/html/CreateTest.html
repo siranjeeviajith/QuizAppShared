@@ -13,7 +13,7 @@
 </head>
 
 
-<body onload="fetchUserEmail()">
+<body>
 
     <div id="testcreationForm">
 
@@ -62,6 +62,21 @@
         </div> -->
     </div>
     <script>
+        window.onload = loadFunctions;
+
+        function loadFunctions() {
+            displayPage();
+            fetchUserEmail();
+
+        }
+
+        function displayPage() {
+            var session = document.cookie.indexOf('JSESSIONID=');
+            if (session == -1) {
+                document.write("You are not allowed to visit this page.Please Log in");
+            }
+        }
+
         function fetchUserEmail() {
             document.getElementById("userEmailCreateTest").innerHTML = localStorage.getItem("userEmail");
             localStorage.clear();
