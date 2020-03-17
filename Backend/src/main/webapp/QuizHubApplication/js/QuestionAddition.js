@@ -125,7 +125,7 @@ function storeQuestion(questionObj, buttonId) {
 
                 for (let itr = 0; itr < Number(localStorage.clickcount); itr++) {
                     var que = localStorage.getItem(itr);
-                    questionList.push(que);
+                    questionList.push(JSON.parse(que));
                 }
                 localStorage.clear();
                 localStorage.clickcount = 0;
@@ -144,7 +144,9 @@ function addQuestion(questionList) {
     questionList.map(que => {
         promises[i++] = makeAjaxCall(url, {
             method: 'POST',
-            request: JSON.parse(que),
+            request: {
+                question: que
+            },
             async: true
         })
     });
@@ -161,6 +163,7 @@ function processAddQuestionResponse(addQuestionResponse) {
 }
 
 function errorHandler(statusCode) {
+
     console.log("failed with status", status);
 }
 

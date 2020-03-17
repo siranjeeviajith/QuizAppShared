@@ -20,8 +20,9 @@ function getAllQuestions() {
         async: true
     }).then((getAllQuestionsResponse) => {
         var questions = getAllQuestionsResponse.data.questions;
+        console.log(getAllQuestionsResponse);
         displayAllQuestions(questions);
-        console.log(getQuestionsResponse);
+
     }).catch(error => {
         document.getElementById('popupFormDisplayQuestions').innerHTML = "";
         document.getElementById('popupFormDisplayQuestions').innerHTML = "no questions to display";

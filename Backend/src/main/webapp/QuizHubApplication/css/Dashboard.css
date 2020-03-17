@@ -84,6 +84,14 @@ div#popupFormDisplayQuestions {
     font-family: 'Raleway', sans-serif
 }
 
+div#cancelQue {
+    position: relative;
+    left: 40%;
+    top: 80%;
+    /* margin-left: -202px; */
+    font-family: 'Raleway', sans-serif
+}
+
 modal-content {
     position: relative;
     display: -webkit-box;
