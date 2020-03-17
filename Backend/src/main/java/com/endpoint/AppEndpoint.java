@@ -59,7 +59,7 @@ public class AppEndpoint extends AbstractBaseApiEndpoint {
                 response="<h1>no session exist</h1>";
                // servletResponse.sendRedirect(servletRequest.getRequestURL()+"/QuizHubApplication/html/index.html");
                 String result = TemplateService.modify(servletContext,new ArrayList<>(),"/QuizHubApplication/html/index.html");
-                return Response.status(401).entity(result).build();
+                return Response.status(200).entity(result).build();
 
 //                return Response.status(401).entity(response).build();
             }

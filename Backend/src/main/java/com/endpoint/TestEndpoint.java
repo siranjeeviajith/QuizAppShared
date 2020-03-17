@@ -104,11 +104,11 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     return Response.status(403).entity(content).build();
                 }
                 if(test.getStatus().equals(TestStatus.COMPLETED)){
-                    servletRequest.getRequestDispatcher(servletRequest.getRequestURL() + "/result").forward(servletRequest,servletResponse);
+                    servletResponse.sendRedirect(servletRequest.getRequestURL() + "/result");
                     return Response.status(302).entity("<h1>test completed</h1>").build();
                 }
 
-                servletRequest.getRequestDispatcher(servletRequest.getRequestURL() + "/testStart").forward(servletRequest,servletResponse);
+                servletResponse.sendRedirect(servletRequest.getRequestURL() + "/testStart");
                 return Response.status(302).entity("<h1>session exist</h1>").build();
             } else {
                 return Response.status(400).entity("<h1>This test is not for you</h1>").build();
@@ -150,7 +150,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
         if (session != null) {
             if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.COMPLETED)){
-                    servletRequest.getRequestDispatcher(servletRequest.getRequestURL().toString().replace("testStart","result")).forward(servletRequest,servletResponse);
+                    servletResponse.sendRedirect(servletRequest.getRequestURL().toString().replace("testStart","result"));
                     return Response.status(302).entity("<h1>test completed</h1>").build();
                 }
                 if(test.getStatus().equals(TestStatus.CANCELED) ){
@@ -213,7 +213,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
         if (session != null) {
             if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.COMPLETED)){
-                    servletRequest.getRequestDispatcher(servletRequest.getRequestURL().toString().replace("doTest","result")).forward(servletRequest,servletResponse);
+                    servletResponse.sendRedirect(servletRequest.getRequestURL().toString().replace("doTest","result"));
                     return Response.status(302).entity("<h1>test completed</h1>").build();
                 }
                 if(test.getStatus().equals(TestStatus.CANCELED) ){
@@ -337,6 +337,9 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
             return Response.status(400).entity(content).build();
 
+        }
+        if (session != null) {
+            session.invalidate();
         }
 //
 //        if (session != null) {

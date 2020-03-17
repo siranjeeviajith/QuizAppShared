@@ -10,6 +10,7 @@ public interface QuestionDao {
     public ApiResponse addAQuestion(Question question);
 
     public boolean checkQuestionValid(Question question);
+    public List<Question> getAllQuestions();
     public List<Question> getQuestionByTag(String tag);
     public Question getQuestionById(String id);
     public List<Question> getQuestionByIds(List<String> questionIds);

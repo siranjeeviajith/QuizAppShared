@@ -1,10 +1,45 @@
+function isCheckedTag() {
+
+    var tagSelected = document.getElementsByName('tag');
+    for (var i = 0; i < tagSelected.length; i++) {
+        if (tagSelected[i].type == 'radio' && tagSelected[i].checked) {
+            return true;
+        }
+    }
+    // End of the loop, return false
+    return false;
+}
+
+function isCheckedAnswer() {
+
+    var answerSelected = document.getElementsByName('correctAnswer');
+    for (var i = 0; i < answerSelected.length; i++) {
+        if (answerSelected[i].type == 'radio' && answerSelected[i].checked) {
+            return true;
+        }
+    }
+    // End of the loop, return false
+    return false;
+}
+
 function checkEmpty(buttonId) {
-    if (document.getElementById('A').value == "" || document.getElementById('B').value == "" || document.getElementById('C').value == "" || document.getElementById('D').value == "" ||
-        document.getElementById('description').value == "" || document.querySelector('input[name=correctAnswer]:checked').length <= 0) {
-        var errorMsg = "Please fill out the fields";
+    var errorMsg = "Please fill out the fields";
+    var checkedTag = isCheckedTag(),
+        checkedAnswer = isCheckedAnswer();
+    if (checkedTag == false || checkedAnswer == false) {
         document.getElementById("error").innerHTML = errorMsg;
+        document.getElementById("error").style.color = "red";
+        return false;
+
+    }
+
+    if (document.getElementById('A').value == "" || document.getElementById('B').value == "" || document.getElementById('C').value == "" || document.getElementById('D').value == "" ||
+        document.getElementById('description').value == "") {
+        document.getElementById("error").innerHTML = errorMsg;
+        document.getElementById("error").style.color = "red";
         return false;
     } else {
+        document.getElementById("error").innerHTML = "";
         let butId = buttonId;
         createQuestionObject(butId);
 
@@ -16,6 +51,7 @@ function openAddQuestionForm() {
 }
 //Function to Hide Popup
 function cancelAddQuestionForm() {
+    localStorage.clickcount = 0;
     localStorage.clear();
     document.getElementById('question').style.display = "none";
 }
@@ -103,7 +139,7 @@ function storeQuestion(questionObj, buttonId) {
 function addQuestion(questionList) {
     var promises = [],
         i = 0;
-    var url = "http://localhost:8080/api/question/addQuestion";
+    var url = "/api/question/addQuestion";
     questionList.map(que => {
         promises[i++] = makeAjaxCall(url, {
             method: 'POST',
@@ -114,7 +150,7 @@ function addQuestion(questionList) {
 
     Promise.all(promises).then((addQuestionResponse) => {
         console.log("Questions sent to db", addQuestionResponse);
-        window.open("/QuizHubApplication/html/Dashboard.html")
+        //  location.replace("/QuizHubApplication/html/Dashboard.html");
     }).catch(error => { console.log("error", error); });
 
 }
@@ -129,7 +165,7 @@ function errorHandler(statusCode) {
 
 /*function addQuestion(questionList) {
     var details, statusCode;
-    var url = "http://localhost:8080/api/question/addQuestion";
+    var url = "/api/question/addQuestion";
     var response = makeAjaxRequest(url, {
         method: 'POST',
         request: questionList,
@@ -163,7 +199,7 @@ function errorHandler(statusCode) {
         }
         if (statusCode === 401) {
             alert("please login first");
-            location.replace("http://localhost:8080/");
+            
         }
     });
 } */

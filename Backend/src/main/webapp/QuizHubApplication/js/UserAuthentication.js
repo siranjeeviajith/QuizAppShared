@@ -3,7 +3,8 @@ function openUserSignUpForm() {
     document.getElementById('userSignUpForm').style.display = "block";
 }
 
-function cancelAddQuestionForm() {
+function cancelUserSignUpForm() {
+
     document.getElementById('userSignUpForm').style.display = "none";
 }
 
@@ -24,7 +25,7 @@ function checkEmptyUserSignUpForm() {
 function addUser()
 
 {
-    var url = "http://localhost:8080/api/client/userSignup";
+    var url = "/api/client/userSignup";
     localStorage.setItem("userEmail", document.getElementById('userEmailID').textContent);
     makeAjaxCall(url, {
         method: 'POST',
@@ -52,7 +53,7 @@ function loginUser() {
         return false;
 
     }
-    var url = "http://localhost:8080/api/user/userLogin";
+    var url = "/api/user/userLogin";
 
     makeAjaxCall(url, {
         method: 'POST',
@@ -64,15 +65,6 @@ function loginUser() {
 
     }).then((userLoginResponse) => {
         //making ajax call if user login promise is resolved
-
-//        var currentURL = window.location.href + "/testStart";
-//        makeAjaxCall(currentURL, {
-//            method: 'GET',
-//            async: true
-//        }).then((startTestResponse) => {
-            location.replace(window.location.href + "/testStart");
-//            console.log("test start" + startTestResponse);
-//        }).catch(error => { console.log("error", error); })
         var currentURL = window.location.href + "/testStart";
         makeAjaxCall(currentURL, {
             method: 'GET',

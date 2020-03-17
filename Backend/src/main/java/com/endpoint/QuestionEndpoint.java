@@ -3,6 +3,7 @@ package com.endpoint;
 import com.Constants.Constant;
 import com.daoImpl.QuestionDaoImpl;
 import com.entities.Question;
+import com.entities.Rating;
 import com.enums.AccountType;
 import com.filters.ApiKeyCheck;
 import com.google.appengine.api.datastore.Cursor;
@@ -132,6 +133,57 @@ public class QuestionEndpoint extends AbstractBaseApiEndpoint {
         }
     }
 
+    @GET
+    @Path("/getAllQuestions")
+    public Response fetchAllQuestion(@QueryParam("cursor") String cursor){
+        ApiResponse response = new ApiResponse();
+        HttpSession session = servletRequest.getSession(false);
+
+
+
+
+        try {
+            if (servletRequest.getSession(false) != null) {
+                if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
+//                    Query<Question> query= ObjectifyService.ofy().load().type(Question.class).limit(Constant.QUESTION_LIMIT);
+//                    if (cursor != null) {
+//                        query = query.startAt(Cursor.fromWebSafeString(cursor));
+//                    }
+//                    boolean continu = false;
+                    List<Question> questionList= new ArrayList<>();
+//                    QueryResultIterator<Question> iterator = query.iterator();
+//                    while (iterator.hasNext()) {
+//                        questionList.add(iterator.next());
+//                        continu = true;
+//                    }
+//                    if (continu) {
+//                        Cursor cursorS = iterator.getCursor();
+//
+//                        // System.out.println("\n DEBUG: cursor: "+cursorS.toString());
+//                        response.addData("cursor",cursorS.toWebSafeString());
+//                    }
+
+                    questionList = questionOption.getAllQuestions();
+                    if (questionList.isEmpty()) {
+                        response.setError("no questions found");
+                        return Response.status(404).entity(response).build();
+                    }
+                    response.setOk(true);
+                    response.addData("questions",questionList);
+                    return Response.status(200).entity(response).build();
+                } else {
+                    response.setError("User account is not permitted");
+                    return Response.status(401).entity(response).build();
+                }
+            } else {
+                response.setError("no session exist");
+                return Response.status(401).entity(response).build();
+            }
+        }catch(Exception e){
+            response.setError(e.getMessage());
+            return Response.status(500).entity(response).build();
+        }
+    }
 
     @POST
     @Path("/addQuestion")
@@ -162,4 +214,29 @@ public class QuestionEndpoint extends AbstractBaseApiEndpoint {
     }
     }
 
+//    @POST
+//    @Path("/giveRating")
+//    public Response giveRating(Rating rate){
+//        ApiResponse response = new ApiResponse();
+//        HttpSession session = servletRequest.getSession(false);
+//        try {
+//            if (servletRequest.getSession(false) != null) {
+//                if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
+//                        if(rate.getStar()>0 && rate.getStar()<=5){
+//
+//                        }
+//
+//                }
+//            else {
+//                response.setError("User account is not permitted");
+//                return Response.status(401).entity(response).build();
+//            }
+//        } else {
+//            response.setError("no session exist");
+//            return Response.status(401).entity(response).build();
+//        }
+//    }catch(Exception e){
+//        response.setError(e.toString());
+//        return Response.status(500).entity(response).build();
+//    }
 }

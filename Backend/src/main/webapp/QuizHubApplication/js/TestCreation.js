@@ -19,7 +19,7 @@ function checkValidEmail() {
 }
 
 function checkEmailExists(userEmail) {
-    var url = "http://localhost:8080/api/user/checkEmail";
+    var url = "/api/user/checkEmail";
 
     makeAjaxCall(url, {
         method: 'GET',
@@ -46,7 +46,7 @@ function checkEmailExists(userEmail) {
 function getQuestionsFromTag() {
     var tag = document.getElementById("tag");
     var selectedTag = tag.options[tag.selectedIndex].value;
-    var url = "http://localhost:8080/api/question/getQuestion/" + selectedTag;
+    var url = "/api/question/getQuestion/" + selectedTag;
     makeAjaxCall(url, {
         method: 'GET',
         async: true
@@ -145,7 +145,7 @@ function createTest() {
         return false;
     } else {
 
-        var url = "http://localhost:8080/api/test/generateTestLink";
+        var url = "/api/test/generateTestLink";
         makeAjaxCall(url, {
             method: 'POST',
             request: {
@@ -155,6 +155,7 @@ function createTest() {
             async: true
         }).then((createTestResponse) => {
             alert("Test Created");
+            localStorage.setItem("testURL", createTestResponse.data.testURL);
             console.log(createTestResponse);
             window.location.replace("/QuizHubApplication/html/Dashboard.html");
 

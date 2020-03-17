@@ -56,6 +56,12 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     @Override
+    public List<Question> getAllQuestions() {
+        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).list();
+        return allQuestions;
+    }
+
+    @Override
     public List<Question> getQuestionByIds(List<String> questionIds) {
         List<Question> questionList=new ArrayList<>();
         for(String questionId:questionIds){
