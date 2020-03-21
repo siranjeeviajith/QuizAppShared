@@ -40,8 +40,13 @@
                  <a href="javascript:checkEmpty(this.value)" id="add" name="link" value="add">Add</a> 
                 <a href="javascript:checkEmpty(this.value)" id="save" name="link" value="save">Submit</a> -->
                 <!--  This works same as type="button" <button onclick="checkEmpty(this.id);return false;" id="add" name="link" value="add">Add</button> -->
+<<<<<<< HEAD
                 <button onclick="checkEmpty(this.id)" type="button" id="add">Add</button>
                 <button onclick="checkEmpty(this.id)" type="button" id="save" >Submit</button>
+=======
+                <button onclick="checkEmpty(this.id)" type="button" id="add" name="link" value="add">Add</button>
+                <button onclick="checkEmpty(this.id)" id="save" name="link" value="save">Submit</button>
+>>>>>>> ab6a10dd545696b85658b73b06a4b085087fe591
                 <button onclick="cancelAddQuestionForm()" id="cancelAddQuestion">Cancel</button>
             </form>
         </div>
@@ -152,7 +157,11 @@
         window.onload = loadFunctions;
 
         function loadFunctions() {
+<<<<<<< HEAD
                displayPage();
+=======
+            //    displayPage();
+>>>>>>> ab6a10dd545696b85658b73b06a4b085087fe591
             displayTestUrl();
 
         }
