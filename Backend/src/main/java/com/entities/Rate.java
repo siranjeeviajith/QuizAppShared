@@ -6,12 +6,12 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Rating extends AbstractBaseEntity {
+public class Rate extends AbstractBaseEntity {
     @Index
     private String questionId;
     @Index
     private String userId;
 
-    private int star;
+    private int rating;
 
 }

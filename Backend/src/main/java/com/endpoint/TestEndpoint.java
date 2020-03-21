@@ -9,6 +9,7 @@ import com.enums.AccountType;
 import com.enums.TestStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filters.ApiKeyCheck;
+import com.filters.SessionCheck;
 import com.google.appengine.repackaged.com.google.protobuf.Api;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
@@ -30,6 +31,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
     @POST
     @Path("/generateTestLink")
     @ApiKeyCheck
+    @SessionCheck
     public Response generateTestLink(Test test) {
         //System.out.println(test.getQuesionIds());
         testOption = new TestDaoImpl();
@@ -37,6 +39,11 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
         try{
         String testUrl = UUID.randomUUID().toString();
         HttpSession session = servletRequest.getSession(false);
+            if(session !=null) {
+                if (session.getAttribute("accountType") == null) {
+                    session.invalidate();
+                }
+            }
         if (session != null) {
             if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
                 if(!test.getUserEmail().matches(".+\\@.+\\..+")   || session.getAttribute("email").toString().equals(test.getUserEmail())){
@@ -86,7 +93,11 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             response = "no test exist";
             return Response.status(400).entity(response).build();
         }
-
+        if(session !=null) {
+            if (session.getAttribute("accountType") == null) {
+                session.invalidate();
+            }
+        }
         if (session != null) {
             if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.CANCELED)) {
@@ -146,7 +157,11 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             return Response.status(400).entity(content).build();
 
         }
-
+        if(session !=null) {
+            if (session.getAttribute("accountType") == null) {
+                session.invalidate();
+            }
+        }
         if (session != null) {
             if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.COMPLETED)){
@@ -208,6 +223,11 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             String content = TemplateService.modify(servletContext, data, "/resources/errorPageTemplate.html");
             return Response.status(400).entity(content).build();
 
+        }
+        if(session !=null) {
+            if (session.getAttribute("accountType") == null) {
+                session.invalidate();
+            }
         }
 
         if (session != null) {
@@ -274,7 +294,11 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             return Response.status(400).entity(content).build();
 
         }
-
+        if(session !=null) {
+            if (session.getAttribute("accountType") == null) {
+                session.invalidate();
+            }
+        }
         if (session != null) {
             if (session.getAttribute("userId") != null && session.getAttribute("userId").toString().equals(test.getUserId())) {
                 if(test.getStatus().equals(TestStatus.CANCELED) || test.getStatus().equals(TestStatus.NOTSTARTED) ){
@@ -338,6 +362,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
             return Response.status(400).entity(content).build();
 
         }
+
         if (session != null) {
             session.invalidate();
         }

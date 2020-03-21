@@ -4,6 +4,7 @@ import com.daoImpl.UserDaoImpl;
 import com.entities.User;
 import com.enums.AccountType;
 import com.filters.ApiKeyCheck;
+import com.filters.SessionCheck;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 import org.jboss.resteasy.annotations.cache.NoCache;
@@ -30,9 +31,16 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
 
         HttpSession session = servletRequest.getSession(false);
         try {
+            if(session !=null) {
+                if (session.getAttribute("accountType") == null) {
+                    session.invalidate();
+                }
+            }
             if (session != null) {
-                response.setError("Session already exists");
-                return Response.status(302).entity(response).build();
+
+                    response.setError("Session already exists");
+                    return Response.status(302).entity(response).build();
+
             } else {
                 if (userOption.clientAuthenticate(user)) {
 
@@ -63,6 +71,11 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
 
         HttpSession session = servletRequest.getSession(false);
         try {
+            if(session !=null) {
+                if (session.getAttribute("accountType") == null) {
+                    session.invalidate();
+                }
+            }
             if (session != null) {
                 response.setError("Session already exists");
                 return Response.status(302).entity(response).build();
@@ -95,8 +108,14 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
     @ApiKeyCheck
     public Response adminSignup(User user) throws NoSuchAlgorithmException {
         ApiResponse response = new ApiResponse();
+        HttpSession session = servletRequest.getSession(false);
+        if(session !=null) {
+            if (session.getAttribute("accountType") == null) {
+                session.invalidate();
+            }
+        }
         try {
-            if (servletRequest.getSession(false) != null) {
+            if (session != null) {
                 response.setError("Session already exist");
                 return Response.status(302).entity(response).build();
             }
@@ -122,9 +141,15 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
     @POST
     @Path("client/userSignup")
     @ApiKeyCheck
+    @SessionCheck
     public Response userSignup(User user) throws NoSuchAlgorithmException {
         ApiResponse response = new ApiResponse();
         HttpSession session = servletRequest.getSession(false);
+        if(session !=null) {
+            if (session.getAttribute("accountType") == null) {
+                session.invalidate();
+            }
+        }
         try {
             if (session == null) {
                 response.setError(" no session exist");
@@ -159,9 +184,15 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
     @GET
     @Path("/user/checkEmail")
     @ApiKeyCheck
+    @SessionCheck
     public Response getUserEmail(@QueryParam("email") String email) {
         ApiResponse response = new ApiResponse();
         HttpSession session = servletRequest.getSession(false);
+        if(session !=null) {
+            if (session.getAttribute("accountType") == null) {
+                session.invalidate();
+            }
+        }
         try {
             if (servletRequest.getSession(false) != null) {
                 if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
@@ -201,10 +232,17 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
     @GET
     @Path("/logout")
     @ApiKeyCheck
+    @SessionCheck
     public Response userLogut() {
         ApiResponse response = new ApiResponse();
+        HttpSession session = servletRequest.getSession(false);
+        if(session !=null) {
+            if (session.getAttribute("accountType") == null) {
+                session.invalidate();
+            }
+        }
         try {
-            HttpSession session = servletRequest.getSession(false);
+
             if (session != null) {
                 session.invalidate();
                 response.setOk(true);

@@ -5,6 +5,7 @@
     <title>Dashboard</title>
     <link href="/QuizHubApplication/css/Dashboard.css" rel="stylesheet">
     <script src="/QuizHubApplication/js/QuestionAddition.js"></script>
+    <script src="/QuizHubApplication/js/Questions.js"></script>
     <script src="/QuizHubApplication/js/AjaxCall.js"></script>
     <script src="/QuizHubApplication/js/ClientAuthentication.js"></script>
     <script src="/QuizHubApplication/js/TestCreation.js"></script>
@@ -39,9 +40,9 @@
                  <a href="javascript:checkEmpty(this.value)" id="add" name="link" value="add">Add</a> 
                 <a href="javascript:checkEmpty(this.value)" id="save" name="link" value="save">Submit</a> -->
                 <!--  This works same as type="button" <button onclick="checkEmpty(this.id);return false;" id="add" name="link" value="add">Add</button> -->
-                <button onclick="checkEmpty(this.id)" type="button" id="add" name="link" value="add">Add</button>
-                <button onclick="checkEmpty(this.id)" id="save" name="link" value="save">Submit</button>
-                <button onclick="cancelAddQuestionForm()" type="button" id="cancelAddQueForm">Cancel</button>
+                <button onclick="checkEmpty(this.id)" type="button" id="add">Add</button>
+                <button onclick="checkEmpty(this.id)" type="button" id="save" >Submit</button>
+                <button onclick="cancelAddQuestionForm()" id="cancelAddQuestion">Cancel</button>
             </form>
         </div>
 
@@ -58,7 +59,7 @@
                 <input type="email" id="userEmail" placeholder="Enter the email">
                 <p id="demo"></p><br> <br>
 
-                <button onclick="cancelTestForm()" type="button" id="cancelTestForm">Cancel</button>
+                <button onclick="cancelTestForm()" id="cancelTestForm">Cancel</button>
                 <button type="button" onclick="checkValidEmail()" id="check">Next</button>
             </form>
         </div>
@@ -77,10 +78,28 @@
                 <!-- <input type="email" id="userEmailID" disabled> -->Password:
                 <input type="password" id="userPassword" required> <br> <br>First Name: <input type="text" id="firstNameUser" required><br> <br> Last Name: <input type="text" id="lastNameUser" required> <br> <br>
                 <button onclick="checkEmptyUserSignUpForm()" id="checkEmptyUserDetails">Next</button>
-                <button onclick="cancelUserSignUpForm()"  type="button" id="cancelSignUpForm">Cancel</button>
+                <button onclick="cancelUserSignUpForm()" id="cancelUserSignUp">Cancel</button>
             </form>
         </div>
         <!-- Popup Div Ends Here -->
+    </div>
+
+    <div id="DisplayQuestions">
+
+        <div id="popupFormDisplayQuestions">
+            Display Questions
+            <!-- <form id="formDisplayQuestions" name="formUserSignUp">
+
+                <h2> User details </h2>
+                <hr> Email: <label id="userEmailID"></label> <br> <br> Password:
+                <input type="password" id="userPassword" required> <br> <br>First Name: <input type="text" id="firstNameUser" required><br> <br> Last Name: <input type="text" id="lastNameUser" required> <br> <br>
+                <button onclick="checkEmptyUserSignUpForm()" id="checkEmptyUserDetails">Next</button>
+                <button onclick="cancelUserSignUpForm()" id="cancelUserSignUp">Cancel</button>
+            </form> -->
+        </div>
+        <div id="cancelQue">
+            <button onclick="cancelDisplayQuestions()" id="cancelDisplayQuestions">Cancel</button>
+        </div>
     </div>
 
     <!-- Button trigger modal -->
@@ -125,14 +144,29 @@
     <!-- Display Popup Button -->
     <h1>Welcome to the Question Hub. You can add questions , create tests .</h1>
     <button id="popup" onclick="openAddQuestionForm()">Add Question</button>
+    <button id="displayQue" onclick="openDisplayQuestions()"> Display Questions</button>
     <button type="button" id="createTest" onclick="openCreateTestForm()">Create Test</button> <br><br>
     <button type="button" id="logout" onclick="logOutClient()">LogOut</button>
     <p id="testLink"></p>
     <script>
-        window.onload = function() {
-            document.getElementById('testLink').innerHTML = localStorage.getItem("testURL");
-            localStorage.removeItem("testURL");
+        window.onload = loadFunctions;
 
+        function loadFunctions() {
+               displayPage();
+            displayTestUrl();
+
+        }
+
+        function displayPage() {
+            var session = document.cookie.indexOf('JSESSIONID=');
+            if (session == -1) {
+                document.write("You are not allowed to visit this page.Please Log in");
+            }
+        }
+
+        function displayTestUrl() {
+            document.getElementById('testLink').innerHTML = "TestURL:" + localStorage.getItem("testURL");
+            localStorage.removeItem("testURL");
         }
     </script>
     <!-- <button type="button" id="logout" >Log out</button> -->

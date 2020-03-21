@@ -4,6 +4,8 @@ import com.endpoint.*;
 import com.entities.*;
 import com.filters.ApiFilter;
 import com.filters.ApiKeyCheck;
+import com.filters.SessionCheck;
+import com.filters.SessionFilter;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
 import com.services.TemplateService;
@@ -29,6 +31,7 @@ public class AppConfig extends Application {
         ObjectifyService.register(User.class);
         ObjectifyService.register(Question.class);
         ObjectifyService.register(Test.class);
+        ObjectifyService.register(Rate.class);
 
 
     }
@@ -56,6 +59,7 @@ public class AppConfig extends Application {
         classes.add(AbstractBaseApiEndpoint.class);
         classes.add(ApiFilter.class);
         classes.add(TemplateService.class);
+        classes.add(SessionFilter.class);
 
     }
 

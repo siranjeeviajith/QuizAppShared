@@ -67,7 +67,18 @@ function addClient() {
     }).then((signUpResponse) => {
         console.log("sign up successful", signUpResponse);
         loginClient(document.getElementById('email').value, document.getElementById('password').value);
-    }).catch(error => { console.log("error", error); });
+    }).catch(error => {
+        if (error == 409) {
+            document.getElementById('error').innerHTML = "Email already exists. Try with a new email";
+            document.getElementById('error').style.color = "red";
+        }
+        if (error == 400) {
+            document.getElementById('error').innerHTML = "Please enter valid inputs";
+            document.getElementById('error').style.color = "red";
+        }
+
+        console.log("error", error);
+    });
 
 }
 
@@ -107,7 +118,7 @@ function logOutClient() {
         async: true
     }).then((LogOutResponse) => {
         console.log("Logged out successful", LogOutResponse);
-        window.location.replace("/");
+        location.replace("/");
     }).catch(error => { console.log("error", error); });
 
 

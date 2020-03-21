@@ -6,7 +6,6 @@ import com.googlecode.objectify.annotation.*;
 import lombok.Data;
 
 import java.util.Base64;
-import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -29,7 +28,10 @@ public class Question extends AbstractBaseEntity {
 
     private Option correctAns;
     @Index
-    private int averageStars;
+    private int averageRating;
+
+    private int noOfUsersRated;
+
 
     @OnSave
     public void encryptDescription(){

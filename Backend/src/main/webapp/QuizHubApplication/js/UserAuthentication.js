@@ -4,7 +4,6 @@ function openUserSignUpForm() {
 }
 
 function cancelUserSignUpForm() {
-
     document.getElementById('userSignUpForm').style.display = "none";
 }
 

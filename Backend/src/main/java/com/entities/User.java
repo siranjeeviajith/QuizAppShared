@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,6 +23,8 @@ public class User extends AbstractBaseEntity {
     private String password;
     private String company;
     private AccountType accountType;
+
+    private List<RatedQuestion> userRatedQuestion;
 
 
 }

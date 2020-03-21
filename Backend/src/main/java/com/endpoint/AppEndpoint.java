@@ -45,11 +45,16 @@ public class AppEndpoint extends AbstractBaseApiEndpoint {
         HttpSession session = servletRequest.getSession(false);
 //        try {
             if (session != null) {
+                if(session.getAttribute("accountType")==null){
+                    session.invalidate();
+                    String result = TemplateService.modify(servletContext,new ArrayList<>(),"/QuizHubApplication/html/index.html");
+                    return Response.status(200).entity(result).build();
+                }
                 if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
                     servletResponse.sendRedirect(servletRequest.getRequestURL()+"/QuizHubApplication/html/Dashboard.html");;
 
                     String result = TemplateService.modify(servletContext,new ArrayList<>(),"/QuizHubApplication/html/Dashboard.html");
-                    return Response.status(200).entity(result).build();
+                    return Response.status(302).entity(result).build();
                 } else {
                     response="<h1>User account is not permitted</h1>";
                     return Response.status(403).entity(response).build();

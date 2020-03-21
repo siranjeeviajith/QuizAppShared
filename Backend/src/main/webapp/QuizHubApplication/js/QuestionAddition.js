@@ -51,6 +51,7 @@ function openAddQuestionForm() {
 }
 //Function to Hide Popup
 function cancelAddQuestionForm() {
+    document.getElementById("form").reset();
     localStorage.clickcount = 0;
     localStorage.clear();
     document.getElementById('question').style.display = "none";
@@ -124,10 +125,11 @@ function storeQuestion(questionObj, buttonId) {
 
                 for (let itr = 0; itr < Number(localStorage.clickcount); itr++) {
                     var que = localStorage.getItem(itr);
-                    questionList.push(que);
+                    questionList.push(JSON.parse(que));
                 }
                 localStorage.clear();
                 localStorage.clickcount = 0;
+                cancelAddQuestionForm();
                 addQuestion(questionList);
                 break;
         }
@@ -143,13 +145,16 @@ function addQuestion(questionList) {
     questionList.map(que => {
         promises[i++] = makeAjaxCall(url, {
             method: 'POST',
-            request: JSON.parse(que),
+            request: {
+                question: que
+            },
             async: true
         })
     });
 
     Promise.all(promises).then((addQuestionResponse) => {
         console.log("Questions sent to db", addQuestionResponse);
+
         //  location.replace("/QuizHubApplication/html/Dashboard.html");
     }).catch(error => { console.log("error", error); });
 
@@ -160,6 +165,7 @@ function processAddQuestionResponse(addQuestionResponse) {
 }
 
 function errorHandler(statusCode) {
+
     console.log("failed with status", status);
 }
 
