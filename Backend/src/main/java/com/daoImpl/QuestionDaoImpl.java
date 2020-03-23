@@ -3,7 +3,6 @@ package com.daoImpl;
 import com.dao.QuestionDao;
 import com.entities.Question;
 import com.entities.Rate;
-import com.entities.RatedQuestion;
 import com.enums.Option;
 import com.enums.QuestionStatus;
 

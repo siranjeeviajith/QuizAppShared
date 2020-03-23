@@ -1,21 +1,14 @@
 package com.endpoint;
 
-import com.Constants.Constant;
 import com.daoImpl.QuestionDaoImpl;
 import com.entities.Question;
 import com.entities.Rate;
 
-import com.entities.RatedQuestion;
 import com.entities.User;
 import com.enums.AccountType;
 import com.filters.ApiKeyCheck;
 import com.filters.SessionCheck;
-import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.QueryResultIterator;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.cmd.Query;
 import com.response.ApiResponse;
 import org.jboss.resteasy.annotations.cache.NoCache;
 

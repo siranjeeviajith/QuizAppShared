@@ -2,8 +2,6 @@ package com.dao;
 
 import com.entities.Question;
 import com.entities.Rate;
-import com.entities.RatedQuestion;
-import com.google.appengine.repackaged.com.google.protobuf.Api;
 import com.response.ApiResponse;
 
 import java.util.List;
