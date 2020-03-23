@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -249,19 +250,25 @@ public class QuestionEndpoint extends AbstractBaseApiEndpoint {
 
     @POST
     @Path("/giveRating")
-    public Response giveRating(Map<String,List<RatedQuestion>> ratingDetails) {
+    public Response giveRating(Rate rating) {
         ApiResponse response = new ApiResponse();
         HttpSession session = servletRequest.getSession(false);
         try {
             if (servletRequest.getSession(false) != null) {
                 if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
                     String userId=(session.getAttribute("userId").toString());
-                    List<RatedQuestion> ratings = ratingDetails.get("ratings");
+
                     com.googlecode.objectify.Key userKey= com.googlecode.objectify.Key.create(User.class,userId);
                     User user= (User) ObjectifyService.ofy().load().key(userKey).now();
-                    user.setUserRatedQuestion(ratings);
-
-                    if (questionOption.rateQuestion(ratings, userId)) {
+                    Map<String,Integer> currentUserRatedQuestion = user.getUserRatedQuestion();
+                    if(currentUserRatedQuestion == null){
+                        currentUserRatedQuestion = new HashMap<>();
+                    }
+                    currentUserRatedQuestion.put(rating.getQuestionId(),rating.getRating());
+                    user.setUserRatedQuestion(currentUserRatedQuestion);
+                    ObjectifyService.ofy().save().entity(user).now();
+                    rating.setUserId(userId);
+                    if (questionOption.rateQuestion(rating)) {
                         ObjectifyService.ofy().save().entity(user).now();
                         response.setOk(true);
                         response.addData("msg", "rated");

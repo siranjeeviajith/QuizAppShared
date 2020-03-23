@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface QuestionDao {
     public ApiResponse addAQuestion(Question question);
-    public void createRating(String userId, RatedQuestion queRating, Question question);
-    public void updateRating(String userId, RatedQuestion queRating, Question question);
+    public void createRating(Rate queRating, Question question);
+    public void updateRating(Rate queRating, Question question);
     public boolean checkQuestionValid(Question question);
     public List<Question> getAllQuestions();
-    public boolean rateQuestion(List<RatedQuestion> ratings, String userId);
+    public boolean rateQuestion(Rate queRating);
 
     public List<Question> getQuestionByTag(String tag);
     public Question getQuestionById(String id);

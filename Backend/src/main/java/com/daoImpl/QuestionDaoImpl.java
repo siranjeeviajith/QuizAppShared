@@ -63,11 +63,11 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     @Override
-    public void createRating(String userId,RatedQuestion queRating,Question question){
+    public void createRating(Rate queRating,Question question){
         Rate newRating  = new Rate();
-        newRating.setId(queRating.getQuestionId()+userId);
+        newRating.setId(queRating.getQuestionId()+queRating.getUserId());
         newRating.setQuestionId(queRating.getQuestionId());
-        newRating.setUserId(userId);
+        newRating.setUserId(queRating.getUserId());
         newRating.setRating(queRating.getRating());
         int ratingCount=question.getNoOfUsersRated();
         int avgRating= question.getAverageRating();
@@ -83,8 +83,8 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     @Override
-    public void updateRating(String userId,RatedQuestion queRating,Question question){
-        com.googlecode.objectify.Key rateKey=  com.googlecode.objectify.Key.create( Rate.class,question.getId()+userId);
+    public void updateRating(Rate queRating,Question question){
+        com.googlecode.objectify.Key rateKey=  com.googlecode.objectify.Key.create( Rate.class,question.getId()+queRating.getUserId());
         Rate existRating = (Rate) ObjectifyService.ofy().load().key(rateKey).now();
 
        // System.out.println("DEBUG: UPDATING RATING");
@@ -102,8 +102,8 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     @Override
-    public boolean rateQuestion(List<RatedQuestion> ratings, String userId) {
-        for(RatedQuestion queRating:ratings) {
+    public boolean rateQuestion(Rate queRating) {
+
 
             com.googlecode.objectify.Key queKey= com.googlecode.objectify.Key.create(Question.class,queRating.getQuestionId());
             Question question= (Question) ObjectifyService.ofy().load().key(queKey).now();
@@ -116,19 +116,19 @@ public class QuestionDaoImpl implements QuestionDao {
             if(question == null){
                 return false;
             }
-            com.googlecode.objectify.Key rateKey=  com.googlecode.objectify.Key.create(Rate.class,queRating.getQuestionId()+userId);
+            com.googlecode.objectify.Key rateKey=  com.googlecode.objectify.Key.create(Rate.class,queRating.getQuestionId()+queRating.getUserId());
             Rate existRating = (Rate) ObjectifyService.ofy().load().key(rateKey).now();
 
            // System.out.println("DEBUG:"+ queRating.getQuestionId()+"  "+queRating.getRating());
             if(existRating==null){
-                createRating(userId,queRating,question);
+                createRating(queRating,question);
 
 
             }else{
-                updateRating(userId,queRating,question);
+                updateRating(queRating,question);
             }
 
-        }
+
         return  true;
     }
 

@@ -9,6 +9,7 @@ import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -245,6 +246,12 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
 
             if (session != null) {
                 session.invalidate();
+                Cookie[] cookies = servletRequest.getCookies();
+                if (cookies.length > 0) {
+                    for (Cookie cookie : cookies) {
+                        cookie.setMaxAge(0);
+                    }
+                }
                 response.setOk(true);
                 response.addData("data", "Account logged out");
                 return Response.status(200).entity(response).build();
