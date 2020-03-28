@@ -57,7 +57,7 @@ public class TestDaoImpl implements TestDao {
 
     @Override
     public List<Test> getAllTestByUser(String userId) {
-        List<Test> allTest ObjectifyService.ofy().load().type(Test.class).filter("createdBy",userId).order("-createdAt").limit(50).list();
+        return ObjectifyService.ofy().load().type(Test.class).filter("createdBy",userId).order("-createdAt").limit(50).list();
     }
 
     @Override
