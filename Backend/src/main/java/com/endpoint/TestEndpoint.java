@@ -28,6 +28,38 @@ import java.util.*;
 public class TestEndpoint extends AbstractBaseApiEndpoint {
     static TestDaoImpl testOption;
 
+    @GET
+    @Path("/getTests")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllTest(){
+        HttpSession session = servletRequest.getSession(false);
+        ApiResponse response = new ApiResponse();
+        if (session != null) {
+            if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
+
+                List allTest =testOption.getAllTestByUser(session.getAttribute("userId").toString());
+                if(!allTest.isEmpty()){
+                    response.setOk(true);
+                    response.addData("testList",allTest);
+                    return Response.status(200).entity(response).build();
+                }
+                else{
+                    response.setError("No test found");
+                    return Response.status(404).entity(response).build();
+                }
+
+            } else {
+                response.setError("User account is not permitted");
+                return Response.status(401).entity(response).build();
+            }
+        } else {
+            response.setError("no session exist");
+            return Response.status(401).entity(response).build();
+        }
+
+    }
+
+
     @POST
     @Path("/generateTestLink")
     @ApiKeyCheck
@@ -55,6 +87,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     return Response.status(400).entity(response).build();
                 }
                 test.setTestURL(testUrl);
+                test.setCreatedBy(session.getAttribute("userId").toString());
                 if (testOption.createTest(test)) {
                     response.setOk(true);
                     response.addData("testURL", "http://localhost:8080/api/test/" + testUrl);
@@ -410,5 +443,6 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
 //            return Response.status(403).entity(content).build();
 //        }
     }
+
 }
 

@@ -217,7 +217,7 @@ public class QuestionEndpoint extends AbstractBaseApiEndpoint {
 //                session.invalidate();
 //            }
 //        }
-        try {
+
 //            if (servletRequest.getSession(false) != null) {
                 if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
                     if (questionOption.checkQuestionValid(questionDetail.get("question"))) {
@@ -235,10 +235,7 @@ public class QuestionEndpoint extends AbstractBaseApiEndpoint {
 //                response.setError("no session exist");
 //                return Response.status(401).entity(response).build();
 //            }
-        } catch (Exception e) {
-            response.setError(e.toString());
-            return Response.status(500).entity(response).build();
-        }
+
     }
 
     @POST

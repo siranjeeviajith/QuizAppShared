@@ -57,7 +57,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     @Override
     public List<Question> getAllQuestions() {
-        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).limit(50).list();
+        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).order("-averageRating").limit(70).list();
         return allQuestions;
     }
 
@@ -70,12 +70,13 @@ public class QuestionDaoImpl implements QuestionDao {
         newRating.setRating(queRating.getRating());
         int ratingCount=question.getNoOfUsersRated();
         int avgRating= question.getAverageRating();
-        int totalStar=avgRating*ratingCount;
+        int totalStar=question.getTotalRating();
         totalStar+=queRating.getRating();
         ratingCount++;
         avgRating = totalStar/ratingCount;
         question.setAverageRating(avgRating);
         question.setNoOfUsersRated(ratingCount);
+        question.setTotalRating(totalStar);
       //  System.out.println("DEBUG: CREATING RATING");
         ObjectifyService.ofy().save().entity(question).now();
         ObjectifyService.ofy().save().entity(newRating).now();
@@ -90,10 +91,13 @@ public class QuestionDaoImpl implements QuestionDao {
             int ratingCount = question.getNoOfUsersRated();
             int avgRating = question.getAverageRating();
            // System.out.println("RATING COUNT:"+ratingCount+"\n"+"AVG:"+avgRating);
-            avgRating = ((ratingCount * avgRating) - existRating.getRating()  + queRating.getRating() ) / ratingCount;
-      //  System.out.println("RATING COUNT:"+ratingCount+"\n"+"AVG:"+avgRating);
+           int totalRating=question.getTotalRating();
+           totalRating = Math.abs(totalRating - existRating.getRating() + queRating.getRating());
+            avgRating = (totalRating ) / ratingCount;
+//        System.out.println("RATING COUNT:"+ratingCount+"\n"+"AVG:"+avgRating);
             existRating.setRating(queRating.getRating());
             question.setAverageRating(avgRating);
+            question.setTotalRating(totalRating);
 
             ObjectifyService.ofy().save().entity(question).now();
             ObjectifyService.ofy().save().entity(existRating).now();
