@@ -44,7 +44,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     @Override
     public List<Question> getQuestionByTag(String tag) {
-        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).filter("tag",tag).list();
+        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).filter("tag",tag).order("-averageRating").list();
 
         return allQuestions;
     }
