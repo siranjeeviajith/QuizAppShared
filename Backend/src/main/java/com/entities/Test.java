@@ -23,7 +23,7 @@ public class Test extends AbstractBaseEntity {
     @IgnoreSave
     private List<Question> queList;
 
-    @IgnoreSave
+    @Index
     private String userEmail;
 
     @Index

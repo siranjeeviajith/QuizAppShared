@@ -36,14 +36,18 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
         ApiResponse response = new ApiResponse();
         if (session != null) {
             if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
-
-                List allTest =testOption.getAllTestByUser(session.getAttribute("userId").toString());
-                if(!allTest.isEmpty()){
-                    response.setOk(true);
-                    response.addData("testList",allTest);
-                    return Response.status(200).entity(response).build();
-                }
-                else{
+                try{
+                    List allTest =testOption.getAllTestByUser(session.getAttribute("userId").toString());
+                    if(!allTest.isEmpty()){
+                        response.setOk(true);
+                        response.addData("testList",allTest);
+                        return Response.status(200).entity(response).build();
+                    }
+                    else{
+                        response.setError("No test found");
+                        return Response.status(404).entity(response).build();
+                    }
+                }catch (NullPointerException exp){
                     response.setError("No test found");
                     return Response.status(404).entity(response).build();
                 }

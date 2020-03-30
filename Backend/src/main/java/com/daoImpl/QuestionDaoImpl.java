@@ -90,7 +90,7 @@ public class QuestionDaoImpl implements QuestionDao {
        // System.out.println("DEBUG: UPDATING RATING");
             int ratingCount = question.getNoOfUsersRated();
             int avgRating = question.getAverageRating();
-           // System.out.println("RATING COUNT:"+ratingCount+"\n"+"AVG:"+avgRating);
+//            System.out.println("RATING COUNT:"+ratingCount+"\n"+"AVG:"+avgRating);
            int totalRating=question.getTotalRating();
            totalRating = Math.abs(totalRating - existRating.getRating() + queRating.getRating());
             avgRating = (totalRating ) / ratingCount;
