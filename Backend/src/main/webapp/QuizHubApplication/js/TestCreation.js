@@ -141,7 +141,7 @@ function sendSelectedQuestions() {
 function createTest() {
 
     let selectedQuestions = sendSelectedQuestions();
-    if (selectedQuestions.length < 1) {
+    if (selectedQuestions == false) {
         alert("Select atleast one question");
         return false;
     } else {

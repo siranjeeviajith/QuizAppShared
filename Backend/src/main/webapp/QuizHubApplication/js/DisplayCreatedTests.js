@@ -20,7 +20,7 @@ function getAllTests() {
 
     }).catch(error => {
         document.getElementById('popupFormDisplayTests').innerHTML = "";
-        document.getElementById('popupFormDisplayTests').innerHTML = "No tests created so far.";
+        document.getElementById('popupFormDisplayTests').innerHTML = "<h1>No tests created so far.</h1>";
         console.log("error", error);
     });
 
