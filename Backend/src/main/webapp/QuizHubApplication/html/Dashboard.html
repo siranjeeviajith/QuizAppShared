@@ -8,6 +8,7 @@
     <meta http-equiv="expires" content="0">
     <title>Dashboard</title>
     <script src="https://use.fontawesome.com/a2e210f715.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
     <link href="/QuizHubApplication/css/Dashboard.css" rel="stylesheet">
     <link href="/QuizHubApplication/css/Stars.css" rel="stylesheet">
     <script src="/QuizHubApplication/js/QuestionAddition.js"></script>
@@ -29,6 +30,7 @@
             Add Question Form
             <form id="form" name="form">
                 <!-- <form id="form" name="form"> -->
+                <button onclick="cancelAddQuestionForm()" id="cancelAddQuestion"><i class="fa fa-close"></i></button>
                 <h2 id="questionNum"> 1 </h2>
                 <p id="error"></p>
                 <hr> Tag: <input type="radio" id="java" name="tag" value="java">JAVA
@@ -49,7 +51,7 @@
                 <!--  This works same as type="button" <button onclick="checkEmpty(this.id);return false;" id="add" name="link" value="add">Add</button> -->
                 <button onclick="checkEmpty(this.id)" type="button" id="add">Add</button>
                 <button onclick="checkEmpty(this.id)" type="button" id="save">Submit</button>
-                <button onclick="cancelAddQuestionForm()" id="cancelAddQuestion">Cancel</button>
+                <!-- <button onclick="cancelAddQuestionForm()" id="cancelAddQuestion">Cancel</button> -->
             </form>
         </div>
 
@@ -155,9 +157,11 @@
 
 
     <!-- Display Popup Button -->
-    <h1>Welcome to the Question Hub. You can add questions, view them and create tests .</h1>
-    <button id="popup" onclick="openAddQuestionForm()">Add Question</button>
-    <button id="displayQue" onclick="openDisplayQuestions()"> Display Questions</button>
+    <h1>
+        Welcome to the Question Hub. You can add questions, view them and create tests .
+    </h1>
+    <button id="popupAddQue" onclick="openAddQuestionForm()">Add Question</button>
+    <button id="displayQue" onclick="openDisplayQuestions()">  Questions</button>
     <button id="createTest" type="button" onclick="openCreateTestForm()">Create Test</button>
     <button id="tests" type="button" onclick="openCreatedTests()">Tests </button><br><br>
     <button id="logout" type="button" onclick="logOutClient()">LogOut</button>
@@ -166,7 +170,7 @@
         window.onload = loadFunctions;
 
         function loadFunctions() {
-            displayPage();
+            //      displayPage();
             displayTestUrl();
 
         }
