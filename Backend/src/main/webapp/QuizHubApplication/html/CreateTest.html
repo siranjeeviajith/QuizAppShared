@@ -7,7 +7,7 @@
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="0">
     <title>Dashboard</title>
-    <link href="/QuizHubApplication/css/Dashboard.css" rel="stylesheet">
+    <link href="/QuizHubApplication/css/CreateTest.css" rel="stylesheet">
     <script src="/QuizHubApplication/js/QuestionAddition.js"></script>
     <script src="/QuizHubApplication/js/AjaxCall.js"></script>
     <script src="/QuizHubApplication/js/ClientAuthentication.js"></script>
@@ -33,10 +33,17 @@
                  <option id="http" value="http">http</option>
            </select>
 
-            <button onclick="getQuestionsFromTag()" type="button">Select</button>
+            <button onclick="getQuestionsFromTag()" type="button">Select</button><br> <br>
+            <div class="duration">
+                <label for="inputTime">Test Duration(hours:min)</label>
+                <input type="time" id="inputTime" class="form-control">
+
+            </div>
         </form>
 
     </div>
+
+
 
     <div id="questionsList">
         <h1>Questions</h1>
@@ -53,7 +60,7 @@
 
 
         </form>
-        <button onclick="createTest()" type="button">Create Test</button>
+        <button onclick="createTest()" id="createTest" type="button">Create Test</button>
     </div>
 
 

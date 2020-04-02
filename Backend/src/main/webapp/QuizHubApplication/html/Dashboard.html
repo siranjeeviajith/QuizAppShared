@@ -164,13 +164,14 @@
     <button id="displayQue" onclick="openDisplayQuestions()">  Questions</button>
     <button id="createTest" type="button" onclick="openCreateTestForm()">Create Test</button>
     <button id="tests" type="button" onclick="openCreatedTests()">Tests </button><br><br>
+    <h4 id="testLink"></h4>
     <button id="logout" type="button" onclick="logOutClient()">LogOut</button>
-    <p id="testLink"></p>
+    <!-- <p id="testLink"></p> -->
     <script>
         window.onload = loadFunctions;
 
         function loadFunctions() {
-            //      displayPage();
+            displayPage();
             displayTestUrl();
 
         }

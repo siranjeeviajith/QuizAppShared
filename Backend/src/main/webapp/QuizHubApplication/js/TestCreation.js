@@ -138,33 +138,60 @@ function sendSelectedQuestions() {
     return selectedQuestions;
 }
 
-function createTest() {
-
-    let selectedQuestions = sendSelectedQuestions();
-    if (selectedQuestions == false) {
-        alert("Select atleast one question");
+function getTime() {
+    let timeSelected = document.getElementById("inputTime").value;
+    if (timeSelected === "") {
+        alert("Time field cannot be blank");
+        return false;
+    } else if (timeSelected === "00:00") {
+        alert("Time cannot be 00:00.Select atleast 1 min!");
         return false;
     } else {
 
-        var url = "/api/test/generateTestLink";
-        makeAjaxCall(url, {
-            method: 'POST',
-            request: {
-                userEmail: document.getElementById("userEmailCreateTest").textContent,
-                questionIds: selectedQuestions
-            },
-            async: true
-        }).then((createTestResponse) => {
-            alert("Test Created");
-            localStorage.setItem("testURL", createTestResponse.data.testURL);
-            console.log(createTestResponse);
-            window.location.replace("/QuizHubApplication/html/Dashboard.html");
-
-        }).catch(error => {
-            alert("Failed to create test. Try again");
-        });
+        var splitTime = timeSelected.split(":");
+        if (splitTime[0] === "00") {
+            return parseInt(splitTime[1]);
+        } else {
+            let minutes = (parseInt(splitTime[0]) * 60) + parseInt(splitTime[1]);
+            return minutes;
+        }
 
     }
+
+
+}
+
+function createTest() {
+
+    let selectedQuestions = sendSelectedQuestions();
+    let testDuration = getTime();
+    if (testDuration === false) {
+        return false;
+    }
+    if (selectedQuestions === false) {
+        return false;
+    }
+
+    var url = "/api/test/generateTestLink";
+    makeAjaxCall(url, {
+        method: 'POST',
+        request: {
+            userEmail: document.getElementById("userEmailCreateTest").textContent,
+            duration: testDuration,
+            questionIds: selectedQuestions
+        },
+        async: true
+    }).then((createTestResponse) => {
+        alert("Test Created");
+        localStorage.setItem("testURL", createTestResponse.data.testURL);
+        console.log(createTestResponse);
+        window.location.replace("/QuizHubApplication/html/Dashboard.html");
+
+    }).catch(error => {
+        alert("Failed to create test. Try again");
+    });
+
+
 
 
 }

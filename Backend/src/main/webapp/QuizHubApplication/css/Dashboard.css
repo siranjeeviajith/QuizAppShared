@@ -6,7 +6,8 @@ CSS settings for HTML div Exact Center
 
 body {
     background-image: url(https://i0.wp.com/blog.parse.ly/wp-content/uploads/2015/09/quiz.jpg?ssl=1);
-    /* opacity: 0.5; */
+    background-color: rgba(255, 255, 255, 0.6);
+    background-blend-mode: lighten;
 }
 
 #question {
@@ -73,7 +74,6 @@ div#popupForm {
     position: absolute;
     left: 5%;
     top: 5%;
-    /* margin-left: -202px; */
     font-family: 'Raleway', sans-serif
 }
 
@@ -81,7 +81,6 @@ div#popupFormvalidateEmail {
     position: absolute;
     left: 40%;
     top: 10%;
-    /* margin-left: -202px; */
     font-family: 'Raleway', sans-serif
 }
 
@@ -89,7 +88,6 @@ div#popupFormUserSignUp {
     position: absolute;
     left: 40%;
     top: 10%;
-    /* margin-left: -202px; */
     font-family: 'Raleway', sans-serif
 }
 
@@ -97,24 +95,13 @@ div#popupFormDisplayQuestions {
     position: absolute;
     left: 40%;
     top: 10%;
-    /* margin-left: -202px; */
     font-family: 'Raleway', sans-serif
 }
-
-
-/* table#popupFormDisplayTests {
-    position: absolute;
-    left: 40%;
-    top: 10%;
-    
-    font-family: 'Raleway', sans-serif;
-} */
 
 div#cancelQue {
     position: relative;
     left: 10%;
     top: 80%;
-    /* margin-left: -202px; */
     font-family: 'Raleway', sans-serif
 }
 
@@ -122,7 +109,6 @@ div#cancelTest {
     position: relative;
     left: 10%;
     top: 80%;
-    /* margin-left: -202px; */
     font-family: 'Raleway', sans-serif
 }
 
@@ -358,8 +344,6 @@ button#tests:hover {
 }
 
 button {
-    /* width: 20%;
-    height: 20px; */
     border-radius: 3px;
     background-color: rgb(204, 36, 120);
     color: rgb(237, 236, 241);
@@ -375,7 +359,7 @@ button:hover {
 button#logout {
     width: 10%;
     height: 50px;
-    margin-top: 30%;
+    margin-top: 25%;
     background-color: DodgerBlue;
     border: none;
     color: white;
@@ -387,10 +371,3 @@ button#logout {
 button#logout:hover {
     background-color: RoyalBlue;
 }
-
-
-/* table,
-th,
-td {
-    border: 1px solid black;
-} */
