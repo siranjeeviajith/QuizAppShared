@@ -1,23 +1,22 @@
 package com.daoImpl;
 
-import com.Constants.Constant;
 import com.dao.TestDao;
 import com.entities.Question;
 import com.entities.Test;
 import com.entities.User;
 import com.enums.TestStatus;
-import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class TestDaoImpl implements TestDao {
 
     @Override
     public boolean createTest(Test test) {
-        String testURL= (String) test.getTestURL();
+        if(test.getDuration()<1 || test.getDuration()>1440){
+            return false;
+        }
         User user= ObjectifyService.ofy().load().type(User.class).filter("email",test.getUserEmail()).first().now();
         if(user==null){
             return false;
@@ -35,11 +34,14 @@ public class TestDaoImpl implements TestDao {
             String userId=user.getId();
 
             test.setStatus(TestStatus.NOTSTARTED);
-            test.setExpireTime(Constant.EXPIRY_TIME);
+           // test.setExpireTime(Constant.EXPIRY_TIME);
           //  System.out.println(test.getQuesionIds());
+            test.setDuration(test.getDuration()*60);
             test.setUserId(userId);
             String uniqueID = UUID.randomUUID().toString();
             test.setId(uniqueID);
+            String testUrl = UUID.randomUUID().toString();
+            test.setTestURL(testUrl);
             ObjectifyService.ofy().save().entity(test).now();
             return true;
 
@@ -57,42 +59,42 @@ public class TestDaoImpl implements TestDao {
 
     @Override
     public List<Test> getAllTestByUser(String userId) {
-        return ObjectifyService.ofy().load().type(Test.class).filter("createdBy",userId).order("-createdAt").limit(50).list();
+        return ObjectifyService.ofy().load().type(Test.class).filter("createdBy",userId).limit(50).list();
     }
 
     @Override
-    public String validateTest(Test test, Map testValues) {
+    public String validateTest(Test test) {
         int correctAns = 0;
         int unansweredQuestion = 0;
         int totalQuestions = test.getQuestionIds().size();
 
         List<String> testQuestionIds = test.getQuestionIds();
-        List<Map> attendedQuestions = (List<Map>) testValues.get("queList");
+        List<Question> attendedQuestions = test.getQueList();
         // System.out.println(attendedQuestions);
         if (attendedQuestions.size() < totalQuestions) {
             unansweredQuestion += totalQuestions - attendedQuestions.size();
         }
         if (!attendedQuestions.isEmpty()) {
-            for (Map questionAttended : attendedQuestions) {
-                if (testQuestionIds.contains(questionAttended.get("id"))) {
-                    Question correctQuestion = ObjectifyService.ofy().load().type(Question.class).id(questionAttended.get("id").toString()).now();
+            for (Question questionAttended : attendedQuestions) {
+                if (testQuestionIds.contains(questionAttended.getId())) {
 
-                    if (correctQuestion.getCorrectAns().toString().equals(questionAttended.get("selectedOption"))) {
+                    Question correctQuestion = ObjectifyService.ofy().load().type(Question.class).id(questionAttended.getId()).now();
+                    if (correctQuestion.getCorrectAns().toString().equals(questionAttended.getSelectedOption().toString())) {
                         correctAns++;
                     }
-                    if (questionAttended.get("selectedOption") == null || questionAttended.get("selectedOption").toString().trim().equals("")) {
+                    if (questionAttended.getSelectedOption() == null || questionAttended.getSelectedOption().toString().trim().equals("")) {
                         unansweredQuestion++;
                     }
                 }
             }
         }
-            return "Total Question:"+totalQuestions+"\n"+"Total Score:"+totalQuestions+"\n"+"Your Score:"+correctAns +"\n UnAnsweredQuestion:" + unansweredQuestion;
+            return "Total Question:"+totalQuestions+"  "+"Total Score:"+totalQuestions+"  "+"Your Score:"+correctAns +"   UnAnsweredQuestion:" + unansweredQuestion;
 
 
     }
 
     @Override
-    public boolean checkTestValid(List<String> questionIds) {
+    public boolean checkTestQuestionsIsValid(List<String> questionIds) {
 
         if(questionIds.isEmpty()){
             return false;

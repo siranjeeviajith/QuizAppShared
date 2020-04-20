@@ -10,7 +10,6 @@ import com.enums.TestStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filters.ApiKeyCheck;
 import com.filters.SessionCheck;
-import com.google.appengine.repackaged.com.google.protobuf.Api;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 import com.services.TemplateService;
@@ -21,7 +20,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 @NoCache
 @Path("/api/test")
@@ -73,7 +72,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
         testOption = new TestDaoImpl();
         ApiResponse response = new ApiResponse();
         try{
-        String testUrl = UUID.randomUUID().toString();
+
         HttpSession session = servletRequest.getSession(false);
             if(session !=null) {
                 if (session.getAttribute("accountType") == null) {
@@ -86,18 +85,22 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     response.setError("invalid email");
                     return Response.status(400).entity(response).build();
                 }
-                if(!testOption.checkTestValid(test.getQuestionIds())){
+                if(!testOption.checkTestQuestionsIsValid(test.getQuestionIds())){
                     response.setError("given one of the question id is invalid");
                     return Response.status(400).entity(response).build();
                 }
-                test.setTestURL(testUrl);
+                if(test.getDuration()<1 || test.getDuration()>1440){
+                    response.setError("invalid duration");
+                    return Response.status(400).entity(response).build();
+                }
+
                 test.setCreatedBy(session.getAttribute("userId").toString());
                 if (testOption.createTest(test)) {
                     response.setOk(true);
-                    response.addData("testURL", "http://localhost:8080/api/test/" + testUrl);
+                    response.addData("testURL", "https://confident-nexus-272915.appspot.com/api/test/" + test.getTestURL());
                     return Response.status(200).entity(response).build();
                 } else {
-                    response.setError("Error while creating test");
+                    response.setError("Error while creating test due to invalid inputs");
                     return Response.status(400).entity(response).build();
                 }
             } else {
@@ -221,7 +224,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                     return Response.status(403).entity(content).build();
                 }
                 data.add(session.getAttribute("firstName").toString());
-                data.add(Long.toString(test.getExpireTime()/60000) + "min");
+                data.add(Long.toString(test.getDuration()/60 )+ "min");
                 data.add(test.getTestURL());
                 String content = TemplateService.modify(servletContext, data, "/resources/startTestTemplate.html");
                 return Response.status(200).entity(content).build();
@@ -317,7 +320,7 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
     @POST
     @Path("/{testURL}/submitTest")
     @Produces(MediaType.TEXT_HTML)
-    public Response validateTest(@PathParam("testURL") String testURL,Map testValues) throws IOException {
+    public Response validateTest(@PathParam("testURL") String testURL,Map<String,List<Question>> testValues) throws IOException {
         String response;
         //System.out.println(testValues);
         testOption = new TestDaoImpl();
@@ -346,8 +349,8 @@ public class TestEndpoint extends AbstractBaseApiEndpoint {
                 }
                 if(test.getStatus().equals(TestStatus.ONGOING)){
                     test.setStatus(TestStatus.COMPLETED);
-
-                    String result = testOption.validateTest(test,testValues);
+                    test.setQueList( testValues.get("queList"));
+                    String result = testOption.validateTest(test);
                     test.setResult(result);
                     testOption.saveTest(test);
                     response = "Total score is "+result;

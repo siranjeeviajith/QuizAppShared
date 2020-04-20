@@ -18,7 +18,7 @@ public class Question extends AbstractBaseEntity {
     private QuestionStatus status;
 
     @IgnoreSave
-    private Option choosedOption;
+    private Option selectedOption;
 
     @Index
     private String description;

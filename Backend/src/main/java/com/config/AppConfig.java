@@ -1,21 +1,18 @@
 package com.config;
 import com.endpoint.*;
-
 import com.entities.*;
 import com.exceptionHandler.ExceptionHandler;
 import com.filters.ApiFilter;
-import com.filters.ApiKeyCheck;
-import com.filters.SessionCheck;
 import com.filters.SessionFilter;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.util.jackson.ObjectifyJacksonModule;
 import com.services.TemplateService;
+import com.taskqueuesample.TaskQueueSample;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
+import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.ws.rs.core.Application;
 
 @NoCache
 public class AppConfig extends Application {
@@ -62,7 +59,7 @@ public class AppConfig extends Application {
         classes.add(TemplateService.class);
         classes.add(SessionFilter.class);
         classes.add(ExceptionHandler.class);
-
+        classes.add(TaskQueueSample.class);
     }
 
     @Override

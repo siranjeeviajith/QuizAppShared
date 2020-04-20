@@ -5,6 +5,7 @@ buildscript {    // Configuration for building
     }
     dependencies {
         classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.2.0'    // Latest 1.x.x release
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
     }
 }
 
@@ -15,10 +16,24 @@ repositories {   // repositories for Jar's you access in your code
     mavenCentral()
     jcenter()
 }
+ext.junit4Version        = '4.12'
+ext.junitVintageVersion  = '4.12.2'
+ext.junitPlatformVersion = '1.0.2'
+ext.junitJupiterVersion  = '5.0.2'
+ext.log4jVersion         = '2.9.0'
 
 apply plugin: 'java'                              // standard Java tasks
 apply plugin: 'war'                               // standard Web Archive plugin
 apply plugin: 'com.google.cloud.tools.appengine'  // App Engine tasks
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+
+compileTestJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.compilerArgs += '-parameters'
+}
+
 
 dependencies {
     compile 'com.google.appengine:appengine-api-1.0-sdk:+'  // Latest App Engine Api's
@@ -30,13 +45,33 @@ dependencies {
 //  compile 'com.google.cloud:google-cloud:+'   // Latest Cloud API's http://googlecloudplatform.github.io/google-cloud-java
 
     testCompile 'junit:junit:4.12'
+
     testCompile 'com.google.truth:truth:0.33'
     testCompile 'org.mockito:mockito-all:1.10.19'
 
     testCompile 'com.google.appengine:appengine-testing:+'
     testCompile 'com.google.appengine:appengine-api-stubs:+'
     testCompile 'com.google.appengine:appengine-tools-sdk:+'
+
+    //added by ajith for reference
+    testCompile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.0'
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+    // If you also want to support JUnit 3 and JUnit 4 tests
+    testCompile("junit:junit:${junit4Version}")
+    testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
+
+    // To avoid compiler warnings about @API annotations in JUnit code
+    testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+
+
+    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
+    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+
+
 }
+
 
 // Always run unit tests
 appengineDeploy.dependsOn test
@@ -44,8 +79,8 @@ appengineStage.dependsOn test
 
 appengine {  // App Engine tasks configuration
     deploy {   // deploy configuration
-        projectId = "my-project"
-        version = '1'
+        projectId = "confident-nexus-272915"
+        version = '4'
     }
 }
 
@@ -63,9 +98,32 @@ test {
         logger.lifecycle("test: " + descriptor + ": " + result )
     }
 }
+task wrapper(type: Wrapper) {
+    description = 'Generates gradlew[.bat] scripts'
+    gradleVersion = '4.3.1'
+}
 
 group   = "com.Backend"        // Generated output GroupId
 version = "1.0-SNAPSHOT"       // Version in generated output
 
 sourceCompatibility = 1.8     // App Engine Flexible uses Java 8
 targetCompatibility = 1.8     // App Engine Flexible uses Java 8
+
+junitPlatform {
+    // platformVersion '1.0.2'
+    filters {
+        engines {
+            // include 'junit-jupiter', 'junit-vintage'
+            // exclude 'custom-engine'
+        }
+        tags {
+            // include 'fast'
+            exclude 'slow'
+        }
+        // includeClassNamePattern '.*Test'
+    }
+    // configurationParameter 'junit.jupiter.conditions.deactivate', '*'
+    // enableStandardTestTask true
+    // reportsDir file('build/test-results/junit-platform') // this is the default
+
+}

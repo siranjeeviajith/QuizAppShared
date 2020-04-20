@@ -3,11 +3,8 @@ package com.endpoint;
 import com.daoImpl.QuestionDaoImpl;
 import com.entities.Question;
 import com.entities.Rate;
-
 import com.entities.User;
 import com.enums.AccountType;
-import com.filters.ApiKeyCheck;
-import com.filters.SessionCheck;
 import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 import org.jboss.resteasy.annotations.cache.NoCache;
@@ -22,8 +19,8 @@ import java.util.Map;
 
 @NoCache
 @Path("/api/question")
-@ApiKeyCheck
-@SessionCheck
+//@ApiKeyCheck
+//@SessionCheck
 public class QuestionEndpoint extends AbstractBaseApiEndpoint {
     static QuestionDaoImpl questionOption;
 
@@ -218,19 +215,20 @@ public class QuestionEndpoint extends AbstractBaseApiEndpoint {
 //            }
 //        }
 
-//            if (servletRequest.getSession(false) != null) {
-                if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
-                    if (questionOption.checkQuestionValid(questionDetail.get("question"))) {
-                        response = questionOption.addAQuestion(questionDetail.get("question"));
+////            if (servletRequest.getSession(false) != null) {
+//                if (session.getAttribute("accountType") != null && session.getAttribute("accountType").equals(AccountType.ADMIN)) {
+                    if (questionOption.addAQuestion(questionDetail.get("question"))) {
+                        response.setOk(true);
+                        response.addData("message","question added");
                         return Response.status(200).entity(response).build();
                     } else {
                         response.setError("invalid question data");
                         return Response.status(400).entity(response).build();
                     }
-                } else {
-                    response.setError("User account is not permitted");
-                    return Response.status(401).entity(response).build();
-                }
+//                } else {
+//                    response.setError("User account is not permitted");
+//                    return Response.status(401).entity(response).build();
+//                }
 //            } else {
 //                response.setError("no session exist");
 //                return Response.status(401).entity(response).build();

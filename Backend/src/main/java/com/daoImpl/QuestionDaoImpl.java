@@ -5,47 +5,47 @@ import com.entities.Question;
 import com.entities.Rate;
 import com.enums.Option;
 import com.enums.QuestionStatus;
-
 import com.googlecode.objectify.ObjectifyService;
-import com.response.ApiResponse;
+import com.googlecode.objectify.cmd.Query;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class QuestionDaoImpl implements QuestionDao {
     @Override
-    public ApiResponse addAQuestion(Question question) {
-            ApiResponse response = new ApiResponse();
+    public boolean addAQuestion(Question question) {
 
+            if(!checkQuestionValid(question)){
+                return false;
+            }
             String uniqueID = UUID.randomUUID().toString();
             question.setId(uniqueID);
             question.setStatus(QuestionStatus.ACTIVE);
             ObjectifyService.ofy().save().entity(question).now();
-            response.setOk(true);
-            response.addData("question",question);
-            return response;
+            return true;
 
     }
 
     @Override
     public boolean checkQuestionValid(Question question) {
-        if(question.getCorrectAns()==null || question.getDescription()==null){
-            return false;
-        }
-        if(question.getDescription().length()>300  || question.getTag()==null || question.getTag().equals("")){
+        if(question.getCorrectAns()==null || question.getDescription()==null ||  question.getTag()==null){
             return false;
         }
 
-        if( question.getOption().get(Option.A).equals("")|| question.getOption().get(Option.B).equals("")|| question.getOption().get(Option.C).equals("")|| question.getOption().get(Option.D).equals("")){
+        if( question.getTag().equals("")||question.getOption().get(Option.A).equals("")|| question.getOption().get(Option.B).equals("")|| question.getOption().get(Option.C).equals("")|| question.getOption().get(Option.D).equals("")){
             return  false;
+        }
+        if(question.getDescription().length()>200  || question.getTag().length()> 50||question.getOption().get(Option.A).length()>70|| question.getOption().get(Option.B).length()>70|| question.getOption().get(Option.C).length()>70|| question.getOption().get(Option.D).length()>70 ){
+            return false;
         }
         return true;
     }
 
     @Override
     public List<Question> getQuestionByTag(String tag) {
-        List<Question> allQuestions = ObjectifyService.ofy().load().type(Question.class).filter("tag",tag).order("-averageRating").list();
-
+        Query results = ObjectifyService.ofy().load().type(Question.class).filter("tag",tag).limit(50).order("-averageRating");
+        List<Question> allQuestions = results.list();
         return allQuestions;
     }
 
@@ -110,7 +110,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
             com.googlecode.objectify.Key queKey= com.googlecode.objectify.Key.create(Question.class,queRating.getQuestionId());
             Question question= (Question) ObjectifyService.ofy().load().key(queKey).now();
-            if (queRating.getRating() <= 0 && queRating.getRating() > 5) {
+            if (queRating.getRating() <= 0 || queRating.getRating() > 5) {
                 return false;
             }
             if (queRating.getQuestionId() == null || queRating.getQuestionId().equals("")) {

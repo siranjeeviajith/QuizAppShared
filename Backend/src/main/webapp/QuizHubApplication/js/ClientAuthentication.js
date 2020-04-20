@@ -107,7 +107,10 @@ function loginClient(emailNew, passwordNew) {
     }).then((LoginResponse) => {
         console.log("Log in successful", LoginResponse);
         window.location.replace("/QuizHubApplication/html/Dashboard.html")
-    }).catch(error => { console.log("error", error); });
+    }).catch(error => {
+        document.getElementById('error').innerHTML = "Invalid username or password";
+        console.log("error", error);
+    });
 
 }
 

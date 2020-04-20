@@ -5,13 +5,15 @@ import com.entities.User;
 import com.enums.AccountType;
 import com.filters.ApiKeyCheck;
 import com.filters.SessionCheck;
-import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.security.NoSuchAlgorithmException;
 
@@ -45,7 +47,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
             } else {
                 if (userOption.clientAuthenticate(user)) {
 
-                    user = ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
+                    //user = ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
                     session = servletRequest.getSession(true);
                     session.setAttribute("userId", user.getId());
                     session.setAttribute("firstName", user.getFirstName());
@@ -80,7 +82,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
             } else {
                 if (userOption.userAuthenticate(user)) {
                     session = servletRequest.getSession(true);
-                    user = ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
+                   // user = ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
                     session.setAttribute("userId", user.getId());
                     session.setAttribute("firstName", user.getFirstName());
                     session.setAttribute("accountType", user.getAccountType());

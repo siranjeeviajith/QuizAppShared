@@ -26,7 +26,7 @@ function getAllQuestions() {
 
     }).catch(error => {
         document.getElementById('popupFormDisplayQuestions').innerHTML = "";
-        document.getElementById('popupFormDisplayQuestions').innerHTML = "no questions to display";
+        document.getElementById('popupFormDisplayQuestions').innerHTML = "<h1>No questions to display</h1>";
         console.log("error", error);
     });
 

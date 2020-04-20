@@ -37,7 +37,7 @@ function addUser()
         async: true
     }).then((signUpResponse) => {
         console.log("sign up successful", signUpResponse);
-        window.location.replace("/QuizHubApplication/html/CreateTest.html");
+        window.location = "/QuizHubApplication/html/CreateTest.html";
     }).catch(error => { console.log("error", error); });
 
 
