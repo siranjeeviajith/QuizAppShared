@@ -80,7 +80,7 @@ appengineStage.dependsOn test
 appengine {  // App Engine tasks configuration
     deploy {   // deploy configuration
         projectId = "confident-nexus-272915"
-        version = '4'
+        version = '1'
     }
 }
 
