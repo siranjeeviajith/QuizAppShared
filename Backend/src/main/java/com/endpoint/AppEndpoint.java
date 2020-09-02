@@ -3,18 +3,14 @@ package com.endpoint;
 import com.daoImpl.UserDaoImpl;
 import com.entities.User;
 import com.enums.AccountType;
-import com.filters.ApiKeyCheck;
-import com.response.ApiResponse;
 import com.services.TemplateService;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;   
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -48,13 +44,6 @@ public class AppEndpoint extends AbstractBaseApiEndpoint {
             if (session != null) {
                 if(session.getAttribute("accountType")==null){
                     session.invalidate();
-                    Cookie[] cookies = servletRequest.getCookies();
-                    if (cookies.length > 0) {
-                        for (Cookie cookie : cookies) {
-                            cookie.setMaxAge(0);
-                            servletResponse.addCookie(cookie);
-                        }
-                    }
                     String result = TemplateService.modify(servletContext,new ArrayList<>(),"/QuizHubApplication/html/index.html");
                     return Response.status(200).entity(result).build();
                 }

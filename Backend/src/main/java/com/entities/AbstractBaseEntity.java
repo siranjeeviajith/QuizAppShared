@@ -6,8 +6,6 @@ import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.OnSave;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Entity
 @Data
 public class AbstractBaseEntity {

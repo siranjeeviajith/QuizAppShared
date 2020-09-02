@@ -22,5 +22,10 @@ public class User extends AbstractBaseEntity {
     @Serialize
     private Map<String,Integer> userRatedQuestion;
 
+    @Override
+    public String toString(){
+        return id+" "+firstName+" "+lastName+" "+email+" "+password+" "+company+" "+accountType+"..";
+    }
+
 
 }

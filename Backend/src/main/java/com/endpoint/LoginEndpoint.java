@@ -5,6 +5,7 @@ import com.entities.User;
 import com.enums.AccountType;
 import com.filters.ApiKeyCheck;
 import com.filters.SessionCheck;
+import com.googlecode.objectify.ObjectifyService;
 import com.response.ApiResponse;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
@@ -47,7 +48,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
             } else {
                 if (userOption.clientAuthenticate(user)) {
 
-                    //user = ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
+                    user = ObjectifyService.ofy().load().type(User.class).filter("email", user.getEmail()).first().now();
                     session = servletRequest.getSession(true);
                     session.setAttribute("userId", user.getId());
                     session.setAttribute("firstName", user.getFirstName());
@@ -55,6 +56,7 @@ public class LoginEndpoint extends AbstractBaseApiEndpoint {
                     session.setAttribute("email",user.getEmail());
                     response.setOk(true);
                     response.addData("data", "Account login successfull");
+                    System.out.println("Login successful: session details"+session.getAttribute("userId")+" "+session.getAttribute("firstName")+" "+ session.getAttribute("accountType"));
                     return Response.status(200).entity(response).build();
                 } else {
                     response.setError("Invalid credentials");
